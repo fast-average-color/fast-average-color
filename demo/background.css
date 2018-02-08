@@ -1,0 +1,16 @@
+img {
+  width: 100%;
+}
+
+.item {
+  float: left;
+  width: 400px;
+  border: 1px solid rgba(77, 77, 77, 0.5);
+  padding: 10px;
+  margin: 10px;
+}
+
+.item__text {
+  padding: 10px;
+  height: 3em;
+}
