@@ -1,5 +1,7 @@
 # Fast Average Color
 
+Under construction...
+
 ## Examples
 - [Background](https://hcodes.github.io/average-color/demo/background.html)
 - [Box shadow](https://hcodes.github.io/average-color/demo/box_shadow.html)
