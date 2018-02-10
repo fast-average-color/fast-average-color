@@ -5,6 +5,7 @@
 [![Build Status](https://img.shields.io/travis/hcodes/fast-average-color.svg?style=flat)](https://travis-ci.org/hcodes/fast-average-color)
 
 A simple library that calculates the average color of any images in browser environment.
+<img width="640" height="351" src="https://raw.githubusercontent.com/hcodes/fast-average-color/master/examples/title.png" />
 
 ## Examples
 - [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
