@@ -4,6 +4,22 @@
     <title>Average color for background</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="main/index.css" />
+    <style>
+        img {
+            border-radius: 50px;
+            transition: all .3s ease;
+        }
+        
+        img:hover {
+            opacity: .8;
+            transform: translateY(10px);
+        }
+        
+        .item__text {
+            position: relative;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
     <div class="item">
@@ -63,6 +79,6 @@
     </div>
 
     <script src="../dist/index.js"></script>
-    <script src="background.js"></script>
+    <script src="box-shadow.js"></script>
 </body>
 </html>

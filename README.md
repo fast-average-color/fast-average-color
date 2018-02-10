@@ -1,10 +1,8 @@
 # Fast Average Color
 
-Under construction...
-
 ## Examples
 - [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
-- [Box shadow](https://hcodes.github.io/fast-average-color/examples/box_shadow.html)
-- [Canvas](https://hcodes.github.io/fast-average-color/examples/canvas.html)
+- [Box shadow](https://hcodes.github.io/fast-average-color/examples/box-shadow.html)
+<!-- - [Canvas](https://hcodes.github.io/fast-average-color/examples/canvas.html)
 - [Video](https://hcodes.github.io/fast-average-color/examples/video.html)
-- [Drag me](https://hcodes.github.io/fast-average-color/examples/drag_me.html)
+- [Drag me](https://hcodes.github.io/fast-average-color/examples/drag_me.html) -->
