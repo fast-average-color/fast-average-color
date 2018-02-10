@@ -1,6 +1,6 @@
 {
   "name": "fast-average-color",
-  "description": "Fast average color",
+  "description": "A simple library that calculates the average color of any images in browser environment.",
   "version": "0.1.0",
   "author": {
     "name": "Denis Seleznev",
@@ -24,7 +24,11 @@
     "node": ">= 4"
   },
   "files": [
-    "dist/*.js"
+    "dist/index.js",
+    "dist/index.min.js",
+    "dist/index.es6.js",
+    "README.md",
+    "LICENSE"
   ],
   "devDependencies": {
     "babel-core": "^6.26.0",
