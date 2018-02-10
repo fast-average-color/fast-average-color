@@ -17,15 +17,13 @@ $(window).on('load', function() {
         
         var width = bigImage[0].width,
             height = bigImage[0].height,
-            delta = 50;
+            size = 30;
             
-        var top = ac.getSync(elem[0], {left: 0, top: 0, width: width, height: delta}),
-            bottom = ac.getSync(elem[0], {left: 0, top: height - delta, width: width, height: delta}),
-            left = ac.getSync(elem[0], {left: 0, top: 0, width: delta, height: height}),
-            right = ac.getSync(elem[0], {left: width - delta, top: 0, width: delta, height: height});
+        var top = ac.getSync(elem[0], {left: 0, top: 0, width: width, height: size}),
+            bottom = ac.getSync(elem[0], {left: 0, top: height - size, width: width, height: size}),
+            left = ac.getSync(elem[0], {left: 0, top: 0, width: size, height: height}),
+            right = ac.getSync(elem[0], {left: width - size, top: 0, width: size, height: height});
             
-        console.log(top.rgb, bottom.rgb, left.rgb, right.rgb);
-
         border.css({
             'border-top-color': top.rgb,
             'border-right-color': right.rgb,
