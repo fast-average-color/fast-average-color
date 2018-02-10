@@ -1,8 +1,10 @@
-# Super Fast Average Color
+# Fast Average Color
 [![NPM version](https://img.shields.io/npm/v/fast-average-color.svg)](https://www.npmjs.com/package/fast-average-color)
 [![NPM Downloads](https://img.shields.io/npm/dm/fast-average-color.svg?style=flat)](https://www.npmjs.org/package/fast-average-color)
 [![Dependency Status](https://img.shields.io/david/hcodes/fast-average-color.svg)](https://david-dm.org/hcodes/fast-average-color)
 [![Build Status](https://img.shields.io/travis/hcodes/fast-average-color.svg?style=flat)](https://travis-ci.org/hcodes/fast-average-color)
+
+A simple library that calculates the average color of any images in browser environment.
 
 ## Examples
 - [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
@@ -61,7 +63,7 @@ console.log(color);
 
 import FastAverageColor from 'fast-average-color/dist/index.es6';
 
-const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1] /* black */}); // black - default color.
+const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1] /* black */});
 const color = ac.getSync(document.querySelector('img'));
 
 console.log(color);
