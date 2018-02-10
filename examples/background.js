@@ -9,6 +9,6 @@ window.addEventListener('load', function() {
             color = ac.getSync(item.querySelector('img'));
 
         item.style.backgroundColor = color.rgb;
-        item.style.color =  color.isDark ? 'white' : 'black';
+        item.style.color = color.isDark ? 'white' : 'black';
     }
 }, false);

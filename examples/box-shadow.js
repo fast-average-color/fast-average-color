@@ -10,6 +10,6 @@ window.addEventListener('load', function() {
             color = ac.getSync(image);
 
         image.style.boxShadow = '0 70px 90px ' + color.rgb;
-        item.style.color =  color.isDark ? 'white' : 'black';
+        item.style.color = color.isDark ? 'white' : 'black';
     }
 }, false);

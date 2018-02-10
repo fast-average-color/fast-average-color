@@ -67,9 +67,11 @@
     "env": {
         "node": true,
         "browser": true,
-        "amd": true
+        "amd": true,
+        "jquery": true
     },
     "globals": {
+        "FastAverageColor": true
     },
     "extends": "eslint:recommended"
 }
