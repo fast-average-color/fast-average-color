@@ -1,6 +1,8 @@
 export default class FastAverageColor {
     constructor(settings) {
-        this.defaultColor = settings && settings.defaultColor || [255, 255, 255, 255];
+        this.defaultColor = settings &&
+            settings.defaultColor ||
+            [255, 255, 255, 255]; // white
     }
 
     /**
@@ -9,8 +11,8 @@ export default class FastAverageColor {
      * @param {HTMLImageElement|HTMLCanvasElement} resource
      * @param {Object|null} options
      * @param {Array} [options.defaultColor]
-     * @param {number} [options.x]
-     * @param {number} [options.y]
+     * @param {number} [options.left]
+     * @param {number} [options.top]
      * @param {number} [options.width]
      * @param {number} [options.height]
      * @param {Function} callback
@@ -26,7 +28,7 @@ export default class FastAverageColor {
             callback(this.getSync.apply(this, arguments));
         }
 
-        // TODO videos
+        // TODO: HTMLVideoElement
     }
 
     /**
@@ -49,14 +51,14 @@ export default class FastAverageColor {
         const ctx = canvas.getContext('2d');
         let
             error = null,
-            x = 'x' in options ? options.x : 0,
-            y = 'y' in options ? options.y : 0,
+            left = 'left' in options ? options.left : 0,
+            top = 'top' in options ? options.top : 0,
             width = 'width' in options ? options.width : resource.width,
             height = 'height' in options ? options.height : resource.height,
             value = defaultColor;
 
         try {
-            ctx.drawImage(resource, x, y, width, height, 0, 0, size, size);
+            ctx.drawImage(resource, left, top, width, height, 0, 0, size, size);
 
             const bitmapData = ctx.getImageData(0, 0, size, size).data;
             value = [
@@ -66,6 +68,8 @@ export default class FastAverageColor {
                 bitmapData[3] // alpha
             ];
         } catch (e) {
+            // Security error, CORS
+            // https://developer.mozilla.org/ru/docs/Web/HTML/CORS_enabled_image
             error = e;
         }
 

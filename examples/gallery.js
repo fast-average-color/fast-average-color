@@ -19,10 +19,10 @@ $(window).on('load', function() {
             height = bigImage[0].height,
             delta = 30;
             
-        var top = ac.getSync(elem[0], {x: 0, y: 0, width: width, height: delta}),
-            bottom = ac.getSync(elem[0], {x: 0, y: height - delta, width: width, height: delta}),
-            left = ac.getSync(elem[0], {x: 0, y: 0, width: delta, height: height}),
-            right = ac.getSync(elem[0], {x: width - delta, y: 0, width: delta, height: height});
+        var top = ac.getSync(elem[0], {left: 0, top: 0, width: width, height: delta}),
+            bottom = ac.getSync(elem[0], {left: 0, top: height - delta, width: width, height: delta}),
+            left = ac.getSync(elem[0], {left: 0, top: 0, width: delta, height: height}),
+            right = ac.getSync(elem[0], {left: width - delta, top: 0, width: delta, height: height});
             
         border.css(
             'borderColor',
