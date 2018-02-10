@@ -13,7 +13,7 @@ var FastAverageColor = function () {
     function FastAverageColor(settings) {
         _classCallCheck(this, FastAverageColor);
 
-        this.defaultColor = settings && settings.defaultColor || [255, 255, 255, 255];
+        this.defaultColor = settings && settings.defaultColor || [255, 255, 255, 255]; // white
     }
 
     /**
@@ -22,8 +22,8 @@ var FastAverageColor = function () {
      * @param {HTMLImageElement|HTMLCanvasElement} resource
      * @param {Object|null} options
      * @param {Array} [options.defaultColor]
-     * @param {number} [options.x]
-     * @param {number} [options.y]
+     * @param {number} [options.left]
+     * @param {number} [options.top]
      * @param {number} [options.width]
      * @param {number} [options.height]
      * @param {Function} callback
@@ -43,7 +43,7 @@ var FastAverageColor = function () {
                 callback(this.getSync.apply(this, arguments));
             }
 
-            // TODO videos
+            // TODO: HTMLVideoElement
         }
 
         /**
@@ -68,14 +68,14 @@ var FastAverageColor = function () {
 
             var ctx = canvas.getContext('2d');
             var error = null,
-                x = 'x' in options ? options.x : 0,
-                y = 'y' in options ? options.y : 0,
+                left = 'left' in options ? options.left : 0,
+                top = 'top' in options ? options.top : 0,
                 width = 'width' in options ? options.width : resource.width,
                 height = 'height' in options ? options.height : resource.height,
                 value = defaultColor;
 
             try {
-                ctx.drawImage(resource, x, y, width, height, 0, 0, size, size);
+                ctx.drawImage(resource, left, top, width, height, 0, 0, size, size);
 
                 var bitmapData = ctx.getImageData(0, 0, size, size).data;
                 value = [bitmapData[0], // red
@@ -84,6 +84,8 @@ var FastAverageColor = function () {
                 bitmapData[3] // alpha
                 ];
             } catch (e) {
+                // Security error, CORS
+                // https://developer.mozilla.org/ru/docs/Web/HTML/CORS_enabled_image
                 error = e;
             }
 
