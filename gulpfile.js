@@ -3,10 +3,7 @@
 const
     gulp = require('gulp'),
     $ = require('gulp-load-plugins')(),
-    //del = require('del'),
-    //fs = require('fs'),
     babel = require('rollup-plugin-babel'),
-    //babelHelpersList = require('babel-helpers').list,
     uglifyOptions = {output: {comments: /^!/}},
     copyright = '/*! Fast Average Color | © 2018 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */\n';
 
@@ -19,9 +16,7 @@ gulp
                     format: 'umd',
                     name: 'FastAverageColor'
                 },
-                plugins: [babel({
-                    //externalHelpersWhitelist: babelHelpersList.filter(helperName => helperName !== 'asyncGenerator')
-                })]
+                plugins: [babel()]
             }))
             .pipe($.replace(/^/, copyright))
             .pipe($.rename('index.js'))
@@ -33,18 +28,12 @@ gulp
             .pipe($.uglify(uglifyOptions))
             .pipe(gulp.dest('dist/'));
     })
-    /*.task('dev-examples-copy', function() {
-        return gulp
-            .src('examples/*')
-            .pipe(gulp.dest('dev-examples/'));
+    .task('es6', function() {
+        return gulp.src('src/index.es6.js')
+            .pipe($.replace(/^/, copyright))
+            .pipe(gulp.dest('dist/'));
     })
-    .task('dev-examples', ['dev-examples-copy'], function() {
-        return gulp
-            .src('dev-examples/*.html')
-            .pipe($.replace(/https:\/\/unpkg\.com\/magic-snowflakes\//g, '../'))
-            .pipe(gulp.dest('dev-examples/'));
-    })*/
     .task('watch', function() {
         gulp.watch(['src/**/*', 'examples/**/*']);
     })
-    .task('default', ['js.min']);
+    .task('default', ['js.min', 'es6']);
