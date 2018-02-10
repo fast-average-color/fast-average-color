@@ -49,7 +49,7 @@ yarn add fast-average-color
 'use strict';
 
 const FastAverageColor = require('fast-average-color');
-const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1]}); // black - default color.
+const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1] /* black */ });
 const color = ac.getSync(document.querySelector('img'));
 
 console.log(color);
@@ -61,7 +61,7 @@ console.log(color);
 
 import FastAverageColor from 'fast-average-color/dist/index.es6';
 
-const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1]}); // black - default color.
+const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1] /* black */}); // black - default color.
 const color = ac.getSync(document.querySelector('img'));
 
 console.log(color);
