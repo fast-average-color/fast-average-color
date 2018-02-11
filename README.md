@@ -30,18 +30,20 @@ yarn add fast-average-color
     <img src="image.png" />
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
-        var fac = new FastAverageColor();
-        var color = fac.getColorSync(document.querySelector('img'));
-        console.log(color);
-        // { 
-        //     error: null,
-        //     rgb: 'rgb(255, 0, 0)',
-        //     rgba: 'rgba(255, 0, 0, 1)',
-        //     hex: '#ff0000',
-        //     hexa: '#ff0000ff',
-        //     value: [255, 0, 0, 255],
-        //     isDark: true
-        // }
+        window.addEventListener('load', function() {
+            var fac = new FastAverageColor();
+            var color = fac.getColorSync(document.querySelector('img'));
+            console.log(color);
+            // { 
+            //     error: null,
+            //     rgb: 'rgb(255, 0, 0)',
+            //     rgba: 'rgba(255, 0, 0, 1)',
+            //     hex: '#ff0000',
+            //     hexa: '#ff0000ff',
+            //     value: [255, 0, 0, 255],
+            //     isDark: true
+            // }
+        }, false);
     </script>
 </body>
 </html>
