@@ -11,7 +11,7 @@ gulp
     .task('js', function() {
         return gulp.src('src/*.js')
             .pipe($.rollup({
-                input: 'src/index.es6.js',
+                input: 'src/index.js',
                 output: {
                     format: 'umd',
                     name: 'FastAverageColor'
@@ -29,7 +29,8 @@ gulp
             .pipe(gulp.dest('dist/'));
     })
     .task('es6', function() {
-        return gulp.src('src/index.es6.js')
+        return gulp.src('src/index.js')
+            .pipe($.rename('index.es6.js'))
             .pipe($.replace(/^/, copyright))
             .pipe(gulp.dest('dist/'));
     })

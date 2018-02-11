@@ -7,40 +7,43 @@ export default class FastAverageColor {
     }
 
     /**
-     * Get average color from images and canvas.
+     * Get asynchronously the average color from images and canvas.
      *
      * @param {HTMLImageElement|HTMLCanvasElement} resource
-     * @param {Object|null} options
+     * @param {Function} callback
+     * @param {Object|null} [options]
      * @param {Array} [options.defaultColor]
+     * @param {*} [options.data]
      * @param {number} [options.left]
      * @param {number} [options.top]
      * @param {number} [options.width]
      * @param {number} [options.height]
-     * @param {Function} callback
      */
-    get(resource, options, callback) {
+    getColor(resource, callback, options) {
+        const data = options && options.data;
+
         if (resource instanceof HTMLImageElement) {
             if (resource.complete || resource.naturalWidth) {
-                callback(this.getSync.apply(this, arguments));
+                callback.call(resource, this.getColorSync.apply(this, arguments), data);
             } else {
-                this.bindImageEvents(resource, options, callback);
+                this._bindImageEvents(resource, callback, options);
             }
         } else if (resource instanceof HTMLCanvasElement) {
-            callback(this.getSync.apply(this, arguments));
+            callback.call(resource, this.getColorSync.apply(this, arguments), data);
         }
 
         // TODO: HTMLVideoElement
     }
 
     /**
-     * Get sync average color from images and canvas.
+     * Get synchronously the average color from images and canvas.
      *
      * @param {HTMLImageElement|HTMLCanvasElement} resource
      * @param {Object|null} options
      *
      * @returns {Object}
      */
-    getSync(resource, options) {
+    getColorSync(resource, options) {
         options = options || {};
 
         const canvas = this._canvas || document.createElement('canvas'),
@@ -59,14 +62,15 @@ export default class FastAverageColor {
             value = defaultColor;
 
         try {
+            ctx.clearRect(0, 0, size, size);
             ctx.drawImage(resource, left, top, width, height, 0, 0, size, size);
 
             const bitmapData = ctx.getImageData(0, 0, size, size).data;
             value = [
-                bitmapData[0], // red
-                bitmapData[1], // green
-                bitmapData[2], // blue
-                bitmapData[3] // alpha
+                bitmapData[0], // red,   0-255
+                bitmapData[1], // green, 0-255
+                bitmapData[2], // blue,  0-255
+                bitmapData[3]  // alpha, 0-255
             ];
         } catch (e) {
             // Security error, CORS
@@ -75,6 +79,78 @@ export default class FastAverageColor {
         }
 
         return this._getResult(value, error);
+    }
+
+    /**
+     * Get the average color from a array when 1 pixel is 3 bytes.
+     *
+     * @param {Array|Uint8Array} arr
+     *
+     * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+     */
+    getColorFromArray3(arr) {
+        if (arr.length < 3) {
+            return this._getDefaultColor();
+        }
+
+        const len = arr.length - arr.length % 3;
+
+        let
+            red = 0,
+            green = 0,
+            blue = 0,
+            count = 0;
+
+        for (let i = 0; i < len; i += 3) {
+            red += arr[i];
+            green += arr[i + 1];
+            blue += arr[i + 2];
+            count++;
+        }
+
+        return [
+            Math.floor(red / count),
+            Math.floor(green / count),
+            Math.floor(blue / count),
+            255
+        ];
+    }
+
+    /**
+     * Get the average color from a array when 1 pixel is 4 bytes.
+     *
+     * @param {Array|Uint8Array} arr
+     *
+     * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+     */
+    getColorFromArray4(arr) {
+        if (arr.length < 4) {
+            return this._getDefaultColor();
+        }
+
+        const len = arr.length - arr.length % 4;
+
+        let
+            red = 0,
+            green = 0,
+            blue = 0,
+            alpha = 0,
+            count = 0;
+
+        for (let i = 0; i < len; i += 4) {
+            red += arr[i];
+            green += arr[i + 1];
+            blue += arr[i + 2];
+            alpha += arr[i + 3];
+            count++;
+        }
+
+        return [
+            Math.floor(red / count),
+            Math.floor(green / count),
+            Math.floor(blue / count),
+            Math.floor(alpha / count)
+        ];
     }
 
     /**
@@ -88,33 +164,46 @@ export default class FastAverageColor {
         return  (options && options.defaultColor) || this.defaultColor;
     }
 
-    _bindImageEvents(resource, options, callback) {
-        this._onload = this._oncached = () => {
+    _bindImageEvents(resource, callback, options) {
+        const data = options && options.data;
+
+        this._onload = () => {
             this._unbindImageEvents();
-            callback(this.getSync(resource, options));
+
+            callback.call(
+                resource,
+                this.getColorSync(resource, options),
+                data
+            );
         };
 
         this._onerror = () => {
             this._unbindImageEvents();
-            callback(this._getResult(this._getDefaultColor(), new Error('Image error')));
+
+            callback.call(
+                resource,
+                this._getResult(this._getDefaultColor(), new Error('Image error')),
+                data
+            );
         };
 
         this._onabort = () => {
             this._unbindImageEvents();
-            callback(this._getResult(this._getDefaultColor(), new Error('Image abort')));
+
+            callback.call(
+                resource,
+                this._getResult(this._getDefaultColor(), new Error('Image abort')),
+                data
+            );
         };
 
         resource.addEventListener('load', this._onload);
-        resource.addEventListener('cached', this._onload);
-
         resource.addEventListener('error', this._onerror);
         resource.addEventListener('abort', this._onabort);
     }
 
     _unbindImageEvents(resource) {
         resource.removeEventListener('load', this._onload);
-        resource.removeEventListener('cached', this._onload);
-
         resource.removeEventListener('error', this._onerror);
         resource.removeEventListener('abort', this._onabort);
     }
@@ -122,15 +211,15 @@ export default class FastAverageColor {
     _getResult(value, error) {
         const
             rgb = value.slice(0, 3),
-            rgba = [].concat(rgb, Math.floor(value[3] / 255));
+            rgba = [].concat(rgb, value[3] / 255);
 
         return {
+            error,
+            value,
             rgb: 'rgb(' + rgb.join(',') + ')',
             rgba: 'rgba(' + rgba.join(',') + ')',
             hex: this._arrayToHex(rgb),
             hexa: this._arrayToHex(value),
-            value,
-            error,
             isDark: this._isDark(value)
         };
     }

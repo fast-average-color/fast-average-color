@@ -11,6 +11,7 @@ A simple library that calculates the average color of any images in browser envi
 - [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
 - [Box shadow](https://hcodes.github.io/fast-average-color/examples/box-shadow.html)
 - [Gallery](https://hcodes.github.io/fast-average-color/examples/gallery.html)
+- [Canvas](https://hcodes.github.io/fast-average-color/examples/canvas.html)
 
 ## Using
 ```
@@ -29,8 +30,8 @@ yarn add fast-average-color
     <img src="image.png" />
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
-        var ac = new FastAverageColor();
-        var color = ac.getSync(document.querySelector('img'));
+        var fac = new FastAverageColor();
+        var color = fac.getColorSync(document.querySelector('img'));
         console.log(color);
         // { 
         //     error: null,
@@ -38,7 +39,7 @@ yarn add fast-average-color
         //     rgba: 'rgba(255, 0, 0, 1)',
         //     hex: '#ff0000',
         //     hexa: '#ff0000ff',
-        //     value: [255, 0, 0, 1],
+        //     value: [255, 0, 0, 255],
         //     isDark: true
         // }
     </script>
@@ -52,8 +53,8 @@ yarn add fast-average-color
 'use strict';
 
 const FastAverageColor = require('fast-average-color');
-const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1] /* black */ });
-const color = ac.getSync(document.querySelector('img'));
+const fac = new FastAverageColor();
+const color = fac.getColorSync(document.querySelector('img'));
 
 console.log(color);
 ```
@@ -64,10 +65,116 @@ console.log(color);
 
 import FastAverageColor from 'fast-average-color/dist/index.es6';
 
-const ac = new FastAverageColor({defaultColor: [0, 0, 0, 1] /* black */});
-const color = ac.getSync(document.querySelector('img'));
+const fac = new FastAverageColor();
+const color = fac.getColorSync(document.querySelector('img'));
 
 console.log(color);
+```
+
+## API
+### `.getColorSync(resource, [options]);`
+
+Get synchronously the average color from a resource (loaded images, videos or canvas).
+
+```js
+const fac = new FastAverageColor();
+let color;
+
+// From loaded image (HTMLImageElement)
+color = fac.getColorSync(image);
+
+//From loaded image with options
+color = fac.getColorSync({defaultColor: [255, 0, 0, 255]}); // Set default color - red.
+
+// From canvas (HTMLCanvasElement)
+color = fac.getColorSync(canvas);
+
+// From video (HTMLVideoElement)
+color = fac.getColorSync(video);
+```
+
+### `.getColor(resource, [options], callback);`
+Get asynchronously the average color from a resource (not loaded images, videos or canvas).
+```js
+const fac = new FastAverageColor();
+
+// From not loaded image (HTMLImageElement)
+fac.getColor(image1, function(color) {
+    console.log(color);
+    // { 
+    //     error: null,
+    //     rgb: 'rgb(255, 0, 0)',
+    //     rgba: 'rgba(255, 0, 0, 1)',
+    //     hex: '#ff0000',
+    //     hexa: '#ff0000ff',
+    //     value: [255, 0, 0, 255],
+    //     isDark: true
+    // }
+});
+
+// Advanced example
+fac.getColor(image2, function(color, data) {
+    console.log(this);
+    // this = image2
+
+    console.log(color);
+    // { 
+    //     error: null,
+    //     rgb: 'rgb(255, 0, 0)',
+    //     rgba: 'rgba(255, 0, 0, 1)',
+    //     hex: '#ff0000',
+    //     hexa: '#ff0000ff',
+    //     value: [255, 0, 0, 255],
+    //     isDark: true
+    // }
+    
+    console.log(data);
+    // {
+    //     myProp: 1
+    // }
+}, {
+    // red 0-255, green 0-255, blue 0-255, alpha 0-255
+    defaultColor: [255, 100, 100, 200],
+    data: { myProp: 1 }
+});
+```
+
+### `.getColorFromArray3()`
+Get the average color from a array when 1 pixel is 3 bytes.
+```js
+const fac = new FastAverageColor();
+const buffer = [
+    // red, green, blue
+    200, 200, 200,
+    100, 100, 100
+];
+const color = fac.getColorFromArray3(buffer);
+console.log(color);
+// [150, 150, 150, 255]
+```
+
+### `.getColorFromArray4()`
+Get the average color from a array when 1 pixel is 4 bytes.
+```js
+const fac = new FastAverageColor();
+const buffer = [
+    // red, green, blue, alpha
+    200, 200, 200, 255,
+    100, 100, 100, 255
+];
+const color = fac.getColorFromArray4(buffer);
+console.log(color);
+// [150, 150, 150, 255]
+```
+
+
+### `.destroy()`
+```js
+const fac = new FastAverageColor();
+const color = fac.getSyncColor();
+
+// The instance is no longer needed.
+fac.destroy();
 ```
 
 ## Different Builds

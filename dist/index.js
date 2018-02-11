@@ -17,37 +17,40 @@ var FastAverageColor = function () {
     }
 
     /**
-     * Get average color from images and canvas.
+     * Get asynchronously the average color from images and canvas.
      *
      * @param {HTMLImageElement|HTMLCanvasElement} resource
-     * @param {Object|null} options
+     * @param {Function} callback
+     * @param {Object|null} [options]
      * @param {Array} [options.defaultColor]
+     * @param {*} [options.data]
      * @param {number} [options.left]
      * @param {number} [options.top]
      * @param {number} [options.width]
      * @param {number} [options.height]
-     * @param {Function} callback
      */
 
 
     _createClass(FastAverageColor, [{
-        key: 'get',
-        value: function get(resource, options, callback) {
+        key: 'getColor',
+        value: function getColor(resource, callback, options) {
+            var data = options && options.data;
+
             if (resource instanceof HTMLImageElement) {
                 if (resource.complete || resource.naturalWidth) {
-                    callback(this.getSync.apply(this, arguments));
+                    callback.call(resource, this.getColorSync.apply(this, arguments), data);
                 } else {
-                    this.bindImageEvents(resource, options, callback);
+                    this._bindImageEvents(resource, callback, options);
                 }
             } else if (resource instanceof HTMLCanvasElement) {
-                callback(this.getSync.apply(this, arguments));
+                callback.call(resource, this.getColorSync.apply(this, arguments), data);
             }
 
             // TODO: HTMLVideoElement
         }
 
         /**
-         * Get sync average color from images and canvas.
+         * Get synchronously the average color from images and canvas.
          *
          * @param {HTMLImageElement|HTMLCanvasElement} resource
          * @param {Object|null} options
@@ -56,8 +59,8 @@ var FastAverageColor = function () {
          */
 
     }, {
-        key: 'getSync',
-        value: function getSync(resource, options) {
+        key: 'getColorSync',
+        value: function getColorSync(resource, options) {
             options = options || {};
 
             var canvas = this._canvas || document.createElement('canvas'),
@@ -75,13 +78,14 @@ var FastAverageColor = function () {
                 value = defaultColor;
 
             try {
+                ctx.clearRect(0, 0, size, size);
                 ctx.drawImage(resource, left, top, width, height, 0, 0, size, size);
 
                 var bitmapData = ctx.getImageData(0, 0, size, size).data;
-                value = [bitmapData[0], // red
-                bitmapData[1], // green
-                bitmapData[2], // blue
-                bitmapData[3] // alpha
+                value = [bitmapData[0], // red,   0-255
+                bitmapData[1], // green, 0-255
+                bitmapData[2], // blue,  0-255
+                bitmapData[3] // alpha, 0-255
                 ];
             } catch (e) {
                 // Security error, CORS
@@ -90,6 +94,72 @@ var FastAverageColor = function () {
             }
 
             return this._getResult(value, error);
+        }
+
+        /**
+         * Get the average color from a array when 1 pixel is 3 bytes.
+         *
+         * @param {Array|Uint8Array} arr
+         *
+         * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+         */
+
+    }, {
+        key: 'getColorFromArray3',
+        value: function getColorFromArray3(arr) {
+            if (arr.length < 3) {
+                return this._getDefaultColor();
+            }
+
+            var len = arr.length - arr.length % 3;
+
+            var red = 0,
+                green = 0,
+                blue = 0,
+                count = 0;
+
+            for (var i = 0; i < len; i += 3) {
+                red += arr[i];
+                green += arr[i + 1];
+                blue += arr[i + 2];
+                count++;
+            }
+
+            return [Math.floor(red / count), Math.floor(green / count), Math.floor(blue / count), 255];
+        }
+
+        /**
+         * Get the average color from a array when 1 pixel is 4 bytes.
+         *
+         * @param {Array|Uint8Array} arr
+         *
+         * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+         */
+
+    }, {
+        key: 'getColorFromArray4',
+        value: function getColorFromArray4(arr) {
+            if (arr.length < 4) {
+                return this._getDefaultColor();
+            }
+
+            var len = arr.length - arr.length % 4;
+
+            var red = 0,
+                green = 0,
+                blue = 0,
+                alpha = 0,
+                count = 0;
+
+            for (var i = 0; i < len; i += 4) {
+                red += arr[i];
+                green += arr[i + 1];
+                blue += arr[i + 2];
+                alpha += arr[i + 3];
+                count++;
+            }
+
+            return [Math.floor(red / count), Math.floor(green / count), Math.floor(blue / count), Math.floor(alpha / count)];
         }
 
         /**
@@ -108,27 +178,30 @@ var FastAverageColor = function () {
         }
     }, {
         key: '_bindImageEvents',
-        value: function _bindImageEvents(resource, options, callback) {
+        value: function _bindImageEvents(resource, callback, options) {
             var _this = this;
 
-            this._onload = this._oncached = function () {
+            var data = options && options.data;
+
+            this._onload = function () {
                 _this._unbindImageEvents();
-                callback(_this.getSync(resource, options));
+
+                callback.call(resource, _this.getColorSync(resource, options), data);
             };
 
             this._onerror = function () {
                 _this._unbindImageEvents();
-                callback(_this._getResult(_this._getDefaultColor(), new Error('Image error')));
+
+                callback.call(resource, _this._getResult(_this._getDefaultColor(), new Error('Image error')), data);
             };
 
             this._onabort = function () {
                 _this._unbindImageEvents();
-                callback(_this._getResult(_this._getDefaultColor(), new Error('Image abort')));
+
+                callback.call(resource, _this._getResult(_this._getDefaultColor(), new Error('Image abort')), data);
             };
 
             resource.addEventListener('load', this._onload);
-            resource.addEventListener('cached', this._onload);
-
             resource.addEventListener('error', this._onerror);
             resource.addEventListener('abort', this._onabort);
         }
@@ -136,8 +209,6 @@ var FastAverageColor = function () {
         key: '_unbindImageEvents',
         value: function _unbindImageEvents(resource) {
             resource.removeEventListener('load', this._onload);
-            resource.removeEventListener('cached', this._onload);
-
             resource.removeEventListener('error', this._onerror);
             resource.removeEventListener('abort', this._onabort);
         }
@@ -145,15 +216,15 @@ var FastAverageColor = function () {
         key: '_getResult',
         value: function _getResult(value, error) {
             var rgb = value.slice(0, 3),
-                rgba = [].concat(rgb, Math.floor(value[3] / 255));
+                rgba = [].concat(rgb, value[3] / 255);
 
             return {
+                error: error,
+                value: value,
                 rgb: 'rgb(' + rgb.join(',') + ')',
                 rgba: 'rgba(' + rgba.join(',') + ')',
                 hex: this._arrayToHex(rgb),
                 hexa: this._arrayToHex(value),
-                value: value,
-                error: error,
                 isDark: this._isDark(value)
             };
         }

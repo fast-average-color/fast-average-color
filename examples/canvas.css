@@ -1,0 +1,39 @@
+html, body {
+    font-family: Arial;
+    font-size: 16px;
+    background: black;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+canvas {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-top: -240px;
+    margin-left: -320px;
+    width: 640px;
+    height: 480px;
+    border: 1px solid rgba(100, 100, 100, .5);
+}
+
+.info {
+    position: fixed;
+    left: 50px;
+    top: 50px;
+    padding: 20px;
+    background: rgba(255, 255, 255, .1);
+    border-radius: 10px;
+    text-shadow: 1px 1px 2px black;
+
+    font-size: 16px;
+    font-family: Arial;
+    color: white;
+    z-index: 10;
+}
+
+.info__item {
+    padding: 3px;
+    min-width: 200px;
+}
