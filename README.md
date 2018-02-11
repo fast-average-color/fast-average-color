@@ -173,7 +173,7 @@ console.log(color);
 ### `.destroy()`
 ```js
 const fac = new FastAverageColor();
-const color = fac.getSyncColor();
+const color = fac.getColorSync(document.querySelector('img'));
 
 // The instance is no longer needed.
 fac.destroy();
