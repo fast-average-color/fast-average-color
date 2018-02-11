@@ -139,7 +139,7 @@ fac.getColor(image2, function(color, data) {
 });
 ```
 
-### `.getColorFromArray3()`
+### `.getColorFromArray3(array)`
 Get the average color from a array when 1 pixel is 3 bytes.
 ```js
 const fac = new FastAverageColor();
@@ -153,7 +153,7 @@ console.log(color);
 // [150, 150, 150, 255]
 ```
 
-### `.getColorFromArray4()`
+### `.getColorFromArray4(array)`
 Get the average color from a array when 1 pixel is 4 bytes.
 ```js
 const fac = new FastAverageColor();
