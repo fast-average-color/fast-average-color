@@ -72,7 +72,7 @@ console.log(color);
 ```
 
 ## API
-### `.getColorSync(resource, [options]);`
+### `.getColorSync(resource, [options])`
 
 Get synchronously the average color from a resource (loaded images, videos or canvas).
 
@@ -83,7 +83,7 @@ let color;
 // From loaded image (HTMLImageElement)
 color = fac.getColorSync(image);
 
-//From loaded image with options
+// From loaded image with options
 color = fac.getColorSync({defaultColor: [255, 0, 0, 255]}); // Set default color - red.
 
 // From canvas (HTMLCanvasElement)
@@ -93,7 +93,7 @@ color = fac.getColorSync(canvas);
 color = fac.getColorSync(video);
 ```
 
-### `.getColor(resource, [options], callback);`
+### `.getColor(resource, callback, [options])`
 Get asynchronously the average color from a resource (not loaded images, videos or canvas).
 ```js
 const fac = new FastAverageColor();
