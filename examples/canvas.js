@@ -27,7 +27,9 @@ window.addEventListener('load', function() {
                 'rgba: ' + color.rgba,
                 'hex: ' + color.hex,
                 'hexa: ' + color.hexa
-            ].map(function(item) { return '<div class="info__item">' + item + '</div>'}).join('');
+            ].map(function(item) {
+                return '<div class="info__item">' + item + '</div>';
+            }).join('');
         }, 50);
     }
     
