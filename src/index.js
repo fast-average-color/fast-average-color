@@ -102,7 +102,7 @@ export default class FastAverageColor {
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
      */
-    getColorFromArray3(arr) {
+    getColorFromArray3(arr, step) {
         if (arr.length < 3) {
             return this._getDefaultColor();
         }
