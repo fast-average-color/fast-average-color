@@ -117,7 +117,7 @@ var FastAverageColor = function () {
 
     }, {
         key: 'getColorFromArray3',
-        value: function getColorFromArray3(arr) {
+        value: function getColorFromArray3(arr, step) {
             if (arr.length < 3) {
                 return this._getDefaultColor();
             }
