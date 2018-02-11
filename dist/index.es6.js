@@ -46,13 +46,27 @@ export default class FastAverageColor {
     getColorSync(resource, options) {
         options = options || {};
 
-        const canvas = this._canvas || document.createElement('canvas'),
+        const
             defaultColor = this._getDefaultColor(options),
             size = 1;
 
-        canvas.width = canvas.height = size;
+        let ctx = this._ctx;
+        
+        if (!ctx) {
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = size;
+            ctx = canvas.getContext && canvas.getContext('2d');
 
-        const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                return this._getResult(
+                    defaultColor,
+                    new Error('Canvas: Context 2D is not supported in this browser.')
+                );
+            }
+
+            this._ctx = ctx;
+        }
+
         let
             error = null,
             left = 'left' in options ? options.left : 0,
@@ -74,7 +88,7 @@ export default class FastAverageColor {
             ];
         } catch (e) {
             // Security error, CORS
-            // https://developer.mozilla.org/ru/docs/Web/HTML/CORS_enabled_image
+            // https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image
             error = e;
         }
 
@@ -85,15 +99,18 @@ export default class FastAverageColor {
      * Get the average color from a array when 1 pixel is 3 bytes.
      *
      * @param {Array|Uint8Array} arr
+     * @param {number} [step=1]
      *
-     * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+     * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
      */
     getColorFromArray3(arr) {
         if (arr.length < 3) {
             return this._getDefaultColor();
         }
 
-        const len = arr.length - arr.length % 3;
+        const
+            len = arr.length - arr.length % 3,
+            preparedStep = (step || 1) * 3;
 
         let
             red = 0,
@@ -101,7 +118,7 @@ export default class FastAverageColor {
             blue = 0,
             count = 0;
 
-        for (let i = 0; i < len; i += 3) {
+        for (let i = 0; i < len; i += preparedStep) {
             red += arr[i];
             green += arr[i + 1];
             blue += arr[i + 2];
@@ -120,15 +137,18 @@ export default class FastAverageColor {
      * Get the average color from a array when 1 pixel is 4 bytes.
      *
      * @param {Array|Uint8Array} arr
+     * @param {number} [step=1]
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
      */
-    getColorFromArray4(arr) {
+    getColorFromArray4(arr, step) {
         if (arr.length < 4) {
             return this._getDefaultColor();
         }
 
-        const len = arr.length - arr.length % 4;
+        const
+            len = arr.length - arr.length % 4,
+            preparedStep = (step || 1) * 4;
 
         let
             red = 0,
@@ -137,7 +157,7 @@ export default class FastAverageColor {
             alpha = 0,
             count = 0;
 
-        for (let i = 0; i < len; i += 4) {
+        for (let i = 0; i < len; i += preparedStep) {
             red += arr[i];
             green += arr[i + 1];
             blue += arr[i + 2];
@@ -154,10 +174,10 @@ export default class FastAverageColor {
     }
 
     /**
-     * Destroy instance.
+     * Destroy the instance.
      */
     destroy() {
-        delete this._canvas;
+        delete this._ctx;
     }
 
     _getDefaultColor(options) {

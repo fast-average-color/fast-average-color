@@ -63,13 +63,23 @@ var FastAverageColor = function () {
         value: function getColorSync(resource, options) {
             options = options || {};
 
-            var canvas = this._canvas || document.createElement('canvas'),
-                defaultColor = this._getDefaultColor(options),
+            var defaultColor = this._getDefaultColor(options),
                 size = 1;
 
-            canvas.width = canvas.height = size;
+            var ctx = this._ctx;
 
-            var ctx = canvas.getContext('2d');
+            if (!ctx) {
+                var canvas = document.createElement('canvas');
+                canvas.width = canvas.height = size;
+                ctx = canvas.getContext && canvas.getContext('2d');
+
+                if (!ctx) {
+                    return this._getResult(defaultColor, new Error('Canvas: Context 2D is not supported in this browser.'));
+                }
+
+                this._ctx = ctx;
+            }
+
             var error = null,
                 left = 'left' in options ? options.left : 0,
                 top = 'top' in options ? options.top : 0,
@@ -89,7 +99,7 @@ var FastAverageColor = function () {
                 ];
             } catch (e) {
                 // Security error, CORS
-                // https://developer.mozilla.org/ru/docs/Web/HTML/CORS_enabled_image
+                // https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image
                 error = e;
             }
 
@@ -100,8 +110,9 @@ var FastAverageColor = function () {
          * Get the average color from a array when 1 pixel is 3 bytes.
          *
          * @param {Array|Uint8Array} arr
+         * @param {number} [step=1]
          *
-         * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+         * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
          */
 
     }, {
@@ -111,14 +122,15 @@ var FastAverageColor = function () {
                 return this._getDefaultColor();
             }
 
-            var len = arr.length - arr.length % 3;
+            var len = arr.length - arr.length % 3,
+                preparedStep = (step || 1) * 3;
 
             var red = 0,
                 green = 0,
                 blue = 0,
                 count = 0;
 
-            for (var i = 0; i < len; i += 3) {
+            for (var i = 0; i < len; i += preparedStep) {
                 red += arr[i];
                 green += arr[i + 1];
                 blue += arr[i + 2];
@@ -132,18 +144,20 @@ var FastAverageColor = function () {
          * Get the average color from a array when 1 pixel is 4 bytes.
          *
          * @param {Array|Uint8Array} arr
+         * @param {number} [step=1]
          *
          * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
          */
 
     }, {
         key: 'getColorFromArray4',
-        value: function getColorFromArray4(arr) {
+        value: function getColorFromArray4(arr, step) {
             if (arr.length < 4) {
                 return this._getDefaultColor();
             }
 
-            var len = arr.length - arr.length % 4;
+            var len = arr.length - arr.length % 4,
+                preparedStep = (step || 1) * 4;
 
             var red = 0,
                 green = 0,
@@ -151,7 +165,7 @@ var FastAverageColor = function () {
                 alpha = 0,
                 count = 0;
 
-            for (var i = 0; i < len; i += 4) {
+            for (var i = 0; i < len; i += preparedStep) {
                 red += arr[i];
                 green += arr[i + 1];
                 blue += arr[i + 2];
@@ -163,13 +177,13 @@ var FastAverageColor = function () {
         }
 
         /**
-         * Destroy instance.
+         * Destroy the instance.
          */
 
     }, {
         key: 'destroy',
         value: function destroy() {
-            delete this._canvas;
+            delete this._ctx;
         }
     }, {
         key: '_getDefaultColor',
