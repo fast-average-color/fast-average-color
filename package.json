@@ -1,7 +1,7 @@
 {
   "name": "fast-average-color",
   "description": "A simple library that calculates the average color of any images in browser environment.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
@@ -42,7 +42,7 @@
     "gulp": "~3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-cleancss": "^0.2.2",
-    "gulp-less": "^3.3.2",
+    "gulp-less": "^3.5.0",
     "gulp-load-plugins": "^1.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.6.1",
@@ -53,6 +53,6 @@
   "scripts": {
     "test": "eslint .",
     "build": "gulp",
-    "prepublish": "gulp"
+    "prepare": "gulp"
   }
 }

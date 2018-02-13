@@ -47,51 +47,63 @@ export default class FastAverageColor {
 
         const
             defaultColor = this._getDefaultColor(options),
-            size = 1;
+            srcLeft = 'left' in options ? options.left : 0,
+            srcTop = 'top' in options ? options.top : 0,
+            srcWidth = 'width' in options ? options.width : resource.naturalWidth,
+            srcHeight = 'height' in options ? options.height : resource.naturalHeight;
 
-        let ctx = this._ctx;
-        
-        if (!ctx) {
-            const canvas = document.createElement('canvas');
-            canvas.width = canvas.height = size;
-            ctx = canvas.getContext && canvas.getContext('2d');
+        let
+            error = null,
+            value = defaultColor,
+            maxSize = 100,
+            minSize = 10,
+            destWidth = srcWidth,
+            destHeight = srcHeight,
+            factor;
 
-            if (!ctx) {
-                return this._getResult(
+        if (!this._ctx) {
+            this._canvas = document.createElement('canvas');
+            this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
+
+            if (!this._ctx) {
+                return this._prepareResult(
                     defaultColor,
                     new Error('Canvas: Context 2D is not supported in this browser.')
                 );
             }
-
-            this._ctx = ctx;
         }
 
-        let
-            error = null,
-            left = 'left' in options ? options.left : 0,
-            top = 'top' in options ? options.top : 0,
-            width = 'width' in options ? options.width : resource.width,
-            height = 'height' in options ? options.height : resource.height,
-            value = defaultColor;
+        if (srcWidth > srcHeight) {
+            factor = srcWidth / srcHeight;
+            destWidth = maxSize;
+            destHeight = Math.floor(destWidth / factor);
+        } else {
+            factor = srcHeight / srcWidth;
+            destHeight = maxSize;
+            destWidth = Math.floor(destHeight / factor);
+        }
+
+        if (destWidth > srcWidth || destHeight > srcHeight || destWidth < minSize || destHeight < minSize) {
+            destWidth = srcWidth;
+            destHeight = srcHeight;
+        }
+
+        this._canvas.width = destWidth;
+        this._canvas.height = destHeight;
 
         try {
-            ctx.clearRect(0, 0, size, size);
-            ctx.drawImage(resource, left, top, width, height, 0, 0, size, size);
+            this._ctx.clearRect(0, 0, destWidth, destHeight);
+            this._ctx.drawImage(resource, srcLeft, srcTop, srcWidth, srcHeight, 0, 0, destWidth, destHeight);
 
-            const bitmapData = ctx.getImageData(0, 0, size, size).data;
-            value = [
-                bitmapData[0], // red,   0-255
-                bitmapData[1], // green, 0-255
-                bitmapData[2], // blue,  0-255
-                bitmapData[3]  // alpha, 0-255
-            ];
+            const bitmapData = this._ctx.getImageData(0, 0, destWidth, destHeight).data;
+            value = this.getColorFromArray4(bitmapData);
         } catch (e) {
             // Security error, CORS
             // https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image
             error = e;
         }
 
-        return this._getResult(value, error);
+        return this._prepareResult(value, error);
     }
 
     /**
@@ -103,13 +115,15 @@ export default class FastAverageColor {
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
      */
     getColorFromArray3(arr, step) {
-        if (arr.length < 3) {
+        const bytesPerPixel = 3;
+
+        if (arr.length < bytesPerPixel) {
             return this._getDefaultColor();
         }
 
         const
-            len = arr.length - arr.length % 3,
-            preparedStep = (step || 1) * 3;
+            len = arr.length - arr.length % bytesPerPixel,
+            preparedStep = (step || 1) * bytesPerPixel;
 
         let
             red = 0,
@@ -141,13 +155,15 @@ export default class FastAverageColor {
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
      */
     getColorFromArray4(arr, step) {
-        if (arr.length < 4) {
+        const bytesPerPixel = 4;
+
+        if (arr.length < bytesPerPixel) {
             return this._getDefaultColor();
         }
 
         const
-            len = arr.length - arr.length % 4,
-            preparedStep = (step || 1) * 4;
+            len = arr.length - arr.length % bytesPerPixel,
+            preparedStep = (step || 1) * bytesPerPixel;
 
         let
             red = 0,
@@ -201,7 +217,7 @@ export default class FastAverageColor {
 
             callback.call(
                 resource,
-                this._getResult(this._getDefaultColor(), new Error('Image error')),
+                this._prepareResult(this._getDefaultColor(), new Error('Image error')),
                 data
             );
         };
@@ -211,7 +227,7 @@ export default class FastAverageColor {
 
             callback.call(
                 resource,
-                this._getResult(this._getDefaultColor(), new Error('Image abort')),
+                this._prepareResult(this._getDefaultColor(), new Error('Image abort')),
                 data
             );
         };
@@ -227,7 +243,7 @@ export default class FastAverageColor {
         resource.removeEventListener('abort', this._onabort);
     }
 
-    _getResult(value, error) {
+    _prepareResult(value, error) {
         const
             rgb = value.slice(0, 3),
             rgba = [].concat(rgb, value[3] / 255);
