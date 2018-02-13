@@ -1,5 +1,8 @@
 # Changelog
 
+# v1.0.1
+Fixed errors in the algorithm.
+
 # v1.0.0
 Added:
 - `.getColorFromArray3()`
