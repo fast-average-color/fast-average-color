@@ -15,7 +15,7 @@ window.addEventListener('load', function() {
             colorLeft = ac.getColorSync(image, {width: size}),
             colorBottom = ac.getColorSync(image, {top: height - size, height: size}),
             radius = ' 90px ',
-            delta = '70px'
+            delta = '70px';
 
         image.style.boxShadow = [
             '0 -{delta} {radius} ' + colorTop.rgb,
