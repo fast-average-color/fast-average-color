@@ -8,17 +8,26 @@ html, body {
 }
 
 img {
-  width: 100%;
+    width: 100%;
+    border-radius: 50px;
+    transition: all .3s ease;
+}
+
+img:hover {
+    opacity: .8;
+    transform: translateY(10px);
 }
 
 .item {
-  float: left;
-  width: 400px;
-  padding: 70px;
-  transition: background-color .5s ease;
+    float: left;
+    width: 400px;
+    padding: 70px;
+    transition: background-color .5s ease;
 }
 
 .item__text {
-  padding: 10px;
-  height: 3em;
+    position: relative;
+    z-index: 10;
+    padding: 10px;
+    height: 3em;
 }

@@ -5,11 +5,12 @@
 [![Build Status](https://img.shields.io/travis/hcodes/fast-average-color.svg?style=flat)](https://travis-ci.org/hcodes/fast-average-color)
 
 A simple library that calculates the average color of any images in browser environment.
-<img width="640" height="351" src="https://raw.githubusercontent.com/hcodes/fast-average-color/master/examples/title.png" />
+<img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/hcodes/fast-average-color/master/examples/title.png" />
 
 ## Examples
 - [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
 - [Box shadow](https://hcodes.github.io/fast-average-color/examples/box-shadow.html)
+- [Box shadow, 4 sides](https://hcodes.github.io/fast-average-color/examples/box-shadow-4-sides.html)
 - [Gallery](https://hcodes.github.io/fast-average-color/examples/gallery.html)
 - [Canvas](https://hcodes.github.io/fast-average-color/examples/canvas.html)
 
@@ -34,7 +35,7 @@ yarn add fast-average-color
             var fac = new FastAverageColor();
             var color = fac.getColorSync(document.querySelector('img'));
             console.log(color);
-            // { 
+            // {
             //     error: null,
             //     rgb: 'rgb(255, 0, 0)',
             //     rgba: 'rgba(255, 0, 0, 1)',
@@ -103,7 +104,7 @@ const fac = new FastAverageColor();
 // From not loaded image (HTMLImageElement)
 fac.getColor(image1, function(color) {
     console.log(color);
-    // { 
+    // {
     //     error: null,
     //     rgb: 'rgb(255, 0, 0)',
     //     rgba: 'rgba(255, 0, 0, 1)',
@@ -120,7 +121,7 @@ fac.getColor(image2, function(color, data) {
     // this = image2
 
     console.log(color);
-    // { 
+    // {
     //     error: null,
     //     rgb: 'rgb(255, 0, 0)',
     //     rgba: 'rgba(255, 0, 0, 1)',
@@ -129,7 +130,7 @@ fac.getColor(image2, function(color, data) {
     //     value: [255, 0, 0, 255],
     //     isDark: true
     // }
-    
+
     console.log(data);
     // {
     //     myProp: 1

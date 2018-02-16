@@ -9,6 +9,8 @@ html, body {
 
 img {
     width: 100%;
+    border-radius: 50px;
+    transition: all .3s ease;
 }
 
 .item {
@@ -19,6 +21,8 @@ img {
 }
 
 .item__text {
-    padding: 10px;
-    height: 3em;
+  position: relative;
+  z-index: 10;
+  padding: 10px;
+  height: 3em;
 }
