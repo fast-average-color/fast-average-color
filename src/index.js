@@ -13,6 +13,7 @@ export default class FastAverageColor {
      * @param {Object|null} [options]
      * @param {Array} [options.defaultColor]
      * @param {*} [options.data]
+     * @param {number} [options.mode="speed"] "precision" or "speed"
      * @param {number} [options.left]
      * @param {number} [options.top]
      * @param {number} [options.width]
@@ -47,19 +48,11 @@ export default class FastAverageColor {
 
         const
             defaultColor = this._getDefaultColor(options),
-            srcLeft = 'left' in options ? options.left : 0,
-            srcTop = 'top' in options ? options.top : 0,
-            srcWidth = 'width' in options ? options.width : resource.naturalWidth,
-            srcHeight = 'height' in options ? options.height : resource.naturalHeight;
+            size = this._prepareSizeAndPosition(resource, options);
 
         let
             error = null,
-            value = defaultColor,
-            maxSize = 100,
-            minSize = 10,
-            destWidth = srcWidth,
-            destHeight = srcHeight,
-            factor;
+            value = defaultColor;
 
         if (!this._ctx) {
             this._canvas = document.createElement('canvas');
@@ -73,29 +66,20 @@ export default class FastAverageColor {
             }
         }
 
-        if (srcWidth > srcHeight) {
-            factor = srcWidth / srcHeight;
-            destWidth = maxSize;
-            destHeight = Math.floor(destWidth / factor);
-        } else {
-            factor = srcHeight / srcWidth;
-            destHeight = maxSize;
-            destWidth = Math.floor(destHeight / factor);
-        }
-
-        if (destWidth > srcWidth || destHeight > srcHeight || destWidth < minSize || destHeight < minSize) {
-            destWidth = srcWidth;
-            destHeight = srcHeight;
-        }
-
-        this._canvas.width = destWidth;
-        this._canvas.height = destHeight;
+        this._canvas.width = size.destWidth;
+        this._canvas.height = size.destHeight;
 
         try {
-            this._ctx.clearRect(0, 0, destWidth, destHeight);
-            this._ctx.drawImage(resource, srcLeft, srcTop, srcWidth, srcHeight, 0, 0, destWidth, destHeight);
+            this._ctx.clearRect(0, 0, size.destWidth, size.destHeight);
+            this._ctx.drawImage(
+                resource,
+                size.srcLeft, size.srcTop,
+                size.srcWidth, size.srcHeight,
+                0, 0,
+                size.destWidth, size.destHeight
+            );
 
-            const bitmapData = this._ctx.getImageData(0, 0, destWidth, destHeight).data;
+            const bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
             value = this.getColorFromArray4(bitmapData);
         } catch (e) {
             // Security error, CORS
@@ -197,6 +181,61 @@ export default class FastAverageColor {
 
     _getDefaultColor(options) {
         return  (options && options.defaultColor) || this.defaultColor;
+    }
+
+    _prepareSizeAndPosition(resource, options) {
+        const
+            srcLeft = 'left' in options ? options.left : 0,
+            srcTop = 'top' in options ? options.top : 0,
+            srcWidth = 'width' in options ? options.width : (resource.naturalWidth || resource.width),
+            srcHeight = 'height' in options ? options.height : (resource.naturalHeight || resource.height);
+
+        if (options.mode === 'precision') {
+            return {
+                srcLeft,
+                srcTop,
+                srcWidth,
+                srcHeight,
+                destWidth: srcWidth,
+                destHeight: srcHeight
+            };
+        }
+
+        const
+            maxSize = 100,
+            minSize = 10;
+
+        let
+            destWidth = srcWidth,
+            destHeight = srcHeight,
+            factor;
+
+        if (srcWidth > srcHeight) {
+            factor = srcWidth / srcHeight;
+            destWidth = maxSize;
+            destHeight = Math.floor(destWidth / factor);
+        } else {
+            factor = srcHeight / srcWidth;
+            destHeight = maxSize;
+            destWidth = Math.floor(destHeight / factor);
+        }
+
+        if (
+            destWidth > srcWidth || destHeight > srcHeight ||
+            destWidth < minSize || destHeight < minSize
+        ) {
+            destWidth = srcWidth;
+            destHeight = srcHeight;
+        }
+
+        return {
+            srcLeft,
+            srcTop,
+            srcWidth,
+            srcHeight,
+            destWidth,
+            destHeight
+        };
     }
 
     _bindImageEvents(resource, callback, options) {
