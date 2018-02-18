@@ -17,14 +17,14 @@ var FastAverageColor = function () {
     }
 
     /**
-     * Get asynchronously the average color from images and canvas.
+     * Get asynchronously the average color from unloaded image.
      *
-     * @param {HTMLImageElement|HTMLCanvasElement} resource
+     * @param {HTMLImageElement} resource
      * @param {Function} callback
      * @param {Object|null} [options]
-     * @param {Array} [options.defaultColor]
-     * @param {*} [options.data]
-     * @param {number} [options.mode="speed"] "precision" or "speed"
+     * @param {Array}  [options.defaultColor]
+     * @param {*}      [options.data]
+     * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {number} [options.left]
      * @param {number} [options.top]
      * @param {number} [options.width]
@@ -33,35 +33,29 @@ var FastAverageColor = function () {
 
 
     _createClass(FastAverageColor, [{
-        key: 'getColor',
-        value: function getColor(resource, callback, options) {
+        key: 'getColorFromUnloadedImage',
+        value: function getColorFromUnloadedImage(resource, callback, options) {
             var data = options && options.data;
 
-            if (resource instanceof HTMLImageElement) {
-                if (resource.complete || resource.naturalWidth) {
-                    callback.call(resource, this.getColorSync.apply(this, arguments), data);
-                } else {
-                    this._bindImageEvents(resource, callback, options);
-                }
-            } else if (resource instanceof HTMLCanvasElement) {
-                callback.call(resource, this.getColorSync.apply(this, arguments), data);
+            if (resource.complete || resource.naturalWidth) {
+                callback.call(resource, this.getColor.apply(this, arguments), data);
+            } else {
+                this._bindImageEvents(resource, callback, options);
             }
-
-            // TODO: HTMLVideoElement
         }
 
         /**
-         * Get synchronously the average color from images and canvas.
+         * Get synchronously the average color from images, videos and canvas.
          *
-         * @param {HTMLImageElement|HTMLCanvasElement} resource
+         * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
          * @param {Object|null} options
          *
          * @returns {Object}
          */
 
     }, {
-        key: 'getColorSync',
-        value: function getColorSync(resource, options) {
+        key: 'getColor',
+        value: function getColor(resource, options) {
             options = options || {};
 
             var defaultColor = this._getDefaultColor(options),
@@ -70,12 +64,16 @@ var FastAverageColor = function () {
             var error = null,
                 value = defaultColor;
 
+            if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
+                return this._prepareResult(defaultColor, new Error('FastAverageColor: Incorrect sizes.'));
+            }
+
             if (!this._ctx) {
                 this._canvas = document.createElement('canvas');
                 this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
                 if (!this._ctx) {
-                    return this._prepareResult(defaultColor, new Error('Canvas: Context 2D is not supported in this browser.'));
+                    return this._prepareResult(defaultColor, new Error('FastAverageColor: Canvas Context 2D is not supported in this browser.'));
                 }
             }
 
@@ -178,6 +176,7 @@ var FastAverageColor = function () {
     }, {
         key: 'destroy',
         value: function destroy() {
+            delete this._canvas;
             delete this._ctx;
         }
     }, {
@@ -188,10 +187,11 @@ var FastAverageColor = function () {
     }, {
         key: '_prepareSizeAndPosition',
         value: function _prepareSizeAndPosition(resource, options) {
-            var srcLeft = 'left' in options ? options.left : 0,
-                srcTop = 'top' in options ? options.top : 0,
-                srcWidth = 'width' in options ? options.width : resource.naturalWidth || resource.width,
-                srcHeight = 'height' in options ? options.height : resource.naturalHeight || resource.height;
+            var originalSize = this._getOriginalSize(resource),
+                srcLeft = typeof options.left === 'undefined' ? 0 : options.left,
+                srcTop = typeof options.top === 'undefined' ? 0 : options.top,
+                srcWidth = typeof options.width === 'undefined' ? originalSize.width : options.width,
+                srcHeight = typeof options.height === 'undefined' ? originalSize.height : options.height;
 
             if (options.mode === 'precision') {
                 return {
@@ -243,13 +243,13 @@ var FastAverageColor = function () {
             var data = options && options.data;
 
             this._onload = function () {
-                _this._unbindImageEvents();
+                _this._unbindImageEvents(resource);
 
-                callback.call(resource, _this.getColorSync(resource, options), data);
+                callback.call(resource, _this.getColor(resource, options), data);
             };
 
             this._onerror = function () {
-                _this._unbindImageEvents();
+                _this._unbindImageEvents(resource);
 
                 callback.call(resource, _this._prepareResult(_this._getDefaultColor(), new Error('Image error')), data);
             };
@@ -285,6 +285,28 @@ var FastAverageColor = function () {
                 hex: this._arrayToHex(rgb),
                 hexa: this._arrayToHex(value),
                 isDark: this._isDark(value)
+            };
+        }
+    }, {
+        key: '_getOriginalSize',
+        value: function _getOriginalSize(resource) {
+            if (resource instanceof HTMLImageElement) {
+                return {
+                    width: resource.naturalWidth,
+                    height: resource.naturalHeight
+                };
+            }
+
+            if (resource instanceof HTMLVideoElement) {
+                return {
+                    width: resource.videoWidth,
+                    height: resource.videoHeight
+                };
+            }
+
+            return {
+                width: resource.width,
+                height: resource.height
             };
         }
     }, {
