@@ -11,15 +11,8 @@ window.addEventListener('load', function() {
             gradient = item.querySelector('.item__gradient'),
             height = image.naturalHeight,
             size = 50,
-            color;
-
-        if (isBottom) {
-            color = ac.getColorSync(image, {top: height - size, height: size});
-        } else {
-            color = ac.getColorSync(image, {height: size});
-        }
-
-        var colorEnd = [].concat(color.value.slice(0, 3), 0).join(',');
+            color = ac.getColor(image, isBottom ? {top: height - size, height: size} : {height: size}),
+            colorEnd = [].concat(color.value.slice(0, 3), 0).join(',');
 
         item.style.background =  color.rgb;
         item.style.color = color.isDark ? 'white' : 'black';

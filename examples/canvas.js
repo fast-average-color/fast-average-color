@@ -28,7 +28,7 @@ window.addEventListener('load', function() {
             ctx.fillRect(rnd(width), rnd(height), rnd(width), rnd(height));
 
             var timeA = Date.now(),
-                color = fac.getColorSync(canvas, {mode: isPrecision ? 'precision' : 'speed'});
+                color = fac.getColor(canvas, {mode: isPrecision ? 'precision' : 'speed'});
 
             info.style.backgroundColor = color.rgba;
             infoColor.innerHTML = [

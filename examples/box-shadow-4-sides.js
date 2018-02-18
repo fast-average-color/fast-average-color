@@ -10,10 +10,10 @@ window.addEventListener('load', function() {
             size = 50,
             width = image.naturalWidth,
             height = image.naturalHeight,
-            colorTop = ac.getColorSync(image, {height: size}),
-            colorRight = ac.getColorSync(image, {left: width - size, width: size}),
-            colorLeft = ac.getColorSync(image, {width: size}),
-            colorBottom = ac.getColorSync(image, {top: height - size, height: size}),
+            colorTop = ac.getColor(image, {height: size}),
+            colorRight = ac.getColor(image, {left: width - size, width: size}),
+            colorLeft = ac.getColor(image, {width: size}),
+            colorBottom = ac.getColor(image, {top: height - size, height: size}),
             radius = ' 90px ',
             delta = '70px';
 
