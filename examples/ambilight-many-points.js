@@ -16,7 +16,7 @@ window.AmbilightManyPoints = {
         var
             ua = navigator.userAgent.toLowerCase(),
             isFirefox = ua.indexOf('firefox') > -1,
-            isSafari = (ua.search('safari') > -1 && ua.search('Chrome') === -1);
+            isSafari = (ua.search('safari') > -1 && ua.search('chrome') === -1);
 
         this._hasDoubleBlur = isFirefox || isSafari ? false : true;
     },

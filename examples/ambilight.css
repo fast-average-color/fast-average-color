@@ -37,6 +37,7 @@ h1 {
     margin: 0 2px 0 0;
     font-size: 12px;
     line-height: 12px;
+    vertical-align: top;
 }
 
 .video-container {
@@ -59,8 +60,6 @@ video {
 
 .video-shadow {
     position: absolute;
-    border-radius: 100%;
-    transform: translate3d(0, 0, 0);
 }
 
 .video-shadow_left {
