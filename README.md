@@ -11,9 +11,11 @@ A simple library that calculates the average color of any images in browser envi
 - [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
 - [Box shadow](https://hcodes.github.io/fast-average-color/examples/box-shadow.html)
 - [Box shadow, 4 sides](https://hcodes.github.io/fast-average-color/examples/box-shadow-4-sides.html)
-- [Gradient](https://hcodes.github.io/fast-average-color/examples/gradient.html)
 - [Gallery](https://hcodes.github.io/fast-average-color/examples/gallery.html)
+- [Gradient](https://hcodes.github.io/fast-average-color/examples/gradient.html)
 - [Canvas](https://hcodes.github.io/fast-average-color/examples/canvas.html)
+- [Video](https://hcodes.github.io/fast-average-color/examples/video.html)
+- [Define the average color for your images](https://hcodes.github.io/fast-average-color/examples/define.html)
 
 ## Using
 ```
@@ -34,7 +36,7 @@ yarn add fast-average-color
     <script>
         window.addEventListener('load', function() {
             var fac = new FastAverageColor();
-            var color = fac.getColorSync(document.querySelector('img'));
+            var color = fac.getColor(document.querySelector('img'));
             console.log(color);
             // {
             //     error: null,
@@ -58,7 +60,7 @@ yarn add fast-average-color
 
 const FastAverageColor = require('fast-average-color');
 const fac = new FastAverageColor();
-const color = fac.getColorSync(document.querySelector('img'));
+const color = fac.getColor(document.querySelector('img'));
 
 console.log(color);
 ```
@@ -70,13 +72,13 @@ console.log(color);
 import FastAverageColor from 'fast-average-color/dist/index.es6';
 
 const fac = new FastAverageColor();
-const color = fac.getColorSync(document.querySelector('img'));
+const color = fac.getColor(document.querySelector('img'));
 
 console.log(color);
 ```
 
 ## API
-### `.getColorSync(resource, [options])`
+### `.getColor(resource, [options])`
 
 Get synchronously the average color from a resource (loaded images, videos or canvas).
 
@@ -85,25 +87,35 @@ const fac = new FastAverageColor();
 let color;
 
 // From loaded image (HTMLImageElement)
-color = fac.getColorSync(image);
+color = fac.getColor(image);
 
-// From loaded image with options
-color = fac.getColorSync({defaultColor: [255, 0, 0, 255]}); // Set default color - red.
+// From loaded image with default color
+color = fac.getColor({
+    // Set default color - red.  
+    defaultColor: [255, 0, 0, 255]
+});
+
+// From loaded image with precision
+color = fac.getColor({
+  // Modes: 'speed' (by default) or 'precision'.
+  // Current mode is precision.
+    mode: 'precision'
+});
 
 // From canvas (HTMLCanvasElement)
-color = fac.getColorSync(canvas);
+color = fac.getColor(canvas);
 
 // From video (HTMLVideoElement)
-color = fac.getColorSync(video);
+color = fac.getColor(video);
 ```
 
-### `.getColor(resource, callback, [options])`
+### `.getColorFromUnloadedImage(resource, callback, [options])`
 Get asynchronously the average color from a resource (not loaded images, videos or canvas).
 ```js
 const fac = new FastAverageColor();
 
 // From not loaded image (HTMLImageElement)
-fac.getColor(image1, function(color) {
+fac.getColorFromUnloadedImage(image1, function(color) {
     console.log(color);
     // {
     //     error: null,
@@ -117,7 +129,7 @@ fac.getColor(image1, function(color) {
 });
 
 // Advanced example
-fac.getColor(image2, function(color, data) {
+fac.getColorFromUnloadedImage(image2, function(color, data) {
     console.log(this);
     // this = image2
 
@@ -175,7 +187,7 @@ console.log(color);
 ### `.destroy()`
 ```js
 const fac = new FastAverageColor();
-const color = fac.getColorSync(document.querySelector('img'));
+const color = fac.getColor(document.querySelector('img'));
 
 // The instance is no longer needed.
 fac.destroy();
