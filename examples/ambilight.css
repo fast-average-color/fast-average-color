@@ -7,11 +7,43 @@ html, body {
     border: 0;
 }
 
+h1 {
+    position: absolute;
+    left: 80px;
+    top: 11px;
+    margin: 0;
+    padding: 0;
+    color: #aaa;
+    font-weight: normal;
+}
+
+.ambilight-control {
+    position: fixed;
+    left: 80px;
+    top: 55px;
+    white-space: nowrap;
+    color: #aaa;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.ambilight-control label {
+    margin: 0;
+    padding: 0;
+    margin-right: 5px;
+}
+
+.ambilight-control input {
+    margin-left: 0;
+}
+
 .video-container {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    border: 10px solid black;
+    outline: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 video {
@@ -21,8 +53,6 @@ video {
     background: black;
     position: relative;
     z-index: 100;
-    border: 10px solid black;
-    outline: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .video-shadow {
@@ -49,4 +79,21 @@ video {
 .video-shadow_bottom {
     bottom: 0;
     border-radius: 0 0 100% 100%;
+}
+
+.copyright {
+    position: fixed;
+    left: 50%;
+    margin-left: -5em;
+    bottom: 5px;
+
+    font-size: 12px;
+    font-family: Arial;
+}
+
+.copyright:link,
+.copyright:visited,
+.copyright:active,
+.copyright:hover {
+    color: #555;
 }

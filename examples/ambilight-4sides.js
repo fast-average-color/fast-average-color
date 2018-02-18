@@ -1,31 +1,51 @@
-var App = {
-    init: function() {
+window.Ambilight4Sides = {
+    init: function(video, container) {
         this._ac = new FastAverageColor();
-        this._video = document.querySelector('video');
-        this._container = document.querySelector('.video-container');
+        this._video = video;
+        this._container = container;
 
         this.radius = '200px',
         this.delta = '200px',
         this.size = 70;
 
-        this.updateBoxShadows = this.updateBoxShadows.bind(this);
-
         this.bindEvents();
+
+        !video.paused && this._onplay();
+    },
+    destroy: function() {
+        if (this._video) {
+            this._video.removeEventListener('play', this._onplay, false);
+            this._video.removeEventListener('pause', this._onpause, false);
+            this._container.style.boxShadow = 'none';
+        }
+
+        window.cancelAnimationFrame(this._requestId);
+
+        delete this._ac;
+        delete this._video;
+        delete this._container;
+
     },
     bindEvents: function() {
-        this._video.addEventListener('play', function() {
-            this._width = this._video.videoWidth;
-            this._height = this._video.videoHeight;
+        var that = this;
 
-            this._requestId = window.requestAnimationFrame(this.updateBoxShadows);
-        }.bind(this), false);
+        this._onplay = function() {
+            that._width = that._video.videoWidth;
+            that._height = that._video.videoHeight;
 
-        this._video.addEventListener('pause', function() {
-            window.cancelAnimationFrame(this._requestId);
-        }.bind(this), false);
+            that._requestId = window.requestAnimationFrame(that.updateBoxShadows.bind(that));
+        };
+
+        this._onpause = function() {
+            window.cancelAnimationFrame(that._requestId);
+        };
+
+        this._video.addEventListener('play', this._onplay, false);
+        this._video.addEventListener('pause', this._onpause, false);
     },
     updateBoxShadows: function() {
-        var ac = this._ac,
+        var
+            ac = this._ac,
             width = this._width,
             height = this._height,
             size = this.size,
@@ -65,8 +85,6 @@ var App = {
             .replace(/\{delta\}/g, this.delta)
             .replace(/\{radius\}/g, this.radius);
 
-        this._requestId = window.requestAnimationFrame(this.updateBoxShadows);
+        this._requestId = window.requestAnimationFrame(this.updateBoxShadows.bind(this));
     }
 };
-
-App.init();

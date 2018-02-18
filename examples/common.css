@@ -11,7 +11,7 @@
 .back:before {
     color: #fff;
     background: rgba(255, 255, 255, .3);
-    padding: 5px;
+    padding: 5px 10px;
     content: 'Back';
     border-radius: 5px;
     text-decoration: none;
