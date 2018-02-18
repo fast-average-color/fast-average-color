@@ -12,6 +12,13 @@ window.AmbilightManyPoints = {
         this.bindEvents();
 
         !video.paused && this._onplay();
+
+        var
+            ua = navigator.userAgent.toLowerCase(),
+            isFirefox = ua.indexOf('firefox') > -1,
+            isSafari = (ua.search('safari') > -1 && ua.search('Chrome') === -1);
+
+        this._hasDoubleBlur = isFirefox || isSafari ? false : true;
     },
     destroy: function() {
         if (this._shadowsCreated) {
@@ -129,7 +136,7 @@ window.AmbilightManyPoints = {
             });
 
             offset = size;
-            blur = size;
+            blur = this._hasDoubleBlur ? size * 2 : size;
 
             this._leftElems[i].style.boxShadow = '-' + offset + 'px 0 ' + blur + 'px ' + leftColor.rgb;
             this._rightElems[i].style.boxShadow = offset + 'px 0 ' + blur + 'px ' + rightColor.rgb;
@@ -153,7 +160,7 @@ window.AmbilightManyPoints = {
             });
 
             offset = size;
-            blur = size;
+            blur = this._hasDoubleBlur ? size * 2 : size;
 
             this._topElems[i].style.boxShadow = '0 -' + offset + 'px ' + blur + 'px ' + topColor.rgb;
             this._bottomElems[i].style.boxShadow = '0 ' + offset + 'px ' + blur + 'px ' + bottomColor.rgb;
