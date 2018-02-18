@@ -1,0 +1,24 @@
+html, body {
+    font-family: Arial;
+    font-size: 16px;
+    background: black;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+img {
+    width: 100%;
+}
+
+.item {
+    float: left;
+    width: 400px;
+    padding: 70px;
+    transition: background-color .5s ease;
+}
+
+.item__text {
+    padding: 10px;
+    height: 3em;
+}

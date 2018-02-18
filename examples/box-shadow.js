@@ -7,7 +7,7 @@ window.addEventListener('load', function() {
         var
             item = items[i],
             image = item.querySelector('img'),
-            color = ac.getColorSync(image);
+            color = ac.getColor(image);
 
         image.style.boxShadow = '0 70px 90px ' + color.rgb;
         item.style.color = color.isDark ? 'white' : 'black';

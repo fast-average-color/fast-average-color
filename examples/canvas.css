@@ -35,5 +35,8 @@ canvas {
 
 .info__item {
     padding: 3px;
-    min-width: 200px;
+    width: 250px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
 }

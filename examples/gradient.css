@@ -1,0 +1,46 @@
+html, body {
+    font-family: Arial;
+    font-size: 16px;
+    background: black;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.item {
+    float: left;
+    position: relative;
+    width: 400px;
+    margin: 20px;
+    transition: all .5s ease;
+}
+
+.item__image {
+    position: relative;
+    width: 400px;
+}
+
+img {
+    display: block;
+    width: 100%;
+}
+
+.item__gradient {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 50%;
+    z-index: 1;
+    transition: all .5s ease;
+}
+
+.item_bottom .item__gradient {
+    top: 50%;
+    bottom: 0;
+}
+
+
+.item__text {
+    padding: 20px;
+}

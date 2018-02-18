@@ -6,7 +6,7 @@ window.addEventListener('load', function() {
     for (var i = 0; i < items.length; i++) {
         var
             item = items[i],
-            color = ac.getColorSync(item.querySelector('img'));
+            color = ac.getColor(item.querySelector('img'));
 
         item.style.backgroundColor = color.rgb;
         item.style.color = color.isDark ? 'white' : 'black';

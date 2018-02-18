@@ -19,10 +19,10 @@ $(window).on('load', function() {
             height = bigImage[0].naturalHeight,
             size = 30;
 
-        var top = ac.getColorSync(elem[0], {left: 0, top: 0, width: width, height: size}),
-            bottom = ac.getColorSync(elem[0], {left: 0, top: height - size, width: width, height: size}),
-            left = ac.getColorSync(elem[0], {left: 0, top: 0, width: size, height: height}),
-            right = ac.getColorSync(elem[0], {left: width - size, top: 0, width: size, height: height});
+        var top = ac.getColor(elem[0], {left: 0, top: 0, width: width, height: size}),
+            bottom = ac.getColor(elem[0], {left: 0, top: height - size, width: width, height: size}),
+            left = ac.getColor(elem[0], {left: 0, top: 0, width: size, height: height}),
+            right = ac.getColor(elem[0], {left: width - size, top: 0, width: size, height: height});
 
         border.css({
             'border-top-color': top.rgb,

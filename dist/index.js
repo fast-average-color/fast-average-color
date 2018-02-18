@@ -17,13 +17,14 @@ var FastAverageColor = function () {
     }
 
     /**
-     * Get asynchronously the average color from images and canvas.
+     * Get asynchronously the average color from unloaded image.
      *
-     * @param {HTMLImageElement|HTMLCanvasElement} resource
+     * @param {HTMLImageElement} resource
      * @param {Function} callback
      * @param {Object|null} [options]
-     * @param {Array} [options.defaultColor]
-     * @param {*} [options.data]
+     * @param {Array}  [options.defaultColor]
+     * @param {*}      [options.data]
+     * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {number} [options.left]
      * @param {number} [options.top]
      * @param {number} [options.width]
@@ -32,83 +33,58 @@ var FastAverageColor = function () {
 
 
     _createClass(FastAverageColor, [{
-        key: 'getColor',
-        value: function getColor(resource, callback, options) {
+        key: 'getColorFromUnloadedImage',
+        value: function getColorFromUnloadedImage(resource, callback, options) {
             var data = options && options.data;
 
-            if (resource instanceof HTMLImageElement) {
-                if (resource.complete || resource.naturalWidth) {
-                    callback.call(resource, this.getColorSync.apply(this, arguments), data);
-                } else {
-                    this._bindImageEvents(resource, callback, options);
-                }
-            } else if (resource instanceof HTMLCanvasElement) {
-                callback.call(resource, this.getColorSync.apply(this, arguments), data);
+            if (resource.complete || resource.naturalWidth) {
+                callback.call(resource, this.getColor.apply(this, arguments), data);
+            } else {
+                this._bindImageEvents(resource, callback, options);
             }
-
-            // TODO: HTMLVideoElement
         }
 
         /**
-         * Get synchronously the average color from images and canvas.
+         * Get synchronously the average color from images, videos and canvas.
          *
-         * @param {HTMLImageElement|HTMLCanvasElement} resource
+         * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
          * @param {Object|null} options
          *
          * @returns {Object}
          */
 
     }, {
-        key: 'getColorSync',
-        value: function getColorSync(resource, options) {
+        key: 'getColor',
+        value: function getColor(resource, options) {
             options = options || {};
 
             var defaultColor = this._getDefaultColor(options),
-                srcLeft = 'left' in options ? options.left : 0,
-                srcTop = 'top' in options ? options.top : 0,
-                srcWidth = 'width' in options ? options.width : resource.naturalWidth,
-                srcHeight = 'height' in options ? options.height : resource.naturalHeight;
+                size = this._prepareSizeAndPosition(resource, options);
 
             var error = null,
-                value = defaultColor,
-                maxSize = 100,
-                minSize = 10,
-                destWidth = srcWidth,
-                destHeight = srcHeight,
-                factor = void 0;
+                value = defaultColor;
+
+            if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
+                return this._prepareResult(defaultColor, new Error('FastAverageColor: Incorrect sizes.'));
+            }
 
             if (!this._ctx) {
                 this._canvas = document.createElement('canvas');
                 this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
                 if (!this._ctx) {
-                    return this._prepareResult(defaultColor, new Error('Canvas: Context 2D is not supported in this browser.'));
+                    return this._prepareResult(defaultColor, new Error('FastAverageColor: Canvas Context 2D is not supported in this browser.'));
                 }
             }
 
-            if (srcWidth > srcHeight) {
-                factor = srcWidth / srcHeight;
-                destWidth = maxSize;
-                destHeight = Math.floor(destWidth / factor);
-            } else {
-                factor = srcHeight / srcWidth;
-                destHeight = maxSize;
-                destWidth = Math.floor(destHeight / factor);
-            }
-
-            if (destWidth > srcWidth || destHeight > srcHeight || destWidth < minSize || destHeight < minSize) {
-                destWidth = srcWidth;
-                destHeight = srcHeight;
-            }
-
-            this._canvas.width = destWidth;
-            this._canvas.height = destHeight;
+            this._canvas.width = size.destWidth;
+            this._canvas.height = size.destHeight;
 
             try {
-                this._ctx.clearRect(0, 0, destWidth, destHeight);
-                this._ctx.drawImage(resource, srcLeft, srcTop, srcWidth, srcHeight, 0, 0, destWidth, destHeight);
+                this._ctx.clearRect(0, 0, size.destWidth, size.destHeight);
+                this._ctx.drawImage(resource, size.srcLeft, size.srcTop, size.srcWidth, size.srcHeight, 0, 0, size.destWidth, size.destHeight);
 
-                var bitmapData = this._ctx.getImageData(0, 0, destWidth, destHeight).data;
+                var bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
                 value = this.getColorFromArray4(bitmapData);
             } catch (e) {
                 // Security error, CORS
@@ -200,12 +176,64 @@ var FastAverageColor = function () {
     }, {
         key: 'destroy',
         value: function destroy() {
+            delete this._canvas;
             delete this._ctx;
         }
     }, {
         key: '_getDefaultColor',
         value: function _getDefaultColor(options) {
             return options && options.defaultColor || this.defaultColor;
+        }
+    }, {
+        key: '_prepareSizeAndPosition',
+        value: function _prepareSizeAndPosition(resource, options) {
+            var originalSize = this._getOriginalSize(resource),
+                srcLeft = typeof options.left === 'undefined' ? 0 : options.left,
+                srcTop = typeof options.top === 'undefined' ? 0 : options.top,
+                srcWidth = typeof options.width === 'undefined' ? originalSize.width : options.width,
+                srcHeight = typeof options.height === 'undefined' ? originalSize.height : options.height;
+
+            if (options.mode === 'precision') {
+                return {
+                    srcLeft: srcLeft,
+                    srcTop: srcTop,
+                    srcWidth: srcWidth,
+                    srcHeight: srcHeight,
+                    destWidth: srcWidth,
+                    destHeight: srcHeight
+                };
+            }
+
+            var maxSize = 100,
+                minSize = 10;
+
+            var destWidth = srcWidth,
+                destHeight = srcHeight,
+                factor = void 0;
+
+            if (srcWidth > srcHeight) {
+                factor = srcWidth / srcHeight;
+                destWidth = maxSize;
+                destHeight = Math.floor(destWidth / factor);
+            } else {
+                factor = srcHeight / srcWidth;
+                destHeight = maxSize;
+                destWidth = Math.floor(destHeight / factor);
+            }
+
+            if (destWidth > srcWidth || destHeight > srcHeight || destWidth < minSize || destHeight < minSize) {
+                destWidth = srcWidth;
+                destHeight = srcHeight;
+            }
+
+            return {
+                srcLeft: srcLeft,
+                srcTop: srcTop,
+                srcWidth: srcWidth,
+                srcHeight: srcHeight,
+                destWidth: destWidth,
+                destHeight: destHeight
+            };
         }
     }, {
         key: '_bindImageEvents',
@@ -215,13 +243,13 @@ var FastAverageColor = function () {
             var data = options && options.data;
 
             this._onload = function () {
-                _this._unbindImageEvents();
+                _this._unbindImageEvents(resource);
 
-                callback.call(resource, _this.getColorSync(resource, options), data);
+                callback.call(resource, _this.getColor(resource, options), data);
             };
 
             this._onerror = function () {
-                _this._unbindImageEvents();
+                _this._unbindImageEvents(resource);
 
                 callback.call(resource, _this._prepareResult(_this._getDefaultColor(), new Error('Image error')), data);
             };
@@ -257,6 +285,28 @@ var FastAverageColor = function () {
                 hex: this._arrayToHex(rgb),
                 hexa: this._arrayToHex(value),
                 isDark: this._isDark(value)
+            };
+        }
+    }, {
+        key: '_getOriginalSize',
+        value: function _getOriginalSize(resource) {
+            if (resource instanceof HTMLImageElement) {
+                return {
+                    width: resource.naturalWidth,
+                    height: resource.naturalHeight
+                };
+            }
+
+            if (resource instanceof HTMLVideoElement) {
+                return {
+                    width: resource.videoWidth,
+                    height: resource.videoHeight
+                };
+            }
+
+            return {
+                width: resource.width,
+                height: resource.height
             };
         }
     }, {
