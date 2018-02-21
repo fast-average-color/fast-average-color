@@ -4,7 +4,7 @@
 [![Dependency Status](https://img.shields.io/david/hcodes/fast-average-color.svg)](https://david-dm.org/hcodes/fast-average-color)
 [![Build Status](https://img.shields.io/travis/hcodes/fast-average-color.svg?style=flat)](https://travis-ci.org/hcodes/fast-average-color)
 
-A simple library that calculates the average color of any images in browser environment.
+A simple library that calculates the average color of any images or videos in browser environment.
 <img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/hcodes/fast-average-color/master/examples/title.png" />
 
 ## Examples
@@ -79,8 +79,25 @@ console.log(color);
 
 ## API
 ### `.getColor(resource, [options])`
+```js
+/**
+ * Get synchronously the average color from images, videos and canvas.
+ *
+ * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
+ * @param {Object|null} [options]
+ * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+ * @param {*}      [options.data]
+ * @param {string} [options.mode="speed"] "precision" or "speed"
+ * @param {number} [options.left=0]
+ * @param {number} [options.top=0]
+ * @param {number} [options.width=width of resource]
+ * @param {number} [options.height=height of resource]
+ *
+ * @returns {Object}
+ */
+```
 
-Get synchronously the average color from a resource (loaded images, videos or canvas).
+Get the average color from a resource (loaded images, videos or canvas).
 
 ```js
 const fac = new FastAverageColor();
@@ -110,6 +127,22 @@ color = fac.getColor(video);
 ```
 
 ### `.getColorFromUnloadedImage(resource, callback, [options])`
+```js
+/**
+ * Get asynchronously the average color from unloaded image.
+ *
+ * @param {HTMLImageElement} resource
+ * @param {Function} callback
+ * @param {Object|null} [options]
+ * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+ * @param {*}      [options.data]
+ * @param {string} [options.mode="speed"] "precision" or "speed"
+ * @param {number} [options.left=0]
+ * @param {number} [options.top=0]
+ * @param {number} [options.width=width of resource]
+ * @param {number} [options.height=height of resource]
+ */
+```
 Get asynchronously the average color from a resource (not loaded images, videos or canvas).
 ```js
 const fac = new FastAverageColor();
@@ -158,6 +191,16 @@ fac.getColorFromUnloadedImage(image2, function(color, data) {
 ### `.getColorFromArray3(array)`
 Get the average color from a array when 1 pixel is 3 bytes.
 ```js
+/**
+ * Get the average color from a array when 1 pixel is 3 bytes.
+ *
+ * @param {Array|Uint8Array} arr
+ * @param {number} [step=1]
+ *
+ * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
+ */
+```
+```js
 const fac = new FastAverageColor();
 const buffer = [
     // red, green, blue
@@ -170,6 +213,17 @@ console.log(color);
 ```
 
 ### `.getColorFromArray4(array)`
+```js
+/**
+ * Get the average color from a array when 1 pixel is 4 bytes.
+ *
+ * @param {Array|Uint8Array} arr
+ * @param {number} [step=1]
+ *
+ * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+ */
+```
+
 Get the average color from a array when 1 pixel is 4 bytes.
 ```js
 const fac = new FastAverageColor();
