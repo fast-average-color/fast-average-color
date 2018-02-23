@@ -29,6 +29,12 @@ html, body {
     padding: 25px;
 }
 
+.images__img {
+    max-width: 640px;
+    max-height: 480px;
+    border: 1px solid gray;
+}
+
 .images__title {
     padding-bottom: 5px;
 }
