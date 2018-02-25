@@ -243,6 +243,8 @@ console.log(color);
 const fac = new FastAverageColor();
 const color = fac.getColor(document.querySelector('img'));
 
+//...
+
 // The instance is no longer needed.
 fac.destroy();
 ```
