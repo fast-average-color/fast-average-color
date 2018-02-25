@@ -20,11 +20,17 @@ window.addEventListener('load', function() {
             sym = document.createElement('div');
 
         sym.innerHTML = '0123456789'[Math.floor(Math.random() * 10)];
-        sym.style = 'position: absolute; left: ' + x + 'px; font-size: ' + fs + 'px; top: ' + y + 'px; transform: rotate(' + angle + 'deg)';
+        
+        var style = sym.style;
+        style.position = 'absolute';
+        style.left = x + 'px';
+        style.fontSize = fs + 'px';
+        style.top = y + 'px';
+        style.transform = 'rotate(' + angle + 'deg)';
         text.appendChild(sym);
 
         var color = fac.getColor(image, {left: x, top: y, width: sym.offsetWidth, height: sym.offsetHeight});
-        sym.style.color = color.rgb;
+        style.color = color.rgb;
 
         fs += 0.005;
     }
