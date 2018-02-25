@@ -11,7 +11,7 @@ export default class FastAverageColor {
      * @param {HTMLImageElement} resource
      * @param {Function} callback
      * @param {Object|null} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 0]]
+     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {number} [options.left=0]
@@ -34,7 +34,7 @@ export default class FastAverageColor {
      *
      * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
      * @param {Object|null} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 0]]
+     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {number} [options.left=0]
