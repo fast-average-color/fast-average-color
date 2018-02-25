@@ -3,8 +3,10 @@ window.addEventListener('load', function() {
         fac = new FastAverageColor({defaultColor: [0, 0, 0, 0]}),
         image = document.querySelector('.big-photo'),
         text = document.querySelector('.text-photo'),
-        x0 = image.width / 2,
-        y0 = image.height / 2,
+        width = image.width,
+        height = image.height,
+        x0 = width / 2,
+        y0 = height / 2,
         step = 0.1,
         n = 30,
         a = 13,
@@ -16,12 +18,18 @@ window.addEventListener('load', function() {
         r = a * angle / 2 / pi;
         var
             x = x0 + r * Math.cos(angle),
-            y = y0 + r * Math.sin(angle),
+            y = y0 + r * Math.sin(angle);
+
+        if (x < 0 || y < 0 || x > width || y > height) {
+            continue;
+        }
+
+        var
             sym = document.createElement('div');
+            style = sym.style;
 
         sym.innerHTML = '0123456789'[Math.floor(Math.random() * 10)];
-        
-        var style = sym.style;
+
         style.position = 'absolute';
         style.left = x + 'px';
         style.fontSize = fs + 'px';
