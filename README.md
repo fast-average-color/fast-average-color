@@ -243,6 +243,8 @@ console.log(color);
 const fac = new FastAverageColor();
 const color = fac.getColor(document.querySelector('img'));
 
+//...
+
 // The instance is no longer needed.
 fac.destroy();
 ```
@@ -262,7 +264,6 @@ git clone git@github.com:hcodes/fast-average-color.git ./fast-average-color
 cd ./fast-average-color
 
 npm i
-npm run build
 npm test
 
 open ./examples/
