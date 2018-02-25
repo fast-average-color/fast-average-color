@@ -1,5 +1,10 @@
 # Changelog
 
+# v2.1.0
+- Add tests
+- Fix jsDoc
+- Update devDependencies
+
 # v2.0.0
 Added modes: `speed` and `precision`. Speed by default.
 ```
