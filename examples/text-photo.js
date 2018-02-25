@@ -1,6 +1,6 @@
 window.addEventListener('load', function() {
     var
-        fac = new FastAverageColor(),
+        fac = new FastAverageColor({defaultColor: [0, 0, 0, 0]}),
         image = document.querySelector('.big-photo'),
         text = document.querySelector('.text-photo'),
         x0 = image.width / 2,
@@ -29,7 +29,13 @@ window.addEventListener('load', function() {
         style.transform = 'rotate(' + angle + 'deg)';
         text.appendChild(sym);
 
-        var color = fac.getColor(image, {left: x, top: y, width: sym.offsetWidth, height: sym.offsetHeight});
+        var color = fac.getColor(image, {
+            left: x,
+            top: y,
+            width: sym.offsetWidth,
+            height: sym.offsetHeight
+        });
+
         style.color = color.rgb;
 
         fs += 0.005;
