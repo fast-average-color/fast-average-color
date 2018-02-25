@@ -43,7 +43,7 @@ html, body {
 .slider {
     position: fixed;
     left: 50%;
-    margin-left: -328px;
+    transform: translateX(-50%);
     bottom: 0;
     white-space: nowrap;
     background: rgba(255, 255, 255, .2);
