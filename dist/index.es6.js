@@ -12,13 +12,13 @@ export default class FastAverageColor {
      * @param {HTMLImageElement} resource
      * @param {Function} callback
      * @param {Object|null} [options]
-     * @param {Array}  [options.defaultColor]
+     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {number} [options.left]
-     * @param {number} [options.top]
-     * @param {number} [options.width]
-     * @param {number} [options.height]
+     * @param {number} [options.left=0]
+     * @param {number} [options.top=0]
+     * @param {number} [options.width=width of resource]
+     * @param {number} [options.height=height of resource]
      */
     getColorFromUnloadedImage(resource, callback, options) {
         const data = options && options.data;
@@ -31,10 +31,17 @@ export default class FastAverageColor {
     }
 
     /**
-     * Get synchronously the average color from images, videos and canvas.
+     * Get the average color from images, videos and canvas.
      *
      * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
-     * @param {Object|null} options
+     * @param {Object|null} [options]
+     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {*}      [options.data]
+     * @param {string} [options.mode="speed"] "precision" or "speed"
+     * @param {number} [options.left=0]
+     * @param {number} [options.top=0]
+     * @param {number} [options.width=width of resource]
+     * @param {number} [options.height=height of resource]
      *
      * @returns {Object}
      */
