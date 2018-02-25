@@ -262,7 +262,6 @@ git clone git@github.com:hcodes/fast-average-color.git ./fast-average-color
 cd ./fast-average-color
 
 npm i
-npm run build
 npm test
 
 open ./examples/
