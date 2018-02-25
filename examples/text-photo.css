@@ -1,0 +1,30 @@
+html, body {
+    font-family: Arial;
+    background: black;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.big-photo {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: -320px;
+    margin-top: -240px;
+    
+    transition: opacity 5s ease;
+}
+
+.big-photo_fade {
+    opacity: 0;
+}
+
+.text-photo {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: -320px;
+    margin-top: -240px;
+    z-index: 10;
+}
