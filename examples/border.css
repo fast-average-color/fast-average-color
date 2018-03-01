@@ -1,0 +1,34 @@
+html, body {
+    font-family: Arial;
+    font-size: 16px;
+    background: black;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.item {
+    float: left;
+    width: 400px;
+    padding: 30px;
+    transition: border-color .5s ease;
+}
+
+.item__image-container {
+    outline: 1px solid rgba(255, 255, 255, 0.08);
+    border: 40px solid  #000;
+    transition: all .3s ease;
+}
+
+.item__image {
+    display: block;
+    width: 100%;
+    outline: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.item__text {
+  position: relative;
+  z-index: 10;
+  padding: 10px;
+  height: 3em;
+}
