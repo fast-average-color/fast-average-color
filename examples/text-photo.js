@@ -25,7 +25,7 @@ window.addEventListener('load', function() {
         }
 
         var
-            sym = document.createElement('div');
+            sym = document.createElement('div'),
             style = sym.style;
 
         sym.innerHTML = '0123456789'[Math.floor(Math.random() * 10)];

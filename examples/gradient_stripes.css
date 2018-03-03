@@ -1,0 +1,30 @@
+html, body {
+    font-family: Arial;
+    font-size: 16px;
+    background: black;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.items {
+    margin: 40px 0 0 40px;
+}
+
+.item {
+    float: left;
+    position: relative;
+    width: 400px;
+    margin: 0 40px 40px 0;
+    padding: 30px;
+    transition: all .5s ease;
+}
+
+img {
+    display: block;
+    width: 100%;
+}
+
+.item__text {
+    padding: 10px 0 10px 0;
+}

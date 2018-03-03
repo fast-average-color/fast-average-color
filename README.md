@@ -14,6 +14,7 @@ A simple library that calculates the average color of any images or videos in br
 - [Border](https://hcodes.github.io/fast-average-color/examples/border.html)
 - [Gallery](https://hcodes.github.io/fast-average-color/examples/gallery.html)
 - [Gradient](https://hcodes.github.io/fast-average-color/examples/gradient.html)
+- [Gradient as stripes](https://hcodes.github.io/fast-average-color/examples/gradient_stripes.html)
 - [Canvas](https://hcodes.github.io/fast-average-color/examples/canvas.html)
 - [Text photo](https://hcodes.github.io/fast-average-color/examples/text-photo.html)
 - [Ambilight](https://hcodes.github.io/fast-average-color/examples/ambilight.html)
