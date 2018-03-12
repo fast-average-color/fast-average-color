@@ -107,33 +107,40 @@ export default class FastAverageColor {
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
      */
     getColorFromArray3(arr, step) {
-        const bytesPerPixel = 3;
+        const
+            bytesPerPixel = 3,
+            arrLength = arr.length;
 
-        if (arr.length < bytesPerPixel) {
+        if (arrLength < bytesPerPixel) {
             return this._getDefaultColor();
         }
 
         const
-            len = arr.length - arr.length % bytesPerPixel,
+            len = arrLength - arrLength % bytesPerPixel,
             preparedStep = (step || 1) * bytesPerPixel;
 
         let
-            red = 0,
-            green = 0,
-            blue = 0,
+            redTotal = 0,
+            greenTotal = 0,
+            blueTotal = 0,
             count = 0;
 
         for (let i = 0; i < len; i += preparedStep) {
-            red += arr[i];
-            green += arr[i + 1];
-            blue += arr[i + 2];
+            let
+                red = arr[i],
+                green = arr[i + 1],
+                blue = arr[i + 2];
+
+            redTotal += red * red;
+            greenTotal += green * green;
+            blueTotal += blue * blue;
             count++;
         }
 
         return [
-            Math.floor(red / count),
-            Math.floor(green / count),
-            Math.floor(blue / count),
+            Math.floor(Math.sqrt(redTotal / count)),
+            Math.floor(Math.sqrt(greenTotal / count)),
+            Math.floor(Math.sqrt(blueTotal / count)),
             255
         ];
     }
@@ -147,37 +154,51 @@ export default class FastAverageColor {
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
      */
     getColorFromArray4(arr, step) {
-        const bytesPerPixel = 4;
+        const
+            bytesPerPixel = 4,
+            arrLength = arr.length;
 
-        if (arr.length < bytesPerPixel) {
+        if (arrLength < bytesPerPixel) {
             return this._getDefaultColor();
         }
 
         const
-            len = arr.length - arr.length % bytesPerPixel,
+            len = arrLength - arrLength % bytesPerPixel,
             preparedStep = (step || 1) * bytesPerPixel;
 
         let
-            red = 0,
-            green = 0,
-            blue = 0,
-            alpha = 0,
+            redTotal = 0,
+            greenTotal = 0,
+            blueTotal = 0,
+            alphaTotal = 0,
             count = 0;
 
         for (let i = 0; i < len; i += preparedStep) {
-            red += arr[i];
-            green += arr[i + 1];
-            blue += arr[i + 2];
-            alpha += arr[i + 3];
+            let
+                alpha = arr[i + 3] / 255,
+                alpha255 = alpha / 255,
+                // i.e.: red = arr[i] / 255 * alpha
+                red = arr[i] * alpha255,
+                green = arr[i + 1] * alpha255,
+                blue = arr[i + 2] * alpha255;
+
+            redTotal += red * red;
+            greenTotal += green * green;
+            blueTotal += blue * blue;
+            alphaTotal += alpha;
             count++;
         }
 
-        return [
-            Math.floor(red / count),
-            Math.floor(green / count),
-            Math.floor(blue / count),
-            Math.floor(alpha / count)
-        ];
+        const
+            averageAlpha = alphaTotal / count,
+            byteAlpha = Math.floor(averageAlpha * 255);
+
+        return byteAlpha ? [
+            Math.floor(Math.sqrt(redTotal / count / averageAlpha) * 255),
+            Math.floor(Math.sqrt(greenTotal / count / averageAlpha) * 255),
+            Math.floor(Math.sqrt(blueTotal / count / averageAlpha) * 255),
+            byteAlpha
+        ] : [0, 0, 0, 0];
     }
 
     /**
