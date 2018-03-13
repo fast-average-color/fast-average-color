@@ -15,7 +15,7 @@ describe('API', function() {
 
             assert.deepEqual(color, defaultColor);
         });
-        
+
         it('if incorrect params should return my default color', function() {
             const
                 myDefaultColor = [0, 0, 0, 0],
@@ -32,9 +32,9 @@ describe('API', function() {
                     100, 100, 100,
                     200, 200, 200
                 ]);
-            assert.deepEqual(color, [150, 150, 150, 255]);
+            assert.deepEqual(color, [158, 158, 158, 255]);
         });
-        
+
         it('should return average color with step', function() {
             const
                 fac = new FastAverageColor(),
@@ -48,7 +48,7 @@ describe('API', function() {
                     2
                 );
 
-            assert.deepEqual(color, [125, 125, 125, 255]);
+            assert.deepEqual(color, [127, 127, 127, 255]);
         });
     });
 
@@ -78,7 +78,7 @@ describe('API', function() {
                     200, 200, 200, 200
                 ]);
 
-            assert.deepEqual(color, [150, 150, 150, 150]);
+            assert.deepEqual(color, [149, 149, 149, 150]);
         });
 
         it('should return average color with step', function() {
@@ -94,7 +94,30 @@ describe('API', function() {
                     2
                 );
 
-            assert.deepEqual(color, [125, 125, 125, 125]);
+            assert.deepEqual(color, [97, 97, 97, 125]);
         });
+    });
+
+    it('getColorFromArray3() == getColorFromArray4()', function() {
+        const
+            fac = new FastAverageColor(),
+            color3 = fac.getColorFromArray3(
+                [
+                    100, 100, 100,
+                    200, 200, 200,
+                    150, 150, 150,
+                    50, 50, 50
+                ]
+            ),
+            color4 = fac.getColorFromArray4(
+                [
+                    100, 100, 100, 255,
+                    200, 200, 200, 255,
+                    150, 150, 150, 255,
+                    50, 50, 50, 255
+                ]
+            );
+
+        assert.deepEqual(color4, color3);
     });
 });
