@@ -1,5 +1,8 @@
 # Changelog
 
+# v2.2.0
+Improvements in the algorithm.
+
 # v2.1.0
 - Add tests
 - Fix jsDoc
