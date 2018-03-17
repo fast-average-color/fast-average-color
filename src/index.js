@@ -49,7 +49,8 @@ export default class FastAverageColor {
 
         const
             defaultColor = this._getDefaultColor(options),
-            size = this._prepareSizeAndPosition(resource, options);
+            originalSize = this._getOriginalSize(resource),
+            size = this._prepareSizeAndPosition(originalSize, options);
 
         let
             error = null,
@@ -213,13 +214,18 @@ export default class FastAverageColor {
         return  (options && options.defaultColor) || this.defaultColor;
     }
 
-    _prepareSizeAndPosition(resource, options) {
-        const
-            originalSize = this._getOriginalSize(resource),
-            srcLeft = typeof options.left === 'undefined' ? 0 : options.left,
-            srcTop = typeof options.top === 'undefined' ? 0 : options.top,
-            srcWidth = typeof options.width === 'undefined' ? originalSize.width : options.width,
-            srcHeight = typeof options.height === 'undefined' ? originalSize.height : options.height;
+    _getOption(options, name, defaultValue) {
+        return typeof options[name] === 'undefined' ? defaultValue : options[name];
+    }
+
+    _prepareSizeAndPosition(originalSize, options) {
+        let
+            srcLeft = this._getOption(options, 'left', 0),
+            srcTop = this._getOption(options, 'top', 0),
+            srcWidth = this._getOption(options, 'width', originalSize.width),
+            srcHeight = this._getOption(options, 'height', originalSize.height),
+            destWidth = srcWidth,
+            destHeight = srcHeight;
 
         if (options.mode === 'precision') {
             return {
@@ -227,8 +233,8 @@ export default class FastAverageColor {
                 srcTop,
                 srcWidth,
                 srcHeight,
-                destWidth: srcWidth,
-                destHeight: srcHeight
+                destWidth,
+                destHeight
             };
         }
 
@@ -236,10 +242,7 @@ export default class FastAverageColor {
             maxSize = 100,
             minSize = 10;
 
-        let
-            destWidth = srcWidth,
-            destHeight = srcHeight,
-            factor;
+        let factor;
 
         if (srcWidth > srcHeight) {
             factor = srcWidth / srcHeight;
