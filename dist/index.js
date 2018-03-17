@@ -66,7 +66,8 @@ var FastAverageColor = function () {
             options = options || {};
 
             var defaultColor = this._getDefaultColor(options),
-                size = this._prepareSizeAndPosition(resource, options);
+                originalSize = this._getOriginalSize(resource),
+                size = this._prepareSizeAndPosition(originalSize, options);
 
             var error = null,
                 value = defaultColor;
@@ -209,13 +210,19 @@ var FastAverageColor = function () {
             return options && options.defaultColor || this.defaultColor;
         }
     }, {
+        key: '_getOption',
+        value: function _getOption(options, name, defaultValue) {
+            return typeof options[name] === 'undefined' ? defaultValue : options[name];
+        }
+    }, {
         key: '_prepareSizeAndPosition',
-        value: function _prepareSizeAndPosition(resource, options) {
-            var originalSize = this._getOriginalSize(resource),
-                srcLeft = typeof options.left === 'undefined' ? 0 : options.left,
-                srcTop = typeof options.top === 'undefined' ? 0 : options.top,
-                srcWidth = typeof options.width === 'undefined' ? originalSize.width : options.width,
-                srcHeight = typeof options.height === 'undefined' ? originalSize.height : options.height;
+        value: function _prepareSizeAndPosition(originalSize, options) {
+            var srcLeft = this._getOption(options, 'left', 0),
+                srcTop = this._getOption(options, 'top', 0),
+                srcWidth = this._getOption(options, 'width', originalSize.width),
+                srcHeight = this._getOption(options, 'height', originalSize.height),
+                destWidth = srcWidth,
+                destHeight = srcHeight;
 
             if (options.mode === 'precision') {
                 return {
@@ -223,17 +230,15 @@ var FastAverageColor = function () {
                     srcTop: srcTop,
                     srcWidth: srcWidth,
                     srcHeight: srcHeight,
-                    destWidth: srcWidth,
-                    destHeight: srcHeight
+                    destWidth: destWidth,
+                    destHeight: destHeight
                 };
             }
 
             var maxSize = 100,
                 minSize = 10;
 
-            var destWidth = srcWidth,
-                destHeight = srcHeight,
-                factor = void 0;
+            var factor = void 0;
 
             if (srcWidth > srcHeight) {
                 factor = srcWidth / srcHeight;
