@@ -7,24 +7,23 @@ html, body {
     border: 0;
 }
 
-h1 {
-    position: fixed;
-    left: 80px;
-    top: 11px;
-    margin: 0;
-    padding: 0;
-    color: #aaa;
-    font-weight: normal;
-}
-
 .ambilight-control {
     position: fixed;
-    left: 80px;
-    top: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 21px;
     white-space: nowrap;
     color: #999;
     font-size: 12px;
     line-height: 12px;
+    text-align: center;
+}
+
+.ambilight-control h1 {
+    margin: 0 0 15px 0;
+    padding: 0;
+    color: #aaa;
+    font-weight: normal;
 }
 
 .ambilight-control label {

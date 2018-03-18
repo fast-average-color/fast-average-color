@@ -22,7 +22,5 @@ window.addEventListener('load', function() {
             colorBottom.rgb,
             colorLeft.rgb
         ].join(' ');
-
-        item.style.color = colorBottom.isDark ? 'white' : 'black';
     }
 }, false);

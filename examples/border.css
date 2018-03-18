@@ -27,8 +27,9 @@ html, body {
 }
 
 .item__text {
-  position: relative;
-  z-index: 10;
-  padding: 10px;
-  height: 3em;
+    position: relative;
+    z-index: 10;
+    padding: 10px;
+    height: 3em;
+    color: #fff;
 }

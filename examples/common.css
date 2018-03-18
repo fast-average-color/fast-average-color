@@ -1,22 +1,29 @@
-.back {
+.nav {
     position: fixed;
     left: 10px;
     top: 20px;
-    text-decoration: none;
-    opacity: .5;
-    transition: opacity .3s ease;
     z-index: 10000;
 }
 
-.back:before {
+.back {
+    margin-right: 20px;
+}
+
+.prev {
+    margin-right: 5px;
+}
+
+.button {
+    text-decoration: none;
+    opacity: .5;
+    transition: opacity .3s ease;
     color: #fff;
     background: rgba(255, 255, 255, .3);
     padding: 5px 10px;
-    content: 'Back';
     border-radius: 5px;
     text-decoration: none;
 }
 
-.back:hover {
+.button:hover {
     opacity: 1;
 }
