@@ -1,4 +1,4 @@
-window.Ambilight4Sides = {
+var Ambilight4Sides = {
     init: function(video, container) {
         this._ac = new FastAverageColor();
         this._video = video;
@@ -32,6 +32,8 @@ window.Ambilight4Sides = {
         this._onplay = function() {
             that._width = that._video.videoWidth;
             that._height = that._video.videoHeight;
+            
+            Ambilight._onplay();
 
             that._requestId = window.requestAnimationFrame(that.updateBoxShadows.bind(that));
         };

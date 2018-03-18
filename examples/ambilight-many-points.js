@@ -1,4 +1,4 @@
-window.AmbilightManyPoints = {
+var AmbilightManyPoints = {
     init: function(video, container) {
         this._ac = new FastAverageColor();
         this._video = video;
@@ -93,7 +93,9 @@ window.AmbilightManyPoints = {
         this._onplay = function() {
             that._width = that._video.videoWidth;
             that._height = that._video.videoHeight;
-
+            
+            Ambilight._onplay();
+            
             if (!that._shadowsCreated) {
                 that._shadowsCreated = true;
                 that.createShadows();

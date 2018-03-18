@@ -92,6 +92,16 @@ video {
     font-family: Arial;
 }
 
+.hint {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: 200px;
+    margin-left: -320px;
+    color: #aaa;
+    font-size: 16px;
+}
+
 .copyright:link,
 .copyright:visited,
 .copyright:active,
