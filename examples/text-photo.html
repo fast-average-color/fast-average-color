@@ -9,8 +9,16 @@
     <script src="common.js"></script>
 </head>
 <body>
-    <img class="big-photo" src="./images/15.jpg" />
-    <div class="text-photo"></div>
+    <form class="controls" autocomplete="off">
+        <label><input type="radio" name="bro" value="firefox" checked onclick="App.setImage(this.value)" /> Firefox</label>
+        <label><input type="radio" name="bro" value="chrome" onclick="App.setImage(this.value)" /> Chrome</label>
+        <label><input type="radio" name="bro" value="ie" onclick="App.setImage(this.value)" /> Internet Explorer</label>
+        <label><input type="radio" name="bro" value="opera" onclick="App.setImage(this.value)" /> Opera</label>
+    </form>
+
+    <img class="big-photo" />    
+    <canvas class="text-photo"></canvas>
+
     <script src="../dist/index.js"></script>
     <script src="text-photo.js"></script>
 </body>

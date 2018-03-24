@@ -6,25 +6,49 @@ html, body {
     border: 0;
 }
 
-.big-photo {
+.controls {
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    left: 10px;
+    top: 70px;
+    font-size: 11px;
+    line-height: 14px;
+    color: #999;
+}
+
+.controls label {
+    display: block;
+}
+
+.controls input {
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.big-photo, .text-photo {
     position: fixed;
     left: 50%;
     top: 50%;
-    margin-left: -320px;
-    margin-top: -240px;
-    
-    transition: opacity 5s ease;
-}
-
-.big-photo_fade {
-    opacity: 0;
+    transform: translate(-50%,-50%);
 }
 
 .text-photo {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    margin-left: -320px;
-    margin-top: -240px;
-    z-index: 10;
+    opacity: 0;
+    visibility: visible;
 }
+
+.big-photo_fade {
+    transition: opacity 2s ease;
+    opacity: 0;
+}
+
+.big-photo_load {
+    visibility: hidden;
+}
+
+.text-photo_fade {
+    transition: opacity 2s ease;
+    opacity: 1;
+}
+
