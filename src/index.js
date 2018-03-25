@@ -139,9 +139,9 @@ export default class FastAverageColor {
         }
 
         return [
-            Math.floor(Math.sqrt(redTotal / count)),
-            Math.floor(Math.sqrt(greenTotal / count)),
-            Math.floor(Math.sqrt(blueTotal / count)),
+            Math.round(Math.sqrt(redTotal / count)),
+            Math.round(Math.sqrt(greenTotal / count)),
+            Math.round(Math.sqrt(blueTotal / count)),
             255
         ];
     }
@@ -192,12 +192,12 @@ export default class FastAverageColor {
 
         const
             averageAlpha = alphaTotal / count,
-            byteAlpha = Math.floor(averageAlpha * 255);
+            byteAlpha = Math.round(averageAlpha * 255);
 
         return byteAlpha ? [
-            Math.floor(Math.sqrt(redTotal / count / averageAlpha) * 255),
-            Math.floor(Math.sqrt(greenTotal / count / averageAlpha) * 255),
-            Math.floor(Math.sqrt(blueTotal / count / averageAlpha) * 255),
+            Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255),
+            Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255),
+            Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255),
             byteAlpha
         ] : [0, 0, 0, 0];
     }
@@ -247,11 +247,11 @@ export default class FastAverageColor {
         if (srcWidth > srcHeight) {
             factor = srcWidth / srcHeight;
             destWidth = maxSize;
-            destHeight = Math.floor(destWidth / factor);
+            destHeight = Math.round(destWidth / factor);
         } else {
             factor = srcHeight / srcWidth;
             destHeight = maxSize;
-            destWidth = Math.floor(destHeight / factor);
+            destWidth = Math.round(destHeight / factor);
         }
 
         if (

@@ -94,7 +94,7 @@ describe('API', function() {
                     2
                 );
 
-            assert.deepEqual(color, [97, 97, 97, 125]);
+            assert.deepEqual(color, [98, 98, 98, 125]);
         });
 
         it('getColorFromArray3() == getColorFromArray4()', function() {
@@ -139,7 +139,7 @@ describe('API', function() {
         it('should return values', function() {
             assert.deepEqual(
                 fac._prepareSizeAndPosition({width: 1000, height: 500}, {left: 10, top: 20, width: 300, height: 200}),
-                {srcLeft: 10, srcTop: 20, srcWidth: 300, srcHeight: 200, destWidth: 100, destHeight: 66}
+                {srcLeft: 10, srcTop: 20, srcWidth: 300, srcHeight: 200, destWidth: 100, destHeight: 67}
             );
         });
 
