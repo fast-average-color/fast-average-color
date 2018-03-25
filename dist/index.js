@@ -141,7 +141,7 @@ var FastAverageColor = function () {
                 count++;
             }
 
-            return [Math.floor(Math.sqrt(redTotal / count)), Math.floor(Math.sqrt(greenTotal / count)), Math.floor(Math.sqrt(blueTotal / count)), 255];
+            return [Math.round(Math.sqrt(redTotal / count)), Math.round(Math.sqrt(greenTotal / count)), Math.round(Math.sqrt(blueTotal / count)), 255];
         }
 
         /**
@@ -189,9 +189,9 @@ var FastAverageColor = function () {
             }
 
             var averageAlpha = alphaTotal / count,
-                byteAlpha = Math.floor(averageAlpha * 255);
+                byteAlpha = Math.round(averageAlpha * 255);
 
-            return byteAlpha ? [Math.floor(Math.sqrt(redTotal / count / averageAlpha) * 255), Math.floor(Math.sqrt(greenTotal / count / averageAlpha) * 255), Math.floor(Math.sqrt(blueTotal / count / averageAlpha) * 255), byteAlpha] : [0, 0, 0, 0];
+            return byteAlpha ? [Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255), byteAlpha] : [0, 0, 0, 0];
         }
 
         /**
@@ -243,11 +243,11 @@ var FastAverageColor = function () {
             if (srcWidth > srcHeight) {
                 factor = srcWidth / srcHeight;
                 destWidth = maxSize;
-                destHeight = Math.floor(destWidth / factor);
+                destHeight = Math.round(destWidth / factor);
             } else {
                 factor = srcHeight / srcWidth;
                 destHeight = maxSize;
-                destWidth = Math.floor(destHeight / factor);
+                destWidth = Math.round(destHeight / factor);
             }
 
             if (destWidth > srcWidth || destHeight > srcHeight || destWidth < minSize || destHeight < minSize) {
