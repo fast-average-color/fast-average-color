@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <style>
+      html, body {
+          padding: 0;
+          margin: 0;
+          font: 16px Arial, sans-serif;
+      }
+
+      th {
+          text-align: left;
+          font-size: 10px;
+      }
+
+      td {
+          vertical-align: top;
+      }
+
+      th,
+      td {
+          padding: 9px;
+          font-size: 10px;
+          white-space: nowrap;
+          text-align: center;
+      }
+
+      table {
+          margin: 50px;
+      }
+
+      .num {
+          vertical-align: middle;
+      }
+
+      .color {
+          position: relative;
+          margin-bottom: 3px;
+          height: 100px;
+          border-radius: 100px;
+      }
+
+      .color:before {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          border: 1px solid rgba(200, 200, 200, 0.5);
+          content: '';
+          box-sizing: border-box;
+          border-radius: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+    <tr>
+        <th>Num.</th>
+        <th>Color 1</th>
+        <th>(c1+c2)/2</th>
+        <th>sqrt((c1^2+c2^2)/2)</th>
+        <th>&rarr;lab (c1+c2)/2</th>
+        <th>Color 2</th>
+    </tr>
+    {{content}}
+  </table>
+</body>
+</html>

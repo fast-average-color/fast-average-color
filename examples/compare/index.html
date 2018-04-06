@@ -1,0 +1,159 @@
+<html>
+  <head>
+    <style>
+      html, body {
+          padding: 0;
+          margin: 0;
+          font: 16px Arial, sans-serif;
+      }
+
+      th {
+          text-align: left;
+          font-size: 10px;
+      }
+
+      td {
+          vertical-align: top;
+      }
+
+      th,
+      td {
+          padding: 9px;
+          font-size: 10px;
+          white-space: nowrap;
+          text-align: center;
+      }
+
+      table {
+          margin: 50px;
+      }
+
+      .num {
+          vertical-align: middle;
+      }
+
+      .color {
+          position: relative;
+          margin-bottom: 3px;
+          height: 100px;
+          border-radius: 100px;
+      }
+
+      .color:before {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          border: 1px solid rgba(200, 200, 200, 0.5);
+          content: '';
+          box-sizing: border-box;
+          border-radius: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+    <tr>
+        <th>Num.</th>
+        <th>Color 1</th>
+        <th>(c1+c2)/2</th>
+        <th>sqrt((c1^2+c2^2)/2)</th>
+        <th>&rarr;lab (c1+c2)/2</th>
+        <th>Color 2</th>
+    </tr>
+    
+<tr><td class="num">1.</td>
+    <td><div class="color" style="width: 200px; background: rgb(0,0,0)"></div>rgb: 0,0,0<br/>lab: 0.0,0.0,0.0</td>
+    <td><div class="color" style="width: 100px; background: rgb(128,128,128)"></div>rgb: 128,128,128<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(180,180,180)"></div>rgb: 180,180,180<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(119,119,119)"></div>rgb: 119,119,119<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(255,255,255)"></div>rgb: 255,255,255<br/>lab: 100.0,0.0,-0.0</td>
+    </tr>
+<tr><td class="num">2.</td>
+    <td><div class="color" style="width: 200px; background: rgb(255,0,0)"></div>rgb: 255,0,0<br/>lab: 53.2,80.1,67.2</td>
+    <td><div class="color" style="width: 100px; background: rgb(128,0,128)"></div>rgb: 128,0,128<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(180,0,180)"></div>rgb: 180,0,180<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(202,0,136)"></div>rgb: 202,0,136<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(0,0,255)"></div>rgb: 0,0,255<br/>lab: 32.3,79.2,-107.9</td>
+    </tr>
+<tr><td class="num">3.</td>
+    <td><div class="color" style="width: 200px; background: rgb(0,255,255)"></div>rgb: 0,255,255<br/>lab: 91.1,-48.1,-14.1</td>
+    <td><div class="color" style="width: 100px; background: rgb(64,128,128)"></div>rgb: 64,128,128<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(91,180,180)"></div>rgb: 91,180,180<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(149,139,119)"></div>rgb: 149,139,119<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(128,0,0)"></div>rgb: 128,0,0<br/>lab: 25.5,48.1,38.1</td>
+    </tr>
+<tr><td class="num">4.</td>
+    <td><div class="color" style="width: 200px; background: rgb(0,0,0)"></div>rgb: 0,0,0<br/>lab: 0.0,0.0,0.0</td>
+    <td><div class="color" style="width: 100px; background: rgb(0,0,64)"></div>rgb: 0,0,64<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(0,0,91)"></div>rgb: 0,0,91<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(22,8,64)"></div>rgb: 22,8,64<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(0,0,128)"></div>rgb: 0,0,128<br/>lab: 13.0,47.5,-64.7</td>
+    </tr>
+<tr><td class="num">5.</td>
+    <td><div class="color" style="width: 200px; background: rgb(0,0,255)"></div>rgb: 0,0,255<br/>lab: 32.3,79.2,-107.9</td>
+    <td><div class="color" style="width: 100px; background: rgb(64,64,128)"></div>rgb: 64,64,128<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(91,91,180)"></div>rgb: 91,91,180<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(133,79,142)"></div>rgb: 133,79,142<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(128,128,0)"></div>rgb: 128,128,0<br/>lab: 51.9,-12.9,56.7</td>
+    </tr>
+<tr><td class="num">6.</td>
+    <td><div class="color" style="width: 200px; background: rgb(255,0,255)"></div>rgb: 255,0,255<br/>lab: 60.3,98.3,-60.8</td>
+    <td><div class="color" style="width: 100px; background: rgb(192,0,192)"></div>rgb: 192,0,192<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(202,0,202)"></div>rgb: 202,0,202<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(189,0,189)"></div>rgb: 189,0,189<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(128,0,128)"></div>rgb: 128,0,128<br/>lab: 29.8,58.9,-36.5</td>
+    </tr>
+<tr><td class="num">7.</td>
+    <td><div class="color" style="width: 200px; background: rgb(128,128,128)"></div>rgb: 128,128,128<br/>lab: 53.6,0.0,-0.0</td>
+    <td><div class="color" style="width: 100px; background: rgb(192,64,64)"></div>rgb: 192,64,64<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(202,91,91)"></div>rgb: 202,91,91<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(202,96,72)"></div>rgb: 202,96,72<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(255,0,0)"></div>rgb: 255,0,0<br/>lab: 53.2,80.1,67.2</td>
+    </tr>
+<tr><td class="num">8.</td>
+    <td><div class="color" style="width: 200px; background: rgb(0,128,0)"></div>rgb: 0,128,0<br/>lab: 46.2,-51.7,49.9</td>
+    <td><div class="color" style="width: 100px; background: rgb(96,160,96)"></div>rgb: 96,160,96<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(136,163,136)"></div>rgb: 136,163,136<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(118,161,104)"></div>rgb: 118,161,104<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(192,192,192)"></div>rgb: 192,192,192<br/>lab: 77.7,0.0,-0.0</td>
+    </tr>
+<tr><td class="num">9.</td>
+    <td><div class="color" style="width: 200px; background: rgb(0,255,0)"></div>rgb: 0,255,0<br/>lab: 87.7,-86.2,83.2</td>
+    <td><div class="color" style="width: 100px; background: rgb(128,255,0)"></div>rgb: 128,255,0<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(180,255,0)"></div>rgb: 180,255,0<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(174,255,0)"></div>rgb: 174,255,0<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(255,255,0)"></div>rgb: 255,255,0<br/>lab: 97.1,-21.6,94.5</td>
+    </tr>
+<tr><td class="num">10.</td>
+    <td><div class="color" style="width: 200px; background: rgb(255,255,0)"></div>rgb: 255,255,0<br/>lab: 97.1,-21.6,94.5</td>
+    <td><div class="color" style="width: 100px; background: rgb(128,128,128)"></div>rgb: 128,128,128<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(180,180,180)"></div>rgb: 180,180,180<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(202,138,170)"></div>rgb: 202,138,170<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(0,0,255)"></div>rgb: 0,0,255<br/>lab: 32.3,79.2,-107.9</td>
+    </tr>
+<tr><td class="num">11.</td>
+    <td><div class="color" style="width: 200px; background: rgb(255,255,0)"></div>rgb: 255,255,0<br/>lab: 97.1,-21.6,94.5</td>
+    <td><div class="color" style="width: 100px; background: rgb(255,128,0)"></div>rgb: 255,128,0<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(255,180,0)"></div>rgb: 255,180,0<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(255,161,0)"></div>rgb: 255,161,0<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(255,0,0)"></div>rgb: 255,0,0<br/>lab: 53.2,80.1,67.2</td>
+    </tr>
+<tr><td class="num">12.</td>
+    <td><div class="color" style="width: 200px; background: rgb(0,255,0)"></div>rgb: 0,255,0<br/>lab: 87.7,-86.2,83.2</td>
+    <td><div class="color" style="width: 100px; background: rgb(128,128,0)"></div>rgb: 128,128,0<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(180,180,0)"></div>rgb: 180,180,0<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(201,171,0)"></div>rgb: 201,171,0<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(255,0,0)"></div>rgb: 255,0,0<br/>lab: 53.2,80.1,67.2</td>
+    </tr>
+<tr><td class="num">13.</td>
+    <td><div class="color" style="width: 200px; background: rgb(255,0,255)"></div>rgb: 255,0,255<br/>lab: 60.3,98.3,-60.8</td>
+    <td><div class="color" style="width: 100px; background: rgb(128,128,128)"></div>rgb: 128,128,128<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(180,180,180)"></div>rgb: 180,180,180<br/></td>
+    <td><div class="color" style="width: 100px; background: rgb(201,178,162)"></div>rgb: 201,178,162<br/></td>
+    <td><div class="color" style="width: 200px; background: rgb(0,255,0)"></div>rgb: 0,255,0<br/>lab: 87.7,-86.2,83.2</td>
+    </tr>
+  </table>
+</body>
+</html>

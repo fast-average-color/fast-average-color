@@ -1,0 +1,13 @@
+{
+  "name": "compare-fast-average-color",
+  "description": "",
+  "version": "1.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 6"
+  },
+  "devDependencies": {
+    "color": "^3.0.0"
+  },
+  "private": true
+}
