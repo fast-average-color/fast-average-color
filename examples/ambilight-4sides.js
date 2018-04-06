@@ -1,3 +1,5 @@
+/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "Ambilight" }]*/
+/*global Ambilight */
 var Ambilight4Sides = {
     init: function(video, container) {
         this._ac = new FastAverageColor();
@@ -32,7 +34,7 @@ var Ambilight4Sides = {
         this._onplay = function() {
             that._width = that._video.videoWidth;
             that._height = that._video.videoHeight;
-            
+
             Ambilight._onplay();
 
             that._requestId = window.requestAnimationFrame(that.updateBoxShadows.bind(that));

@@ -1,11 +1,12 @@
+/*eslint no-unused-vars: ["error", { "vars": "local" }]*/
 var Ambilight = {
     init: function() {
         var
             that = this,
             inputs = document.querySelectorAll('input[type="radio"]');
-        
+
         inputs[location.hash === '#4Sides' ? 1 : 0].checked = true;
-            
+
         var currentType = document.querySelector('input:checked').value;
 
         inputs[0].onchange = inputs[1].onchange = function() {
