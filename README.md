@@ -66,8 +66,6 @@ console.log(color);
 
 ### ES6
 ```js
-'use strict';
-
 import FastAverageColor from 'fast-average-color/dist/index.es6';
 
 const fac = new FastAverageColor();
