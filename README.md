@@ -22,11 +22,7 @@ A simple library that calculates the average color of any images or videos in br
 
 ## Using
 ```
-npm i fast-average-color --save-dev
-```
-or
-```
-yarn add fast-average-color
+npm i -D fast-average-color
 ```
 
 ### Simple
