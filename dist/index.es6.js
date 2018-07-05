@@ -320,7 +320,8 @@ export default class FastAverageColor {
     _prepareResult(value, error) {
         const
             rgb = value.slice(0, 3),
-            rgba = [].concat(rgb, value[3] / 255);
+            rgba = [].concat(rgb, value[3] / 255),
+            isDark = this._isDark(value); 
 
         return {
             error,
@@ -329,7 +330,8 @@ export default class FastAverageColor {
             rgba: 'rgba(' + rgba.join(',') + ')',
             hex: this._arrayToHex(rgb),
             hexa: this._arrayToHex(value),
-            isDark: this._isDark(value)
+            isDark,
+            isLight: !isDark
         };
     }
 
@@ -364,11 +366,9 @@ export default class FastAverageColor {
     }
 
     _isDark(color) {
-        let count = 0;
-        color.forEach(function(colorComponent) {
-            count += colorComponent < 128 ? 1 : 0;
-        });
+        // http://www.w3.org/TR/AERT#color-contrast
+        const result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
 
-        return count >= 2;
+        return result < 128;
     }
 }

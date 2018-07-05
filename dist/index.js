@@ -304,7 +304,8 @@ var FastAverageColor = function () {
         key: '_prepareResult',
         value: function _prepareResult(value, error) {
             var rgb = value.slice(0, 3),
-                rgba = [].concat(rgb, value[3] / 255);
+                rgba = [].concat(rgb, value[3] / 255),
+                isDark = this._isDark(value);
 
             return {
                 error: error,
@@ -313,7 +314,8 @@ var FastAverageColor = function () {
                 rgba: 'rgba(' + rgba.join(',') + ')',
                 hex: this._arrayToHex(rgb),
                 hexa: this._arrayToHex(value),
-                isDark: this._isDark(value)
+                isDark: isDark,
+                isLight: !isDark
             };
         }
     }, {
@@ -352,12 +354,10 @@ var FastAverageColor = function () {
     }, {
         key: '_isDark',
         value: function _isDark(color) {
-            var count = 0;
-            color.forEach(function (colorComponent) {
-                count += colorComponent < 128 ? 1 : 0;
-            });
+            // http://www.w3.org/TR/AERT#color-contrast
+            var result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
 
-            return count >= 2;
+            return result < 128;
         }
     }]);
 

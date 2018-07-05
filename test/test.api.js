@@ -169,4 +169,22 @@ describe('API', function() {
             );
         });
     });
+
+    describe('_isDark', function() {
+        it('should return dark color', function() {
+            const fac = new FastAverageColor();
+
+            [
+                {color: [0, 0, 0], expected: true},
+                {color: [255, 255, 255], expected: false},
+                {color: [255, 0, 0], expected: true},
+                {color: [0, 100, 0], expected: true},
+                {color: [204, 108, 92], expected: false},
+                {color: [238, 144, 134], expected: false},
+                {color: [123, 151, 175], expected: false}
+            ].forEach(item => {
+                assert.equal(fac._isDark(item.color), item.expected, item.color.join());
+            });
+        });
+    });
 });

@@ -1,5 +1,8 @@
 # Changelog
 
+# v2.3.0
+Improvements in the definition of dark color.
+
 # v2.2.0
 Improvements in the algorithm.
 
