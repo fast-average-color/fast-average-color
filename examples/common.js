@@ -30,4 +30,7 @@ window.addEventListener('load', function() {
         </div>';
 
     document.body.appendChild(nav);
+
+    var stats = new Image();
+    stats.src = 'https://mc.yandex.ru/watch/49603183';
 }, false);

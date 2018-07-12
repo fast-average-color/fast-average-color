@@ -7,7 +7,7 @@
 A simple library that calculates the average color of any images or videos in browser environment.
 <img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/hcodes/fast-average-color/master/examples/title.png" />
 
-## Examples
+## [Examples](https://hcodes.github.io/fast-average-color/examples/background.html)
 - [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
 - [Box shadow](https://hcodes.github.io/fast-average-color/examples/box-shadow.html)
 - [Box shadow, 4 sides](https://hcodes.github.io/fast-average-color/examples/box-shadow-4-sides.html)
@@ -20,6 +20,8 @@ A simple library that calculates the average color of any images or videos in br
 - [Ambilight](https://hcodes.github.io/fast-average-color/examples/ambilight.html)
 - [Define the average color for your images](https://hcodes.github.io/fast-average-color/examples/define.html)
 
+[See code](./examples)
+
 ## Using
 ```
 npm i -D fast-average-color
@@ -30,12 +32,23 @@ npm i -D fast-average-color
 <html>
 <body>
     ...
-    <img src="image.png" />
+    <div class="image-container">
+        <img src="image.png" />
+        <div>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div>
+    </div>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
         window.addEventListener('load', function() {
-            var fac = new FastAverageColor();
-            var color = fac.getColor(document.querySelector('img'));
+            var
+                fac = new FastAverageColor(),
+                container = document.querySelector('.image-container'),
+                color = fac.getColor(container.querySelector('img'));
+
+            container.style.backgroundColor = color.rgba;
+            container.style.color = color.isDark ? '#fff' : '#000';
+
             console.log(color);
             // {
             //     error: null,
@@ -44,9 +57,37 @@ npm i -D fast-average-color
             //     hex: '#ff0000',
             //     hexa: '#ff0000ff',
             //     value: [255, 0, 0, 255],
-            //     isDark: true
+            //     isDark: true,
+            //     isLight: false
             // }
         }, false);
+    </script>
+</body>
+</html>
+```
+
+or
+
+```html
+<html>
+<body>
+    ...
+    <div class="image-container">
+        <img src="image.png" />
+        <div>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div>
+    </div>
+    <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+    <script>
+        var
+            fac = new FastAverageColor(),
+            container = document.querySelector('.image-container');
+
+        fac.getColorFromUnloadedImage(container.querySelector('img'), function(color) {
+            container.style.backgroundColor = color.rgba;
+            container.style.color = color.isDark ? '#fff' : '#000';
+        });
     </script>
 </body>
 </html>
@@ -85,6 +126,8 @@ console.log(color);
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
  * @param {*}      [options.data]
  * @param {string} [options.mode="speed"] "precision" or "speed"
+ * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+ * @param {number} [options.step=1]
  * @param {number} [options.left=0]
  * @param {number} [options.top=0]
  * @param {number} [options.width=width of resource]
@@ -111,8 +154,8 @@ color = fac.getColor({
 
 // From loaded image with precision
 color = fac.getColor({
-  // Modes: 'speed' (by default) or 'precision'.
-  // Current mode is precision.
+    // Modes: 'speed' (by default) or 'precision'.
+    // Current mode is precision.
     mode: 'precision'
 });
 
@@ -134,6 +177,8 @@ color = fac.getColor(video);
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
  * @param {*}      [options.data]
  * @param {string} [options.mode="speed"] "precision" or "speed"
+ * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+ * @param {number} [options.step=1]
  * @param {number} [options.left=0]
  * @param {number} [options.top=0]
  * @param {number} [options.width=width of resource]
@@ -154,7 +199,8 @@ fac.getColorFromUnloadedImage(image1, function(color) {
     //     hex: '#ff0000',
     //     hexa: '#ff0000ff',
     //     value: [255, 0, 0, 255],
-    //     isDark: true
+    //     isDark: true,
+    //     isLight: false
     // }
 });
 
@@ -171,7 +217,8 @@ fac.getColorFromUnloadedImage(image2, function(color, data) {
     //     hex: '#ff0000',
     //     hexa: '#ff0000ff',
     //     value: [255, 0, 0, 255],
-    //     isDark: true
+    //     isDark: true,
+    //     isLight: false
     // }
 
     console.log(data);
@@ -185,37 +232,16 @@ fac.getColorFromUnloadedImage(image2, function(color, data) {
 });
 ```
 
-### `.getColorFromArray3(array)`
-Get the average color from a array when 1 pixel is 3 bytes.
-```js
-/**
- * Get the average color from a array when 1 pixel is 3 bytes.
- *
- * @param {Array|Uint8Array} arr
- * @param {number} [step=1]
- *
- * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
- */
-```
-```js
-const fac = new FastAverageColor();
-const buffer = [
-    // red, green, blue
-    200, 200, 200,
-    100, 100, 100
-];
-const color = fac.getColorFromArray3(buffer);
-console.log(color);
-// [150, 150, 150, 255]
-```
-
-### `.getColorFromArray4(array)`
+### `.getColorFromArray4(array, options)`
 ```js
 /**
  * Get the average color from a array when 1 pixel is 4 bytes.
  *
  * @param {Array|Uint8Array} arr
- * @param {number} [step=1]
+ * @param {Object} [options]
+ * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+ * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+ * @param {number} [options.step=1]
  *
  * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
  */

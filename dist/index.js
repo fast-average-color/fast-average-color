@@ -10,30 +10,29 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var FastAverageColor = function () {
-    function FastAverageColor(settings) {
+    function FastAverageColor() {
         _classCallCheck(this, FastAverageColor);
-
-        this.defaultColor = settings && settings.defaultColor || [255, 255, 255, 255]; // white
     }
-
-    /**
-     * Get asynchronously the average color from unloaded image.
-     *
-     * @param {HTMLImageElement} resource
-     * @param {Function} callback
-     * @param {Object|null} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
-     * @param {*}      [options.data]
-     * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {number} [options.left=0]
-     * @param {number} [options.top=0]
-     * @param {number} [options.width=width of resource]
-     * @param {number} [options.height=height of resource]
-     */
-
 
     _createClass(FastAverageColor, [{
         key: 'getColorFromUnloadedImage',
+
+        /**
+         * Get asynchronously the average color from unloaded image.
+         *
+         * @param {HTMLImageElement} resource
+         * @param {Function} callback
+         * @param {Object|null} [options]
+         * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+         * @param {*}      [options.data]
+         * @param {string} [options.mode="speed"] "precision" or "speed"
+         * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+         * @param {number} [options.step=1]
+         * @param {number} [options.left=0]
+         * @param {number} [options.top=0]
+         * @param {number} [options.width=width of resource]
+         * @param {number} [options.height=height of resource]
+         */
         value: function getColorFromUnloadedImage(resource, callback, options) {
             var data = options && options.data;
 
@@ -52,6 +51,8 @@ var FastAverageColor = function () {
          * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
          * @param {*}      [options.data]
          * @param {string} [options.mode="speed"] "precision" or "speed"
+         * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+         * @param {number} [options.step=1]
          * @param {number} [options.left=0]
          * @param {number} [options.top=0]
          * @param {number} [options.width=width of resource]
@@ -93,7 +94,7 @@ var FastAverageColor = function () {
                 this._ctx.drawImage(resource, size.srcLeft, size.srcTop, size.srcWidth, size.srcHeight, 0, 0, size.destWidth, size.destHeight);
 
                 var bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
-                value = this.getColorFromArray4(bitmapData);
+                value = this.getColorFromArray4(bitmapData, options);
             } catch (e) {
                 // Security error, CORS
                 // https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image
@@ -104,94 +105,33 @@ var FastAverageColor = function () {
         }
 
         /**
-         * Get the average color from a array when 1 pixel is 3 bytes.
-         *
-         * @param {Array|Uint8Array} arr
-         * @param {number} [step=1]
-         *
-         * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
-         */
-
-    }, {
-        key: 'getColorFromArray3',
-        value: function getColorFromArray3(arr, step) {
-            var bytesPerPixel = 3,
-                arrLength = arr.length;
-
-            if (arrLength < bytesPerPixel) {
-                return this._getDefaultColor();
-            }
-
-            var len = arrLength - arrLength % bytesPerPixel,
-                preparedStep = (step || 1) * bytesPerPixel;
-
-            var redTotal = 0,
-                greenTotal = 0,
-                blueTotal = 0,
-                count = 0;
-
-            for (var i = 0; i < len; i += preparedStep) {
-                var red = arr[i],
-                    green = arr[i + 1],
-                    blue = arr[i + 2];
-
-                redTotal += red * red;
-                greenTotal += green * green;
-                blueTotal += blue * blue;
-                count++;
-            }
-
-            return [Math.round(Math.sqrt(redTotal / count)), Math.round(Math.sqrt(greenTotal / count)), Math.round(Math.sqrt(blueTotal / count)), 255];
-        }
-
-        /**
          * Get the average color from a array when 1 pixel is 4 bytes.
          *
          * @param {Array|Uint8Array} arr
-         * @param {number} [step=1]
+         * @param {Object} [options]
+         * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+         * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+         * @param {number} [options.step=1]
          *
          * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
          */
 
     }, {
         key: 'getColorFromArray4',
-        value: function getColorFromArray4(arr, step) {
+        value: function getColorFromArray4(arr, options) {
+            options = options || {};
+
             var bytesPerPixel = 4,
                 arrLength = arr.length;
 
             if (arrLength < bytesPerPixel) {
-                return this._getDefaultColor();
+                return this._getDefaultColor(options);
             }
 
             var len = arrLength - arrLength % bytesPerPixel,
-                preparedStep = (step || 1) * bytesPerPixel;
+                preparedStep = (options.step || 1) * bytesPerPixel;
 
-            var redTotal = 0,
-                greenTotal = 0,
-                blueTotal = 0,
-                alphaTotal = 0,
-                count = 0;
-
-            for (var i = 0; i < len; i += preparedStep) {
-                var alpha = arr[i + 3] / 255,
-                    alpha255 = alpha / 255,
-
-                // i.e.: red = arr[i] / 255 * alpha
-                red = arr[i] * alpha255,
-                    green = arr[i + 1] * alpha255,
-                    blue = arr[i + 2] * alpha255;
-
-                redTotal += red * red;
-                greenTotal += green * green;
-                blueTotal += blue * blue;
-                alphaTotal += alpha;
-                count++;
-            }
-
-            var averageAlpha = alphaTotal / count,
-                byteAlpha = Math.round(averageAlpha * 255);
-
-            return byteAlpha ? [Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255), byteAlpha] : [0, 0, 0, 0];
+            return options.algorithm === 'simple' ? this._simpleAlgorithm(arr, len, preparedStep) : this._sqrtAlgorithm(arr, len, preparedStep);
         }
 
         /**
@@ -207,7 +147,7 @@ var FastAverageColor = function () {
     }, {
         key: '_getDefaultColor',
         value: function _getDefaultColor(options) {
-            return options && options.defaultColor || this.defaultColor;
+            return this._getOption(options, 'defaultColor', [255, 255, 255, 255]);
         }
     }, {
         key: '_getOption',
@@ -265,11 +205,72 @@ var FastAverageColor = function () {
             };
         }
     }, {
+        key: '_simpleAlgorithm',
+        value: function _simpleAlgorithm(arr, len, preparedStep) {
+            var redTotal = 0,
+                greenTotal = 0,
+                blueTotal = 0,
+                alphaTotal = 0,
+                count = 0;
+
+            for (var i = 0; i < len; i += preparedStep) {
+                var alpha = arr[i + 3] / 255,
+                    alpha255 = alpha / 255,
+                    red = arr[i] * alpha255,
+                    green = arr[i + 1] * alpha255,
+                    blue = arr[i + 2] * alpha255;
+
+                redTotal += red;
+                greenTotal += green;
+                blueTotal += blue;
+                alphaTotal += alpha;
+                count++;
+            }
+
+            var averageAlpha = alphaTotal / count,
+                byteAlpha = Math.round(averageAlpha * 255);
+
+            return [Math.round(redTotal / count / averageAlpha * 255), Math.round(greenTotal / count / averageAlpha * 255), Math.round(blueTotal / count / averageAlpha * 255), byteAlpha];
+        }
+    }, {
+        key: '_sqrtAlgorithm',
+        value: function _sqrtAlgorithm(arr, len, preparedStep) {
+            var redTotal = 0,
+                greenTotal = 0,
+                blueTotal = 0,
+                alphaTotal = 0,
+                count = 0;
+
+            for (var i = 0; i < len; i += preparedStep) {
+                var alpha = arr[i + 3] / 255,
+                    alpha255 = alpha / 255,
+
+                // i.e.: red = arr[i] / 255 * alpha
+                red = arr[i] * alpha255,
+                    green = arr[i + 1] * alpha255,
+                    blue = arr[i + 2] * alpha255;
+
+                redTotal += red * red;
+                greenTotal += green * green;
+                blueTotal += blue * blue;
+                alphaTotal += alpha;
+                count++;
+            }
+
+            var averageAlpha = alphaTotal / count,
+                byteAlpha = Math.round(averageAlpha * 255);
+
+            return [Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255), byteAlpha];
+        }
+    }, {
         key: '_bindImageEvents',
         value: function _bindImageEvents(resource, callback, options) {
             var _this = this;
 
-            var data = options && options.data;
+            options = options || {};
+
+            var data = options && options.data,
+                defaultColor = this._getDefaultColor(options);
 
             this._onload = function () {
                 _this._unbindImageEvents(resource);
@@ -280,13 +281,13 @@ var FastAverageColor = function () {
             this._onerror = function () {
                 _this._unbindImageEvents(resource);
 
-                callback.call(resource, _this._prepareResult(_this._getDefaultColor(), new Error('Image error')), data);
+                callback.call(resource, _this._prepareResult(defaultColor, new Error('Image error')), data);
             };
 
             this._onabort = function () {
                 _this._unbindImageEvents();
 
-                callback.call(resource, _this._prepareResult(_this._getDefaultColor(), new Error('Image abort')), data);
+                callback.call(resource, _this._prepareResult(defaultColor, new Error('Image abort')), data);
             };
 
             resource.addEventListener('load', this._onload);

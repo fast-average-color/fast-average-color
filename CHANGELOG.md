@@ -1,5 +1,10 @@
 # Changelog
 
+# v3.0.0
+- Added `algorithm` property with values `simple` or `sqrt`. Default: `sqrt`.
+- Changed parameters in `getColorFromArray4()` method.
+- Removed `getColorFromArray3()` method.
+
 # v2.3.0
 Improvements in the definition of dark color.
 
