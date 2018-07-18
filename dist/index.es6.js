@@ -1,11 +1,5 @@
 /*! Fast Average Color | © 2018 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */
 export default class FastAverageColor {
-    constructor(settings) {
-        this.defaultColor = settings &&
-            settings.defaultColor ||
-            [255, 255, 255, 255]; // white
-    }
-
     /**
      * Get asynchronously the average color from unloaded image.
      *
@@ -15,6 +9,8 @@ export default class FastAverageColor {
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
+     * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+     * @param {number} [options.step=1]
      * @param {number} [options.left=0]
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
@@ -38,6 +34,8 @@ export default class FastAverageColor {
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
+     * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+     * @param {number} [options.step=1]
      * @param {number} [options.left=0]
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
@@ -90,7 +88,7 @@ export default class FastAverageColor {
             );
 
             const bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
-            value = this.getColorFromArray4(bitmapData);
+            value = this.getColorFromArray4(bitmapData, options);
         } catch (e) {
             // Security error, CORS
             // https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image
@@ -101,106 +99,34 @@ export default class FastAverageColor {
     }
 
     /**
-     * Get the average color from a array when 1 pixel is 3 bytes.
-     *
-     * @param {Array|Uint8Array} arr
-     * @param {number} [step=1]
-     *
-     * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (255)]
-     */
-    getColorFromArray3(arr, step) {
-        const
-            bytesPerPixel = 3,
-            arrLength = arr.length;
-
-        if (arrLength < bytesPerPixel) {
-            return this._getDefaultColor();
-        }
-
-        const
-            len = arrLength - arrLength % bytesPerPixel,
-            preparedStep = (step || 1) * bytesPerPixel;
-
-        let
-            redTotal = 0,
-            greenTotal = 0,
-            blueTotal = 0,
-            count = 0;
-
-        for (let i = 0; i < len; i += preparedStep) {
-            let
-                red = arr[i],
-                green = arr[i + 1],
-                blue = arr[i + 2];
-
-            redTotal += red * red;
-            greenTotal += green * green;
-            blueTotal += blue * blue;
-            count++;
-        }
-
-        return [
-            Math.round(Math.sqrt(redTotal / count)),
-            Math.round(Math.sqrt(greenTotal / count)),
-            Math.round(Math.sqrt(blueTotal / count)),
-            255
-        ];
-    }
-
-    /**
      * Get the average color from a array when 1 pixel is 4 bytes.
      *
      * @param {Array|Uint8Array} arr
-     * @param {number} [step=1]
+     * @param {Object} [options]
+     * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {number} [options.step=1]
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
      */
-    getColorFromArray4(arr, step) {
+    getColorFromArray4(arr, options) {
+        options = options || {};
+
         const
             bytesPerPixel = 4,
             arrLength = arr.length;
 
         if (arrLength < bytesPerPixel) {
-            return this._getDefaultColor();
+            return this._getDefaultColor(options);
         }
 
         const
             len = arrLength - arrLength % bytesPerPixel,
-            preparedStep = (step || 1) * bytesPerPixel;
+            preparedStep = (options.step || 1) * bytesPerPixel;
 
-        let
-            redTotal = 0,
-            greenTotal = 0,
-            blueTotal = 0,
-            alphaTotal = 0,
-            count = 0;
-
-        for (let i = 0; i < len; i += preparedStep) {
-            let
-                alpha = arr[i + 3] / 255,
-                alpha255 = alpha / 255,
-                // i.e.: red = arr[i] / 255 * alpha
-                red = arr[i] * alpha255,
-                green = arr[i + 1] * alpha255,
-                blue = arr[i + 2] * alpha255;
-
-            redTotal += red * red;
-            greenTotal += green * green;
-            blueTotal += blue * blue;
-            alphaTotal += alpha;
-            count++;
-        }
-
-        const
-            averageAlpha = alphaTotal / count,
-            byteAlpha = Math.round(averageAlpha * 255);
-
-        return byteAlpha ? [
-            Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255),
-            Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255),
-            Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255),
-            byteAlpha
-        ] : [0, 0, 0, 0];
+        return options.algorithm === 'simple' ?
+            this._simpleAlgorithm(arr, len, preparedStep) :
+            this._sqrtAlgorithm(arr, len, preparedStep);
     }
 
     /**
@@ -212,7 +138,7 @@ export default class FastAverageColor {
     }
 
     _getDefaultColor(options) {
-        return  (options && options.defaultColor) || this.defaultColor;
+        return this._getOption(options, 'defaultColor', [255, 255, 255, 255]);
     }
 
     _getOption(options, name, defaultValue) {
@@ -273,8 +199,83 @@ export default class FastAverageColor {
         };
     }
 
+    _simpleAlgorithm(arr, len, preparedStep) {
+        let
+            redTotal = 0,
+            greenTotal = 0,
+            blueTotal = 0,
+            alphaTotal = 0,
+            count = 0;
+
+        for (let i = 0; i < len; i += preparedStep) {
+            let
+                alpha = arr[i + 3] / 255,
+                alpha255 = alpha / 255,
+                red = arr[i] * alpha255,
+                green = arr[i + 1] * alpha255,
+                blue = arr[i + 2] * alpha255;
+
+            redTotal += red;
+            greenTotal += green;
+            blueTotal += blue;
+            alphaTotal += alpha;
+            count++;
+        }
+
+        const
+            averageAlpha = alphaTotal / count,
+            byteAlpha = Math.round(averageAlpha * 255);
+
+        return [
+            Math.round(redTotal / count / averageAlpha * 255),
+            Math.round(greenTotal / count / averageAlpha * 255),
+            Math.round(blueTotal / count / averageAlpha * 255),
+            byteAlpha
+        ];
+    }
+
+    _sqrtAlgorithm(arr, len, preparedStep) {
+        let
+            redTotal = 0,
+            greenTotal = 0,
+            blueTotal = 0,
+            alphaTotal = 0,
+            count = 0;
+
+        for (let i = 0; i < len; i += preparedStep) {
+            let
+                alpha = arr[i + 3] / 255,
+                alpha255 = alpha / 255,
+                // i.e.: red = arr[i] / 255 * alpha
+                red = arr[i] * alpha255,
+                green = arr[i + 1] * alpha255,
+                blue = arr[i + 2] * alpha255;
+
+            redTotal += red * red;
+            greenTotal += green * green;
+            blueTotal += blue * blue;
+            alphaTotal += alpha;
+            count++;
+        }
+
+        const
+            averageAlpha = alphaTotal / count,
+            byteAlpha = Math.round(averageAlpha * 255);
+
+        return [
+            Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255),
+            Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255),
+            Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255),
+            byteAlpha
+        ];
+    }
+
     _bindImageEvents(resource, callback, options) {
-        const data = options && options.data;
+        options = options || {};
+
+        const
+            data = options && options.data,
+            defaultColor = this._getDefaultColor(options);
 
         this._onload = () => {
             this._unbindImageEvents(resource);
@@ -291,7 +292,7 @@ export default class FastAverageColor {
 
             callback.call(
                 resource,
-                this._prepareResult(this._getDefaultColor(), new Error('Image error')),
+                this._prepareResult(defaultColor, new Error('Image error')),
                 data
             );
         };
@@ -301,7 +302,7 @@ export default class FastAverageColor {
 
             callback.call(
                 resource,
-                this._prepareResult(this._getDefaultColor(), new Error('Image abort')),
+                this._prepareResult(defaultColor, new Error('Image abort')),
                 data
             );
         };
