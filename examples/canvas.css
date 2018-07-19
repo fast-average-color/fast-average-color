@@ -1,42 +1,55 @@
-html, body {
+html,
+body
+{
     font-family: Arial;
     font-size: 16px;
-    background: black;
+
     margin: 0;
     padding: 0;
+
     border: 0;
+    background: black;
 }
 
-canvas {
+canvas
+{
     position: fixed;
-    left: 50%;
     top: 50%;
-    margin-top: -240px;
-    margin-left: -320px;
+    left: 50%;
+
     width: 640px;
     height: 480px;
+    margin-top: -240px;
+    margin-left: -320px;
+
     border: 1px solid rgba(100, 100, 100, .5);
 }
 
-.info {
-    position: fixed;
-    left: 50px;
-    top: 50px;
-    padding: 20px;
-    background: rgba(255, 255, 255, .1);
-    border-radius: 10px;
-    text-shadow: 1px 1px 2px black;
-
-    font-size: 16px;
+.info
+{
     font-family: Arial;
-    color: white;
+    font-size: 16px;
+
+    position: fixed;
     z-index: 10;
+    top: 50px;
+    left: 50px;
+
+    padding: 20px;
+
+    color: white;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .1);
+    text-shadow: 1px 1px 2px black;
 }
 
-.info__item {
-    padding: 3px;
-    width: 250px;
-    text-overflow: ellipsis;
+.info__item
+{
     overflow-x: hidden;
+
+    width: 250px;
+    padding: 3px;
+
     white-space: nowrap;
+    text-overflow: ellipsis;
 }

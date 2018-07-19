@@ -1,40 +1,54 @@
-html, body {
+html,
+body
+{
     font-family: Arial;
     font-size: 16px;
-    background: black;
+
     margin: 0;
     padding: 0;
+
     border: 0;
+    background: black;
 }
 
-.select-file-container {
+.select-file-container
+{
     position: fixed;
-    left: 0;
-    right: 0;
     top: 0;
-    text-align: center;
+    right: 0;
+    left: 0;
+
     padding: 10px;
-    background: rgba(0, 0, 0, .5);
-    color: white;
+
+    text-align: center;
     white-space: nowrap;
+
+    color: white;
+    background: rgba(0, 0, 0, .5);
 }
 
-.images {
+.images
+{
     margin-top: 50px;
 }
 
-.images__item {
+.images__item
+{
     display: inline-block;
+
     margin: 25px;
     padding: 25px;
 }
 
-.images__img {
+.images__img
+{
     max-width: 640px;
     max-height: 480px;
+
     border: 1px solid gray;
 }
 
-.images__title {
+.images__title
+{
     padding-bottom: 5px;
 }

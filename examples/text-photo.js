@@ -72,15 +72,20 @@ var App = {
                 height: Math.floor(fs) * 0.6
             });
 
+            ctx.save();
+
             ctx.font = Math.floor(fs) + 'px Arial';
             ctx.fillStyle = color.rgb;
             if (!str[pos]) {
                 pos = 0;
             }
-            ctx.fillText(str[pos], x, y);
+
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            ctx.fillText(str[pos], 0, 0);
             pos++;
 
-            //style.transform = 'rotate(' + angle + 'rad)';
+            ctx.restore();            
 
             fs += 0.005;
         }
