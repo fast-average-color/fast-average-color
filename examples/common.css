@@ -1,29 +1,39 @@
-.nav {
+.nav
+{
     position: fixed;
-    left: 10px;
-    top: 20px;
     z-index: 10000;
+    top: 15px;
+    left: 10px;
 }
 
-.back {
-    margin-right: 20px;
+.back
+{
+    margin-right: 15px;
 }
 
-.prev {
-    margin-right: 5px;
+.prev
+{
+    margin-right: 3px;
 }
 
-.button {
-    text-decoration: none;
-    opacity: .5;
+.button
+{
+    padding: 5px 9px;
+
     transition: opacity .3s ease;
-    color: #fff;
-    background: rgba(255, 255, 255, .3);
-    padding: 5px 10px;
-    border-radius: 5px;
     text-decoration: none;
+
+    opacity: .5;
+    color: #fff;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, .3);
+
+    font-size: 12px;
+
+    filter: grayscale(100%);
 }
 
-.button:hover {
+.button:hover
+{
     opacity: 1;
 }

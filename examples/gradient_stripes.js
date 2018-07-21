@@ -34,15 +34,20 @@ window.addEventListener('load', function() {
         };
     }
 
-    for (var i = 0; i < items.length; i++) {
-        var
-            item = items[i],
-            image = item.querySelector('img'),
-            padding = 30,
-            gradient = getGradient(image, padding);
+    function updateStripes() {
+        for (var i = 0; i < items.length; i++) {
+            var
+                item = items[i],
+                image = item.querySelector('img'),
+                padding = 30,
+                gradient = getGradient(image, padding);
 
-        item.style.background = gradient.value;
-        item.style.color = gradient.lastColor.isDark ? 'white' : 'black';
+            item.style.background = gradient.value;
+            item.style.color = gradient.lastColor.isDark ? 'white' : 'black';
+        }
     }
 
+    window.addEventListener('resize', updateStripes, false);
+
+    updateStripes();
 }, false);

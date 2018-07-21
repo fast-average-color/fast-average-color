@@ -1,35 +1,51 @@
-html, body {
+html,
+body
+{
     font-family: Arial;
     font-size: 16px;
-    background: black;
+
     margin: 0;
     padding: 0;
+
     border: 0;
+    background: black;
 }
 
-.item {
+.item
+{
     float: left;
+
+    box-sizing: border-box;
     width: 400px;
+    max-width: 100%;
     padding: 30px;
+
     transition: border-color .5s ease;
 }
 
-.item__image-container {
-    outline: 1px solid rgba(255, 255, 255, 0.08);
-    border: 40px solid  #000;
+.item__image-container
+{
     transition: all .3s ease;
+
+    border: 40px solid  #000;
+    outline: 1px solid rgba(255, 255, 255, .08);
 }
 
-.item__image {
+.item__image
+{
     display: block;
+
     width: 100%;
-    outline: 1px solid rgba(255, 255, 255, 0.08);
+
+    outline: 1px solid rgba(255, 255, 255, .08);
 }
 
-.item__text {
+.item__text
+{
     position: relative;
     z-index: 10;
+
     padding: 10px;
-    height: 3em;
+
     color: #fff;
 }

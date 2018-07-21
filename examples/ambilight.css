@@ -1,109 +1,147 @@
-html, body {
+html,
+body
+{
     font-family: Arial;
     font-size: 16px;
-    background: black;
+
     margin: 0;
     padding: 0;
+
     border: 0;
+    background: black;
 }
 
-.ambilight-control {
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 21px;
-    white-space: nowrap;
-    color: #999;
+.ambilight-control
+{
     font-size: 12px;
     line-height: 12px;
+
+    position: fixed;
+    z-index: 100;
+    top: 21px;
+    left: 50%;
+
+    transform: translateX(-50%);
     text-align: center;
+    white-space: nowrap;
+
+    color: #999;
 }
 
-.ambilight-control h1 {
+.ambilight-control h1
+{
+    font-weight: normal;
+
     margin: 0 0 15px 0;
     padding: 0;
+
     color: #aaa;
-    font-weight: normal;
 }
 
-.ambilight-control label {
+.ambilight-control label
+{
     margin: 0;
-    padding: 0;
     margin-right: 8px;
+    padding: 0;
 }
 
-.ambilight-control input {
-    margin: 0 2px 0 0;
+.ambilight-control input
+{
     font-size: 12px;
     line-height: 12px;
+
+    margin: 0 2px 0 0;
+
     vertical-align: top;
 }
 
-.video-container {
+.video-container
+{
     position: absolute;
-    left: 50%;
     top: 50%;
+    left: 50%;
+
     transform: translate(-50%, -50%);
 }
 
-video {
-    display: block;
+video
+{
     position: relative;
-    border: 10px solid black;
-    outline: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0;
-    margin: 0;
-    background: black;
     z-index: 100;
+
+    display: block;
+
+    margin: 0;
+    padding: 0;
+
+    border: 10px solid black;
+    outline: 1px solid rgba(255, 255, 255, .1);
+    background: black;
 }
 
-.video-shadow {
+.video-shadow
+{
     position: absolute;
 }
 
-.video-shadow_left {
+.video-shadow_left
+{
     left: 0;
+
     border-radius: 100% 0 0 100%;
 }
 
-.video-shadow_right {
+.video-shadow_right
+{
     right: 0;
+
     border-radius: 0 100% 100% 0;
 }
 
-.video-shadow_top {
+.video-shadow_top
+{
     top: 0;
+
     border-radius: 100% 100% 0 0;
 }
 
-.video-shadow_bottom {
+.video-shadow_bottom
+{
     bottom: 0;
+
     border-radius: 0 0 100% 100%;
 }
 
-.copyright {
-    position: fixed;
-    left: 50%;
-    margin-left: -5em;
-    bottom: 5px;
-
-    font-size: 12px;
+.copyright
+{
     font-family: Arial;
+    font-size: 12px;
+
+    position: fixed;
+    bottom: 5px;
+    left: 50%;
+
+    margin-left: -5em;
 }
 
-.hint {
+.hint
+{
+    font-size: 16px;
+
     position: absolute;
-    left: 50%;
     top: 50%;
+    left: 50%;
+
     margin-top: 200px;
     margin-left: -320px;
+
     color: #aaa;
-    font-size: 16px;
 }
 
 .copyright:link,
 .copyright:visited,
 .copyright:active,
-.copyright:hover {
+.copyright:hover
+{
     color: #555;
 }

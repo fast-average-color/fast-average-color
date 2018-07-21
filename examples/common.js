@@ -24,7 +24,7 @@ window.addEventListener('load', function() {
 
     var nav = document.createElement('div');
     nav.innerHTML = '<div class="nav">\
-        <a href="https://github.com/hcodes/fast-average-color" class="button back">Back</a>\
+        <a href="https://github.com/hcodes/fast-average-color" class="button back">🏠</a>\
         <a href="./' + prev + '.html" class="button prev">◀</a>\
         <a href="./' + next + '.html" class="button next">▶</a>\
         </div>';

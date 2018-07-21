@@ -1,46 +1,62 @@
-html, body {
+html,
+body
+{
     font-family: Arial;
     font-size: 16px;
-    background: black;
+
     margin: 0;
     padding: 0;
+
     border: 0;
+    background: black;
 }
 
-.item {
-    float: left;
+.item
+{
     position: relative;
+
+    float: left;
+
+    box-sizing: border-box;
     width: 400px;
-    margin: 20px;
+    max-width: 100%;
+    margin: 1px 1px 0 0;
+
     transition: all .5s ease;
 }
 
-.item__image {
+.item__image
+{
     position: relative;
-    width: 400px;
 }
 
-img {
+img
+{
     display: block;
+
     width: 100%;
 }
 
-.item__gradient {
+.item__gradient
+{
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 50%;
     z-index: 1;
+    top: 0;
+    right: 0;
+    bottom: 50%;
+    left: 0;
+
     transition: all .5s ease;
 }
 
-.item_bottom .item__gradient {
+.item_bottom .item__gradient
+{
     top: 50%;
     bottom: 0;
 }
 
 
-.item__text {
+.item__text
+{
     padding: 20px;
 }
