@@ -34,7 +34,7 @@ img:hover
     box-sizing: border-box;
     width: 540px;
     max-width: 100%;
-    padding: 70px;
+    padding: 30px 50px;
 
     transition: background-color .5s ease;
 }

@@ -2,8 +2,13 @@
 {
     position: fixed;
     z-index: 10000;
-    top: 15px;
-    left: 10px;
+    top: 5px;
+    left: 5px;
+    padding: 10px;
+
+    background: rgba(0, 0, 0, .5);
+
+    border-radius: 5px;
 }
 
 .back
@@ -18,12 +23,11 @@
 
 .button
 {
-    padding: 5px 9px;
+    padding: 5px 15px;
 
     transition: opacity .3s ease;
     text-decoration: none;
 
-    opacity: .5;
     color: #fff;
     border-radius: 5px;
     background: rgba(255, 255, 255, .3);
@@ -35,5 +39,5 @@
 
 .button:hover
 {
-    opacity: 1;
+    opacity: .5;
 }

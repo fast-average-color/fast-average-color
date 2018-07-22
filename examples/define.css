@@ -13,11 +13,7 @@ body
 
 .select-file-container
 {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-
+    margin-top: 50px;
     padding: 10px;
 
     text-align: center;
