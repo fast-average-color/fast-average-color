@@ -84,7 +84,7 @@ or
             fac = new FastAverageColor(),
             container = document.querySelector('.image-container');
 
-        fac.getColorFromUnloadedImage(container.querySelector('img'), function(color) {
+        fac.getColorAsync(container.querySelector('img'), function(color) {
             container.style.backgroundColor = color.rgba;
             container.style.color = color.isDark ? '#fff' : '#000';
         });
@@ -166,10 +166,10 @@ color = fac.getColor(canvas);
 color = fac.getColor(video);
 ```
 
-### `.getColorFromUnloadedImage(resource, callback, [options])`
+### `.getColorAsync(resource, callback, [options])`
 ```js
 /**
- * Get asynchronously the average color from unloaded image.
+ * Get asynchronously the average color from not loaded image.
  *
  * @param {HTMLImageElement} resource
  * @param {Function} callback
@@ -190,7 +190,7 @@ Get asynchronously the average color from a resource (not loaded images, videos 
 const fac = new FastAverageColor();
 
 // From not loaded image (HTMLImageElement)
-fac.getColorFromUnloadedImage(image1, function(color) {
+fac.getColorAsync(image1, function(color) {
     console.log(color);
     // {
     //     error: null,
@@ -205,7 +205,7 @@ fac.getColorFromUnloadedImage(image1, function(color) {
 });
 
 // Advanced example
-fac.getColorFromUnloadedImage(image2, function(color, data) {
+fac.getColorAsync(image2, function(color, data) {
     console.log(this);
     // this = image2
 
