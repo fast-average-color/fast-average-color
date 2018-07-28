@@ -1,5 +1,9 @@
 # Changelog
 
+# v4.0.0
+- `.getColorFromUnloadedImage()` → `.getColorAsync()`.
+- Small fixes for examples.
+
 # v3.0.0
 - Added `algorithm` property with values `simple` or `sqrt`. Default: `sqrt`.
 - Changed parameters in `getColorFromArray4()` method.
@@ -31,7 +35,7 @@ Added support for HTMLVideoElement.
 
 Changed methods:
 - `.getColorSync()` → `.getColor()`
-- `.getColor()` → `.getColorFromUnloadedImage()`
+- `.getColor()` → `.Image()`
 
 # v1.0.1
 Fixed errors in the algorithm.
