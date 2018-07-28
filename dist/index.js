@@ -15,10 +15,10 @@ var FastAverageColor = function () {
     }
 
     _createClass(FastAverageColor, [{
-        key: 'getColorFromUnloadedImage',
+        key: 'getColorAsync',
 
         /**
-         * Get asynchronously the average color from unloaded image.
+         * Get asynchronously the average color from not loaded image.
          *
          * @param {HTMLImageElement} resource
          * @param {Function} callback
@@ -33,7 +33,7 @@ var FastAverageColor = function () {
          * @param {number} [options.width=width of resource]
          * @param {number} [options.height=height of resource]
          */
-        value: function getColorFromUnloadedImage(resource, callback, options) {
+        value: function getColorAsync(resource, callback, options) {
             var data = options && options.data;
 
             if (resource.complete || resource.naturalWidth) {
