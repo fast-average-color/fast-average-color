@@ -6,7 +6,7 @@
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
 
-        ac.getColorFromUnloadedImage(item.querySelector('img'), function(color, data) {
+        ac.getColorAsync(item.querySelector('img'), function(color, data) {
             data.item.style.backgroundColor = color.rgb;
             data.item.style.color = color.isDark ? 'white' : 'black';
         }, {

@@ -1,6 +1,6 @@
 export default class FastAverageColor {
     /**
-     * Get asynchronously the average color from unloaded image.
+     * Get asynchronously the average color from not loaded image.
      *
      * @param {HTMLImageElement} resource
      * @param {Function} callback
@@ -15,7 +15,7 @@ export default class FastAverageColor {
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
      */
-    getColorFromUnloadedImage(resource, callback, options) {
+    getColorAsync(resource, callback, options) {
         const data = options && options.data;
 
         if (resource.complete || resource.naturalWidth) {
