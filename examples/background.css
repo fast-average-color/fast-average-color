@@ -23,12 +23,12 @@ img
     box-sizing: border-box;
     width: 500px;
     max-width: 100%;
-    padding: 50px;
+    padding: 50px 50px 45px 50px;
 
     transition: background-color .5s ease;
 }
 
 .item__text
 {
-    padding: 10px;
+    padding-top: 10px;
 }
