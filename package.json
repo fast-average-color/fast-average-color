@@ -1,18 +1,18 @@
 {
   "name": "fast-average-color",
   "description": "A simple library that calculates the average color of images, videos and canvas in browser environment.",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
-    "url": "https://github.com/hcodes/fast-average-color"
+    "url": "https://github.com/fast-average-color/fast-average-color"
   },
   "main": "dist/index.js",
-  "homepage": "https://github.com/hcodes/fast-average-color",
+  "homepage": "https://github.com/fast-average-color/fast-average-color",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/hcodes/fast-average-color.git"
+    "url": "git://github.com/fast-average-color/fast-average-color.git"
   },
   "keywords": [
     "fast",
