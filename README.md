@@ -1,24 +1,24 @@
 # Fast Average Color
 [![NPM version](https://img.shields.io/npm/v/fast-average-color.svg)](https://www.npmjs.com/package/fast-average-color)
 [![NPM Downloads](https://img.shields.io/npm/dm/fast-average-color.svg?style=flat)](https://www.npmjs.org/package/fast-average-color)
-[![Dependency Status](https://img.shields.io/david/hcodes/fast-average-color.svg)](https://david-dm.org/hcodes/fast-average-color)
-[![Build Status](https://img.shields.io/travis/hcodes/fast-average-color.svg?style=flat)](https://travis-ci.org/hcodes/fast-average-color)
+[![Dependency Status](https://img.shields.io/david/fast-average-color/fast-average-color.svg)](https://david-dm.org/fast-average-color/fast-average-color)
+[![Build Status](https://img.shields.io/travis/fast-average-color/fast-average-color.svg?style=flat)](https://travis-ci.org/fast-average-color/fast-average-color)
 
 A simple library that calculates the average color of any images or videos in browser environment.
-<img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/hcodes/fast-average-color/master/examples/title.png" />
+<img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/fast-average-color/fast-average-color/master/examples/title.png" />
 
-## [Examples](https://hcodes.github.io/fast-average-color/examples/background.html)
-- [Background](https://hcodes.github.io/fast-average-color/examples/background.html)
-- [Box shadow](https://hcodes.github.io/fast-average-color/examples/box-shadow.html)
-- [Box shadow, 4 sides](https://hcodes.github.io/fast-average-color/examples/box-shadow-4-sides.html)
-- [Border](https://hcodes.github.io/fast-average-color/examples/border.html)
-- [Gallery](https://hcodes.github.io/fast-average-color/examples/gallery.html)
-- [Gradient](https://hcodes.github.io/fast-average-color/examples/gradient.html)
-- [Gradient as stripes](https://hcodes.github.io/fast-average-color/examples/gradient_stripes.html)
-- [Canvas](https://hcodes.github.io/fast-average-color/examples/canvas.html)
-- [Text photo](https://hcodes.github.io/fast-average-color/examples/text-photo.html)
-- [Ambilight](https://hcodes.github.io/fast-average-color/examples/ambilight.html)
-- [Define the average color for your images](https://hcodes.github.io/fast-average-color/examples/define.html)
+## [Examples](https://fast-average-color.github.io/fast-average-color/examples/background.html)
+- [Background](https://fast-average-color.github.io/fast-average-color/examples/background.html)
+- [Box shadow](https://fast-average-color.github.io/fast-average-color/examples/box-shadow.html)
+- [Box shadow, 4 sides](https://fast-average-color.github.io/fast-average-color/examples/box-shadow-4-sides.html)
+- [Border](https://fast-average-color.github.io/fast-average-color/examples/border.html)
+- [Gallery](https://fast-average-color.github.io/fast-average-color/examples/gallery.html)
+- [Gradient](https://fast-average-color.github.io/fast-average-color/examples/gradient.html)
+- [Gradient as stripes](https://fast-average-color.github.io/fast-average-color/examples/gradient_stripes.html)
+- [Canvas](https://fast-average-color.github.io/fast-average-color/examples/canvas.html)
+- [Text photo](https://fast-average-color.github.io/fast-average-color/examples/text-photo.html)
+- [Ambilight](https://fast-average-color.github.io/fast-average-color/examples/ambilight.html)
+- [Define the average color for your images](https://fast-average-color.github.io/fast-average-color/examples/define.html)
 
 [See code](./examples)
 
@@ -285,7 +285,7 @@ In the `dist/` directory of [the NPM package](https://unpkg.com/fast-average-col
 
 ## Development
 ```
-git clone git@github.com:hcodes/fast-average-color.git ./fast-average-color
+git clone git@github.com:fast-average-color/fast-average-color.git ./fast-average-color
 cd ./fast-average-color
 
 npm i
