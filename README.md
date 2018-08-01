@@ -35,7 +35,8 @@ npm i -D fast-average-color
     <div class="image-container">
         <img src="image.png" />
         <div>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
     </div>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
@@ -75,7 +76,8 @@ or
     <div class="image-container">
         <img src="image.png" />
         <div>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
     </div>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
