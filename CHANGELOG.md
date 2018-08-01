@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.0.1
+- `/examples` moved to separate [repo](https://github.com/fast-average-color/examples).
+
 # v4.0.0
 - `.getColorFromUnloadedImage()` → `.getColorAsync()`.
 - Small fixes for examples.

@@ -5,22 +5,22 @@
 [![Build Status](https://img.shields.io/travis/fast-average-color/fast-average-color.svg?style=flat)](https://travis-ci.org/fast-average-color/fast-average-color)
 
 A simple library that calculates the average color of any images or videos in browser environment.
-<img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/fast-average-color/fast-average-color/master/examples/title.png" />
+<img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/fast-average-color/fast-average-color/master/img/title.png" />
 
-## [Examples](https://fast-average-color.github.io/fast-average-color/examples/background.html)
-- [Background](https://fast-average-color.github.io/fast-average-color/examples/background.html)
-- [Box shadow](https://fast-average-color.github.io/fast-average-color/examples/box-shadow.html)
-- [Box shadow, 4 sides](https://fast-average-color.github.io/fast-average-color/examples/box-shadow-4-sides.html)
-- [Border](https://fast-average-color.github.io/fast-average-color/examples/border.html)
-- [Gallery](https://fast-average-color.github.io/fast-average-color/examples/gallery.html)
-- [Gradient](https://fast-average-color.github.io/fast-average-color/examples/gradient.html)
-- [Gradient as stripes](https://fast-average-color.github.io/fast-average-color/examples/gradient_stripes.html)
-- [Canvas](https://fast-average-color.github.io/fast-average-color/examples/canvas.html)
-- [Text photo](https://fast-average-color.github.io/fast-average-color/examples/text-photo.html)
-- [Ambilight](https://fast-average-color.github.io/fast-average-color/examples/ambilight.html)
-- [Define the average color for your images](https://fast-average-color.github.io/fast-average-color/examples/define.html)
+## [Examples](https://fast-average-color.github.io/examples/background.html)
+- [Background](https://fast-average-color.github.io/examples/background.html)
+- [Box shadow](https://fast-average-color.github.io/examples/box-shadow.html)
+- [Box shadow, 4 sides](https://fast-average-color.github.io/examples/box-shadow-4-sides.html)
+- [Border](https://fast-average-color.github.io/examples/border.html)
+- [Gallery](https://fast-average-color.github.io/examples/gallery.html)
+- [Gradient](https://fast-average-color.github.io/examples/gradient.html)
+- [Gradient as stripes](https://fast-average-color.github.io/examples/gradient_stripes.html)
+- [Canvas](https://fast-average-color.github.io/examples/canvas.html)
+- [Text photo](https://fast-average-color.github.io/examples/text-photo.html)
+- [Ambilight](https://fast-average-color.github.io/examples/ambilight.html)
+- [Define the average color for your images](https://fast-average-color.github.io/examples/define.html)
 
-[See code](./examples)
+[See code](https://github.com/fast-average-color/examples)
 
 ## Using
 ```
