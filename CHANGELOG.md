@@ -1,5 +1,9 @@
 # Changelog
 
+# v4.1.0
+- Fixed bugs in algorithms #12 (thanks @AngReload).
+- Added typings for TypeScript.
+
 # v4.0.1
 - `/examples` moved to separate [repo](https://github.com/fast-average-color/examples).
 

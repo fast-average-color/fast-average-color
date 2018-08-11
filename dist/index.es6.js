@@ -208,12 +208,11 @@ export default class FastAverageColor {
             count = 0;
 
         for (let i = 0; i < len; i += preparedStep) {
-            let
-                alpha = arr[i + 3] / 255,
-                alpha255 = alpha / 255,
-                red = arr[i] * alpha255,
-                green = arr[i + 1] * alpha255,
-                blue = arr[i + 2] * alpha255;
+            const
+                alpha = arr[i + 3],
+                red = arr[i] * alpha,
+                green = arr[i + 1] * alpha,
+                blue = arr[i + 2] * alpha;
 
             redTotal += red;
             greenTotal += green;
@@ -222,16 +221,12 @@ export default class FastAverageColor {
             count++;
         }
 
-        const
-            averageAlpha = alphaTotal / count,
-            byteAlpha = Math.round(averageAlpha * 255);
-
-        return [
-            Math.round(redTotal / count / averageAlpha * 255),
-            Math.round(greenTotal / count / averageAlpha * 255),
-            Math.round(blueTotal / count / averageAlpha * 255),
-            byteAlpha
-        ];
+        return alphaTotal ? [
+            Math.round(redTotal / alphaTotal),
+            Math.round(greenTotal / alphaTotal),
+            Math.round(blueTotal / alphaTotal),
+            Math.round(alphaTotal / count)
+        ] : [0, 0, 0, 0];
     }
 
     _sqrtAlgorithm(arr, len, preparedStep) {
@@ -243,33 +238,26 @@ export default class FastAverageColor {
             count = 0;
 
         for (let i = 0; i < len; i += preparedStep) {
-            let
-                alpha = arr[i + 3] / 255,
-                alpha255 = alpha / 255,
-                // i.e.: red = arr[i] / 255 * alpha
-                red = arr[i] * alpha255,
-                green = arr[i + 1] * alpha255,
-                blue = arr[i + 2] * alpha255;
+            const
+                red = arr[i],
+                green = arr[i + 1],
+                blue = arr[i + 2],
+                alpha = arr[i + 3];
 
-            redTotal += red * red;
-            greenTotal += green * green;
-            blueTotal += blue * blue;
+            redTotal += red * red * alpha;
+            greenTotal += green * green * alpha;
+            blueTotal += blue * blue * alpha;
             alphaTotal += alpha;
             count++;
         }
 
-        const
-            averageAlpha = alphaTotal / count,
-            byteAlpha = Math.round(averageAlpha * 255);
-
-        return [
-            Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255),
-            Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255),
-            Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255),
-            byteAlpha
-        ];
+        return alphaTotal ? [
+            Math.round(Math.sqrt(redTotal / alphaTotal)),
+            Math.round(Math.sqrt(greenTotal / alphaTotal)),
+            Math.round(Math.sqrt(blueTotal / alphaTotal)),
+            Math.round(alphaTotal / count)
+        ] : [0, 0, 0, 0];
     }
-
     _bindImageEvents(resource, callback, options) {
         options = options || {};
 
@@ -322,7 +310,7 @@ export default class FastAverageColor {
         const
             rgb = value.slice(0, 3),
             rgba = [].concat(rgb, value[3] / 255),
-            isDark = this._isDark(value); 
+            isDark = this._isDark(value);
 
         return {
             error,

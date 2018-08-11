@@ -214,11 +214,10 @@ var FastAverageColor = function () {
                 count = 0;
 
             for (var i = 0; i < len; i += preparedStep) {
-                var alpha = arr[i + 3] / 255,
-                    alpha255 = alpha / 255,
-                    red = arr[i] * alpha255,
-                    green = arr[i + 1] * alpha255,
-                    blue = arr[i + 2] * alpha255;
+                var alpha = arr[i + 3],
+                    red = arr[i] * alpha,
+                    green = arr[i + 1] * alpha,
+                    blue = arr[i + 2] * alpha;
 
                 redTotal += red;
                 greenTotal += green;
@@ -227,10 +226,7 @@ var FastAverageColor = function () {
                 count++;
             }
 
-            var averageAlpha = alphaTotal / count,
-                byteAlpha = Math.round(averageAlpha * 255);
-
-            return [Math.round(redTotal / count / averageAlpha * 255), Math.round(greenTotal / count / averageAlpha * 255), Math.round(blueTotal / count / averageAlpha * 255), byteAlpha];
+            return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
         }
     }, {
         key: '_sqrtAlgorithm',
@@ -242,25 +238,19 @@ var FastAverageColor = function () {
                 count = 0;
 
             for (var i = 0; i < len; i += preparedStep) {
-                var alpha = arr[i + 3] / 255,
-                    alpha255 = alpha / 255,
+                var red = arr[i],
+                    green = arr[i + 1],
+                    blue = arr[i + 2],
+                    alpha = arr[i + 3];
 
-                // i.e.: red = arr[i] / 255 * alpha
-                red = arr[i] * alpha255,
-                    green = arr[i + 1] * alpha255,
-                    blue = arr[i + 2] * alpha255;
-
-                redTotal += red * red;
-                greenTotal += green * green;
-                blueTotal += blue * blue;
+                redTotal += red * red * alpha;
+                greenTotal += green * green * alpha;
+                blueTotal += blue * blue * alpha;
                 alphaTotal += alpha;
                 count++;
             }
 
-            var averageAlpha = alphaTotal / count,
-                byteAlpha = Math.round(averageAlpha * 255);
-
-            return [Math.round(Math.sqrt(redTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(greenTotal / count / averageAlpha) * 255), Math.round(Math.sqrt(blueTotal / count / averageAlpha) * 255), byteAlpha];
+            return alphaTotal ? [Math.round(Math.sqrt(redTotal / alphaTotal)), Math.round(Math.sqrt(greenTotal / alphaTotal)), Math.round(Math.sqrt(blueTotal / alphaTotal)), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
         }
     }, {
         key: '_bindImageEvents',
