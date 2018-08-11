@@ -25,29 +25,68 @@ describe('API', function() {
             assert.deepEqual(color, myDefaultColor);
         });
 
-        it('should return average color', function() {
-            const
-                fac = new FastAverageColor(),
-                color = fac.getColorFromArray4([
-                    100, 100, 100, 100,
-                    200, 200, 200, 200
-                ]);
+        it('should return sqrt average color', function() {
+            const fac = new FastAverageColor();
 
-            assert.deepEqual(color, [149, 149, 149, 150]);
+            let color = fac.getColorFromArray4([
+                100, 100, 100, 100,
+                200, 200, 200, 200
+            ]);
+
+            assert.deepEqual(color, [173, 173, 173, 150]);
+
+            color = fac.getColorFromArray4([
+                100, 100, 100, 255,
+                200, 200, 200, 255
+            ]);
+
+            assert.deepEqual(color, [158, 158, 158, 255]);
         });
 
         it('should return average color using simple algorithm', function() {
+            const fac = new FastAverageColor();
+
+            let color = fac.getColorFromArray4([
+                100, 100, 100, 100,
+                200, 200, 200, 200
+            ], {
+                algorithm: 'simple',
+                step: 1
+            });
+
+            assert.deepEqual(color, [167, 167, 167, 150]);
+
+            color = fac.getColorFromArray4([
+                100, 100, 100, 255,
+                200, 200, 200, 255
+            ], {
+                algorithm: 'simple',
+                step: 1
+            });
+
+            assert.deepEqual(color, [150, 150, 150, 255]);
+        });
+
+        it('should return transparent color for simple algorithm', function() {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([
-                    100, 100, 100, 100,
-                    200, 200, 200, 200
-                ], {
-                    algorithm: 'simple',
-                    step: 1
-                });
+                    100, 100, 100, 0,
+                    0, 0, 0, 0
+                ], {algorithm: 'simple'});
 
-            assert.deepEqual(color, [167, 167, 167, 150]);
+            assert.deepEqual(color, [0, 0, 0, 0]);
+        });
+
+        it('should return transparent color for sqrt algorithm', function() {
+            const
+                fac = new FastAverageColor(),
+                color = fac.getColorFromArray4([
+                    100, 100, 100, 0,
+                    0, 0, 0, 0
+                ]);
+
+            assert.deepEqual(color, [0, 0, 0, 0]);
         });
 
         it('should return average color with step', function() {
@@ -63,7 +102,7 @@ describe('API', function() {
                     { step: 2 }
                 );
 
-            assert.deepEqual(color, [98, 98, 98, 125]);
+            assert.deepEqual(color, [132, 132, 132, 125]);
         });
     });
 
