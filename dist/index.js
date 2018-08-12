@@ -34,10 +34,8 @@ var FastAverageColor = function () {
          * @param {number} [options.height=height of resource]
          */
         value: function getColorAsync(resource, callback, options) {
-            var data = options && options.data;
-
-            if (resource.complete || resource.naturalWidth) {
-                callback.call(resource, this.getColor.apply(this, arguments), data);
+            if (resource.complete) {
+                callback.call(resource, this.getColor(resource, options), options && options.data);
             } else {
                 this._bindImageEvents(resource, callback, options);
             }
@@ -260,36 +258,31 @@ var FastAverageColor = function () {
             options = options || {};
 
             var data = options && options.data,
-                defaultColor = this._getDefaultColor(options);
-
-            this._onload = function () {
-                _this._unbindImageEvents(resource);
+                defaultColor = this._getDefaultColor(options),
+                onload = function onload() {
+                unbindEvents();
 
                 callback.call(resource, _this.getColor(resource, options), data);
-            };
-
-            this._onerror = function () {
-                _this._unbindImageEvents(resource);
+            },
+                onerror = function onerror() {
+                unbindEvents();
 
                 callback.call(resource, _this._prepareResult(defaultColor, new Error('Image error')), data);
-            };
-
-            this._onabort = function () {
-                _this._unbindImageEvents();
+            },
+                onabort = function onabort() {
+                unbindEvents();
 
                 callback.call(resource, _this._prepareResult(defaultColor, new Error('Image abort')), data);
+            },
+                unbindEvents = function unbindEvents() {
+                resource.removeEventListener('load', onload);
+                resource.removeEventListener('error', onerror);
+                resource.removeEventListener('abort', onabort);
             };
 
-            resource.addEventListener('load', this._onload);
-            resource.addEventListener('error', this._onerror);
-            resource.addEventListener('abort', this._onabort);
-        }
-    }, {
-        key: '_unbindImageEvents',
-        value: function _unbindImageEvents(resource) {
-            resource.removeEventListener('load', this._onload);
-            resource.removeEventListener('error', this._onerror);
-            resource.removeEventListener('abort', this._onabort);
+            resource.addEventListener('load', onload);
+            resource.addEventListener('error', onerror);
+            resource.addEventListener('abort', onabort);
         }
     }, {
         key: '_prepareResult',

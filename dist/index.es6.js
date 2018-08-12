@@ -17,10 +17,8 @@ export default class FastAverageColor {
      * @param {number} [options.height=height of resource]
      */
     getColorAsync(resource, callback, options) {
-        const data = options && options.data;
-
-        if (resource.complete || resource.naturalWidth) {
-            callback.call(resource, this.getColor.apply(this, arguments), data);
+        if (resource.complete) {
+            callback.call(resource, this.getColor(resource, options), options && options.data);
         } else {
             this._bindImageEvents(resource, callback, options);
         }
@@ -258,52 +256,49 @@ export default class FastAverageColor {
             Math.round(alphaTotal / count)
         ] : [0, 0, 0, 0];
     }
+
     _bindImageEvents(resource, callback, options) {
         options = options || {};
 
         const
             data = options && options.data,
-            defaultColor = this._getDefaultColor(options);
+            defaultColor = this._getDefaultColor(options),
+            onload = () => {
+                unbindEvents();
 
-        this._onload = () => {
-            this._unbindImageEvents(resource);
+                callback.call(
+                    resource,
+                    this.getColor(resource, options),
+                    data
+                );
+            },
+            onerror = () => {
+                unbindEvents();
 
-            callback.call(
-                resource,
-                this.getColor(resource, options),
-                data
-            );
-        };
+                callback.call(
+                    resource,
+                    this._prepareResult(defaultColor, new Error('Image error')),
+                    data
+                );
+            },
+            onabort = () => {
+                unbindEvents();
 
-        this._onerror = () => {
-            this._unbindImageEvents(resource);
+                callback.call(
+                    resource,
+                    this._prepareResult(defaultColor, new Error('Image abort')),
+                    data
+                );
+            },
+            unbindEvents = () => {
+                resource.removeEventListener('load', onload);
+                resource.removeEventListener('error', onerror);
+                resource.removeEventListener('abort', onabort);
+            };
 
-            callback.call(
-                resource,
-                this._prepareResult(defaultColor, new Error('Image error')),
-                data
-            );
-        };
-
-        this._onabort = () => {
-            this._unbindImageEvents();
-
-            callback.call(
-                resource,
-                this._prepareResult(defaultColor, new Error('Image abort')),
-                data
-            );
-        };
-
-        resource.addEventListener('load', this._onload);
-        resource.addEventListener('error', this._onerror);
-        resource.addEventListener('abort', this._onabort);
-    }
-
-    _unbindImageEvents(resource) {
-        resource.removeEventListener('load', this._onload);
-        resource.removeEventListener('error', this._onerror);
-        resource.removeEventListener('abort', this._onabort);
+        resource.addEventListener('load', onload);
+        resource.addEventListener('error', onerror);
+        resource.addEventListener('abort', onabort);
     }
 
     _prepareResult(value, error) {
