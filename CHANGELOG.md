@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.1.1
+Fixes for `.getColorAsync()` method.
+
 # v4.1.0
 - Fixed bugs in algorithms #12 (thanks @AngReload).
 - Added typings for TypeScript.
