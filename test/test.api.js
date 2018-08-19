@@ -25,6 +25,20 @@ describe('API', function() {
             assert.deepEqual(color, myDefaultColor);
         });
 
+        it('should return transparent color', function() {
+            const algorithms = ['simple', 'sqrt', 'dominant'];
+            const fac = new FastAverageColor();
+
+            algorithms.forEach(algorithm => {
+                const color = fac.getColorFromArray4([
+                    100, 100, 100, 0,
+                    0, 0, 0, 0
+                ], {algorithm});
+
+                assert.deepEqual(color, [0, 0, 0, 0]);
+            });
+        });
+
         it('should return sqrt average color', function() {
             const fac = new FastAverageColor();
 
@@ -67,26 +81,21 @@ describe('API', function() {
             assert.deepEqual(color, [150, 150, 150, 255]);
         });
 
-        it('should return transparent color for simple algorithm', function() {
+        it('should return average color using dominant algorithm', function() {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([
-                    100, 100, 100, 0,
-                    0, 0, 0, 0
-                ], {algorithm: 'simple'});
+                    100, 100, 100, 100,
+                    190, 190, 190, 200,
+                    200, 200, 200, 200,
+                    200, 200, 200, 200,
+                    50, 150, 0, 200
+                ], {
+                    algorithm: 'dominant',
+                    step: 1
+                });
 
-            assert.deepEqual(color, [0, 0, 0, 0]);
-        });
-
-        it('should return transparent color for sqrt algorithm', function() {
-            const
-                fac = new FastAverageColor(),
-                color = fac.getColorFromArray4([
-                    100, 100, 100, 0,
-                    0, 0, 0, 0
-                ]);
-
-            assert.deepEqual(color, [0, 0, 0, 0]);
+            assert.deepEqual(color, [197, 197, 197, 200]);
         });
 
         it('should return average color with step', function() {

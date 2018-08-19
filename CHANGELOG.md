@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.2.0
+- Added dominant algorithm.
+
 # v4.1.1
 Fixes for `.getColorAsync()` method.
 
