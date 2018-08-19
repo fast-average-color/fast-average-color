@@ -5,6 +5,8 @@
 	(global.FastAverageColor = factory());
 }(this, (function () { 'use strict';
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26,7 +28,7 @@ var FastAverageColor = function () {
          * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
          * @param {*}      [options.data]
          * @param {string} [options.mode="speed"] "precision" or "speed"
-         * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+         * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
          * @param {number} [options.step=1]
          * @param {number} [options.left=0]
          * @param {number} [options.top=0]
@@ -49,7 +51,7 @@ var FastAverageColor = function () {
          * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
          * @param {*}      [options.data]
          * @param {string} [options.mode="speed"] "precision" or "speed"
-         * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+         * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
          * @param {number} [options.step=1]
          * @param {number} [options.left=0]
          * @param {number} [options.top=0]
@@ -107,7 +109,7 @@ var FastAverageColor = function () {
          *
          * @param {Array|Uint8Array} arr
          * @param {Object} [options]
-         * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+         * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
          * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
          * @param {number} [options.step=1]
          *
@@ -127,9 +129,14 @@ var FastAverageColor = function () {
             }
 
             var len = arrLength - arrLength % bytesPerPixel,
-                preparedStep = (options.step || 1) * bytesPerPixel;
+                preparedStep = (options.step || 1) * bytesPerPixel,
+                algorithm = '_' + (options.algorithm || 'sqrt') + 'Algorithm';
 
-            return options.algorithm === 'simple' ? this._simpleAlgorithm(arr, len, preparedStep) : this._sqrtAlgorithm(arr, len, preparedStep);
+            if (typeof this[algorithm] !== 'function') {
+                throw new Error('FastAverageColor: ' + options.algorithm + ' is unknown algorithm.');
+            }
+
+            return this[algorithm](arr, len, preparedStep);
         }
 
         /**
@@ -249,6 +256,44 @@ var FastAverageColor = function () {
             }
 
             return alphaTotal ? [Math.round(Math.sqrt(redTotal / alphaTotal)), Math.round(Math.sqrt(greenTotal / alphaTotal)), Math.round(Math.sqrt(blueTotal / alphaTotal)), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
+        }
+    }, {
+        key: '_dominantAlgorithm',
+        value: function _dominantAlgorithm(arr, len, preparedStep) {
+            var colorHash = {},
+                divider = 24;
+
+            for (var i = 0; i < len; i += preparedStep) {
+                var red = arr[i],
+                    green = arr[i + 1],
+                    blue = arr[i + 2],
+                    alpha = arr[i + 3],
+                    key = Math.round(red / divider) + ',' + Math.round(green / divider) + ',' + Math.round(blue / divider);
+
+                if (colorHash[key]) {
+                    colorHash[key] = [colorHash[key][0] + red * alpha, colorHash[key][1] + green * alpha, colorHash[key][2] + blue * alpha, colorHash[key][3] + alpha, colorHash[key][4] + 1];
+                } else {
+                    colorHash[key] = [red * alpha, green * alpha, blue * alpha, alpha, 1];
+                }
+            }
+
+            var buffer = Object.keys(colorHash).map(function (key) {
+                return colorHash[key];
+            }).sort(function (a, b) {
+                var countA = a[4],
+                    countB = b[4];
+
+                return countA > countB ? -1 : countA === countB ? 0 : 1;
+            });
+
+            var _buffer$ = _slicedToArray(buffer[0], 5),
+                redTotal = _buffer$[0],
+                greenTotal = _buffer$[1],
+                blueTotal = _buffer$[2],
+                alphaTotal = _buffer$[3],
+                count = _buffer$[4];
+
+            return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
         }
     }, {
         key: '_bindImageEvents',

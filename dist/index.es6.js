@@ -9,7 +9,7 @@ export default class FastAverageColor {
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
      * @param {number} [options.left=0]
      * @param {number} [options.top=0]
@@ -32,7 +32,7 @@ export default class FastAverageColor {
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
      * @param {number} [options.left=0]
      * @param {number} [options.top=0]
@@ -101,7 +101,7 @@ export default class FastAverageColor {
      *
      * @param {Array|Uint8Array} arr
      * @param {Object} [options]
-     * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {number} [options.step=1]
      *
@@ -120,11 +120,14 @@ export default class FastAverageColor {
 
         const
             len = arrLength - arrLength % bytesPerPixel,
-            preparedStep = (options.step || 1) * bytesPerPixel;
+            preparedStep = (options.step || 1) * bytesPerPixel,
+            algorithm = '_' + (options.algorithm || 'sqrt') + 'Algorithm';
 
-        return options.algorithm === 'simple' ?
-            this._simpleAlgorithm(arr, len, preparedStep) :
-            this._sqrtAlgorithm(arr, len, preparedStep);
+        if (typeof this[algorithm] !== 'function') {
+            throw new Error(`FastAverageColor: ${options.algorithm} is unknown algorithm.`);
+        }
+
+        return this[algorithm](arr, len, preparedStep);
     }
 
     /**
@@ -253,6 +256,54 @@ export default class FastAverageColor {
             Math.round(Math.sqrt(redTotal / alphaTotal)),
             Math.round(Math.sqrt(greenTotal / alphaTotal)),
             Math.round(Math.sqrt(blueTotal / alphaTotal)),
+            Math.round(alphaTotal / count)
+        ] : [0, 0, 0, 0];
+    }
+    
+    _dominantAlgorithm(arr, len, preparedStep) {
+        const
+            colorHash = {},
+            divider = 24;
+        
+        for (let i = 0; i < len; i += preparedStep) {
+            let
+                red = arr[i],
+                green = arr[i + 1],
+                blue = arr[i + 2],
+                alpha = arr[i + 3],
+                key = Math.round(red / divider) + ',' +
+                    Math.round(green / divider) + ',' +
+                    Math.round(blue / divider);
+
+            if (colorHash[key]) {
+                colorHash[key] = [
+                    colorHash[key][0] + red * alpha,
+                    colorHash[key][1] + green * alpha,
+                    colorHash[key][2] + blue * alpha,
+                    colorHash[key][3] + alpha,
+                    colorHash[key][4] + 1
+                ];
+            } else {
+                colorHash[key] = [red * alpha, green * alpha, blue * alpha, alpha, 1];
+            }
+        }
+
+        const buffer = Object.keys(colorHash).map(function(key) {
+            return colorHash[key];
+        }).sort(function(a, b) {
+            const
+                countA = a[4],
+                countB = b[4];
+
+            return countA > countB ?  -1 : countA === countB ? 0 : 1;
+        });
+
+        const [redTotal, greenTotal, blueTotal, alphaTotal, count] = buffer[0];
+        
+        return alphaTotal ? [
+            Math.round(redTotal / alphaTotal),
+            Math.round(greenTotal / alphaTotal),
+            Math.round(blueTotal / alphaTotal),
             Math.round(alphaTotal / count)
         ] : [0, 0, 0, 0];
     }
