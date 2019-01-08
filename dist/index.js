@@ -78,7 +78,7 @@ var FastAverageColor = function () {
             }
 
             if (!this._ctx) {
-                this._canvas = document.createElement('canvas');
+                this._canvas = this._makeCanvas();
                 this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
                 if (!this._ctx) {
@@ -387,6 +387,15 @@ var FastAverageColor = function () {
             var result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
 
             return result < 128;
+        }
+    }, {
+        key: '_makeCanvas',
+        value: function _makeCanvas() {
+            if (typeof window !== 'undefined') {
+                return document.createElement('canvas');
+            }
+
+            return new OffscreenCanvas(256, 256);
         }
     }]);
 
