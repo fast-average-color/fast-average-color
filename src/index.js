@@ -407,10 +407,8 @@ export default class FastAverageColor {
     }
 
     _makeCanvas() {
-        if (typeof window !== 'undefined') {
-            return document.createElement('canvas');
-        }
-
-        return new OffscreenCanvas(256, 256);
+        return typeof window === 'undefined' ?
+            new OffscreenCanvas(1, 1) :
+            document.createElement('canvas');
     }
 }
