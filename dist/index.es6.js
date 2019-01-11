@@ -1,4 +1,4 @@
-/*! Fast Average Color | © 2018 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */
+/*! Fast Average Color | © 2019 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */
 export default class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
@@ -61,7 +61,7 @@ export default class FastAverageColor {
         }
 
         if (!this._ctx) {
-            this._canvas = document.createElement('canvas');
+            this._canvas = this._makeCanvas();
             this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
             if (!this._ctx) {
@@ -259,12 +259,12 @@ export default class FastAverageColor {
             Math.round(alphaTotal / count)
         ] : [0, 0, 0, 0];
     }
-    
+
     _dominantAlgorithm(arr, len, preparedStep) {
         const
             colorHash = {},
             divider = 24;
-        
+
         for (let i = 0; i < len; i += preparedStep) {
             let
                 red = arr[i],
@@ -299,7 +299,7 @@ export default class FastAverageColor {
         });
 
         const [redTotal, greenTotal, blueTotal, alphaTotal, count] = buffer[0];
-        
+
         return alphaTotal ? [
             Math.round(redTotal / alphaTotal),
             Math.round(greenTotal / alphaTotal),
@@ -405,5 +405,11 @@ export default class FastAverageColor {
         const result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
 
         return result < 128;
+    }
+
+    _makeCanvas() {
+        return typeof window === 'undefined' ?
+            new OffscreenCanvas(1, 1) :
+            document.createElement('canvas');
     }
 }
