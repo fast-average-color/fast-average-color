@@ -1,4 +1,6 @@
 # Changelog
+# v4.3.0
+- Added OffScreenCanvas support @2xAA.
 
 # v4.2.0
 - Added dominant algorithm.
