@@ -7,11 +7,10 @@ const
     uglify = require('gulp-uglify'),
     rollup = require('gulp-rollup'),
     babel = require('rollup-plugin-babel'),
-    uglifyOptions = {output: {comments: /^!/}},
-    copyright = '/*! Fast Average Color | © 2018 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */\n';
+    copyright = '/*! Fast Average Color | © 2019 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */\n';
 
 gulp.task('js', function() {
-    return gulp.src('src/*.js')
+    return gulp.src('src/index.js')
         .pipe(rollup({
             input: 'src/index.js',
             output: {
@@ -25,10 +24,10 @@ gulp.task('js', function() {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('js.min', gulp.series('js', function() {
+gulp.task('min', gulp.series('js', function min() {
     return gulp.src('dist/index.js')
         .pipe(rename('index.min.js'))
-        .pipe(uglify(uglifyOptions))
+        .pipe(uglify({output: {comments: /^!/}}))
         .pipe(gulp.dest('dist/'));
 }));
 
@@ -43,4 +42,4 @@ gulp.task('watch', function() {
     gulp.watch(['src/**/*', 'examples/**/*']);
 });
 
-gulp.task('default', gulp.series('js.min', 'es6'));
+gulp.task('default', gulp.parallel('min', 'es6'));
