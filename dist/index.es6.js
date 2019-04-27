@@ -4,7 +4,6 @@ export default class FastAverageColor {
      * Get asynchronously the average color from not loaded image.
      *
      * @param {HTMLImageElement} resource
-     * @param {Function} callback
      * @param {Object|null} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
@@ -15,12 +14,15 @@ export default class FastAverageColor {
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
+     * 
+     * @returns {Promise}
      */
-    getColorAsync(resource, callback, options) {
+    getColorAsync(resource, options) {
         if (resource.complete) {
-            callback.call(resource, this.getColor(resource, options), options && options.data);
+            const result = this.getColor(resource, options);
+            return result.error ? Promise.reject(result.error) : Promise.resolve(result);
         } else {
-            this._bindImageEvents(resource, callback, options);
+            return this._bindImageEvents(resource, options);
         }
     }
 
@@ -308,48 +310,40 @@ export default class FastAverageColor {
         ] : [0, 0, 0, 0];
     }
 
-    _bindImageEvents(resource, callback, options) {
-        options = options || {};
+    _bindImageEvents(resource, options) {
+        return new Promise((resolve, reject) => {
+            const onload = () => {
+                    unbindEvents();
 
-        const
-            data = options && options.data,
-            defaultColor = this._getDefaultColor(options),
-            onload = () => {
-                unbindEvents();
+                    const result = this.getColor(resource, options);
 
-                callback.call(
-                    resource,
-                    this.getColor(resource, options),
-                    data
-                );
-            },
-            onerror = () => {
-                unbindEvents();
+                    if (result.error) {
+                        reject(result.error);
+                    } else {
+                        resolve(result);
+                    }
+                
+                },
+                onerror = () => {
+                    unbindEvents();
 
-                callback.call(
-                    resource,
-                    this._prepareResult(defaultColor, new Error('Image error')),
-                    data
-                );
-            },
-            onabort = () => {
-                unbindEvents();
+                    reject(new Error('Image error'));
+                },
+                onabort = () => {
+                    unbindEvents();
 
-                callback.call(
-                    resource,
-                    this._prepareResult(defaultColor, new Error('Image abort')),
-                    data
-                );
-            },
-            unbindEvents = () => {
-                resource.removeEventListener('load', onload);
-                resource.removeEventListener('error', onerror);
-                resource.removeEventListener('abort', onabort);
-            };
+                    reject(new Error('Image abort'));
+                },
+                unbindEvents = () => {
+                    resource.removeEventListener('load', onload);
+                    resource.removeEventListener('error', onerror);
+                    resource.removeEventListener('abort', onabort);
+                };
 
-        resource.addEventListener('load', onload);
-        resource.addEventListener('error', onerror);
-        resource.addEventListener('abort', onabort);
+            resource.addEventListener('load', onload);
+            resource.addEventListener('error', onerror);
+            resource.addEventListener('abort', onabort);
+        });
     }
 
     _prepareResult(value, error) {
