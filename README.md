@@ -22,6 +22,8 @@ A simple library that calculates the average color of any images or videos in br
 
 [See code](https://github.com/fast-average-color/examples)
 
+## [Storing an image from a foreign origin](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image#Storing_an_image_from_a_foreign_origin)
+
 ## Using
 ```
 npm i fast-average-color
