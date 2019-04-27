@@ -4,7 +4,7 @@
 - `getColorAsync()` with Promise, callbacks removed.
 Before:
 ```js
-fac.getColorAsync(image1, function(color) {
+fac.getColorAsync(image, function(color) {
     console.log(color);
     // {
     //     error: null,
