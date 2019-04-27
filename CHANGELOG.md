@@ -1,4 +1,40 @@
 # Changelog
+
+# v5.0.0.
+- `getColorAsync()` with Promise, callbacks removed.
+Before:
+```js
+fac.getColorAsync(image1, function(color) {
+    console.log(color);
+    // {
+    //     error: null,
+    //     rgb: 'rgb(255, 0, 0)',
+    //     rgba: 'rgba(255, 0, 0, 1)',
+    //     hex: '#ff0000',
+    //     hexa: '#ff0000ff',
+    //     value: [255, 0, 0, 255],
+    //     isDark: true,
+    //     isLight: false
+    // }
+}, { algorithm: 'dominant' });
+```
+
+After:
+```js
+fac.getColorAsync(image, { algorithm: 'dominant' }).then((color) => {
+    console.log(color);
+    // {
+    //     rgb: 'rgb(255, 0, 0)',
+    //     rgba: 'rgba(255, 0, 0, 1)',
+    //     hex: '#ff0000',
+    //     hexa: '#ff0000ff',
+    //     value: [255, 0, 0, 255],
+    //     isDark: true,
+    //     isLight: false
+    // }
+});
+```
+
 # v4.3.0
 - Added OffScreenCanvas support @2xAA.
 
