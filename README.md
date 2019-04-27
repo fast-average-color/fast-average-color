@@ -196,7 +196,7 @@ Get asynchronously the average color from a resource (not loaded images, videos 
 const fac = new FastAverageColor();
 
 // From not loaded image (HTMLImageElement)
-fac.getColorAsync(image)
+fac.getColorAsync(image, { algorithm: 'dominant' })
     .then(function(color) {
         console.log(color);
         // {
