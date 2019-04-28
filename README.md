@@ -283,8 +283,6 @@ cd ./fast-average-color
 
 npm i
 npm test
-
-open ./examples/
 ```
 
 ## [License](LICENSE)
