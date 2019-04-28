@@ -79,7 +79,6 @@ function () {
      * Get asynchronously the average color from not loaded image.
      *
      * @param {HTMLImageElement} resource
-     * @param {Function} callback
      * @param {Object|null} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {*}      [options.data]
@@ -90,12 +89,15 @@ function () {
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
+     * 
+     * @returns {Promise}
      */
-    value: function getColorAsync(resource, callback, options) {
+    value: function getColorAsync(resource, options) {
       if (resource.complete) {
-        callback.call(resource, this.getColor(resource, options), options && options.data);
+        var result = this.getColor(resource, options);
+        return result.error ? Promise.reject(result.error) : Promise.resolve(result);
       } else {
-        this._bindImageEvents(resource, callback, options);
+        return this._bindImageEvents(resource, options);
       }
     }
     /**
@@ -347,34 +349,39 @@ function () {
     }
   }, {
     key: "_bindImageEvents",
-    value: function _bindImageEvents(resource, callback, options) {
+    value: function _bindImageEvents(resource, options) {
       var _this = this;
 
-      options = options || {};
+      return new Promise(function (resolve, reject) {
+        var onload = function onload() {
+          unbindEvents();
 
-      var data = options && options.data,
-          defaultColor = this._getDefaultColor(options),
-          onload = function onload() {
-        unbindEvents();
-        callback.call(resource, _this.getColor(resource, options), data);
-      },
-          onerror = function onerror() {
-        unbindEvents();
-        callback.call(resource, _this._prepareResult(defaultColor, new Error('Image error')), data);
-      },
-          onabort = function onabort() {
-        unbindEvents();
-        callback.call(resource, _this._prepareResult(defaultColor, new Error('Image abort')), data);
-      },
-          unbindEvents = function unbindEvents() {
-        resource.removeEventListener('load', onload);
-        resource.removeEventListener('error', onerror);
-        resource.removeEventListener('abort', onabort);
-      };
+          var result = _this.getColor(resource, options);
 
-      resource.addEventListener('load', onload);
-      resource.addEventListener('error', onerror);
-      resource.addEventListener('abort', onabort);
+          if (result.error) {
+            reject(result.error);
+          } else {
+            resolve(result);
+          }
+        },
+            onerror = function onerror() {
+          unbindEvents();
+          reject(new Error('Image error'));
+        },
+            onabort = function onabort() {
+          unbindEvents();
+          reject(new Error('Image abort'));
+        },
+            unbindEvents = function unbindEvents() {
+          resource.removeEventListener('load', onload);
+          resource.removeEventListener('error', onerror);
+          resource.removeEventListener('abort', onabort);
+        };
+
+        resource.addEventListener('load', onload);
+        resource.addEventListener('error', onerror);
+        resource.addEventListener('abort', onabort);
+      });
     }
   }, {
     key: "_prepareResult",

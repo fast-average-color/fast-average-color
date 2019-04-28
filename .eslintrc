@@ -71,6 +71,7 @@
         "node": true,
         "mocha": true,
         "browser": true,
+        "es6": true,
         "amd": true,
         "jquery": true
     },

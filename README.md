@@ -88,10 +88,14 @@ or
             fac = new FastAverageColor(),
             container = document.querySelector('.image-container');
 
-        fac.getColorAsync(container.querySelector('img'), function(color) {
-            container.style.backgroundColor = color.rgba;
-            container.style.color = color.isDark ? '#fff' : '#000';
-        });
+        fac.getColorAsync(container.querySelector('img'))
+            .then(function(color) {
+                container.style.backgroundColor = color.rgba;
+                container.style.color = color.isDark ? '#fff' : '#000';
+            })
+            .catch(function(e) {
+                console.log(e);
+            });
     </script>
 </body>
 </html>
@@ -126,11 +130,10 @@ console.log(color);
  * Get synchronously the average color from images, videos and canvas.
  *
  * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
- * @param {Object|null} [options]
+ * @param {Object} [options]
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
- * @param {*}      [options.data]
  * @param {string} [options.mode="speed"] "precision" or "speed"
- * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+ * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {number} [options.step=1]
  * @param {number} [options.left=0]
  * @param {number} [options.top=0]
@@ -170,23 +173,22 @@ color = fac.getColor(canvas);
 color = fac.getColor(video);
 ```
 
-### `.getColorAsync(resource, callback, [options])`
+### `.getColorAsync(resource, [options])`
 ```js
 /**
  * Get asynchronously the average color from not loaded image.
  *
  * @param {HTMLImageElement} resource
- * @param {Function} callback
- * @param {Object|null} [options]
- * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
- * @param {*}      [options.data]
+ * @param {Object} [options]
  * @param {string} [options.mode="speed"] "precision" or "speed"
- * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+ * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {number} [options.step=1]
  * @param {number} [options.left=0]
  * @param {number} [options.top=0]
  * @param {number} [options.width=width of resource]
  * @param {number} [options.height=height of resource]
+ * 
+ * @returns {Promise}
  */
 ```
 Get asynchronously the average color from a resource (not loaded images, videos or canvas).
@@ -194,46 +196,22 @@ Get asynchronously the average color from a resource (not loaded images, videos 
 const fac = new FastAverageColor();
 
 // From not loaded image (HTMLImageElement)
-fac.getColorAsync(image1, function(color) {
-    console.log(color);
-    // {
-    //     error: null,
-    //     rgb: 'rgb(255, 0, 0)',
-    //     rgba: 'rgba(255, 0, 0, 1)',
-    //     hex: '#ff0000',
-    //     hexa: '#ff0000ff',
-    //     value: [255, 0, 0, 255],
-    //     isDark: true,
-    //     isLight: false
-    // }
-});
-
-// Advanced example
-fac.getColorAsync(image2, function(color, data) {
-    console.log(this);
-    // this = image2
-
-    console.log(color);
-    // {
-    //     error: null,
-    //     rgb: 'rgb(255, 0, 0)',
-    //     rgba: 'rgba(255, 0, 0, 1)',
-    //     hex: '#ff0000',
-    //     hexa: '#ff0000ff',
-    //     value: [255, 0, 0, 255],
-    //     isDark: true,
-    //     isLight: false
-    // }
-
-    console.log(data);
-    // {
-    //     myProp: 1
-    // }
-}, {
-    // red 0-255, green 0-255, blue 0-255, alpha 0-255
-    defaultColor: [255, 100, 100, 200],
-    data: { myProp: 1 }
-});
+fac.getColorAsync(image, { algorithm: 'dominant' })
+    .then(function(color) {
+        console.log(color);
+        // {
+        //     rgb: 'rgb(255, 0, 0)',
+        //     rgba: 'rgba(255, 0, 0, 1)',
+        //     hex: '#ff0000',
+        //     hexa: '#ff0000ff',
+        //     value: [255, 0, 0, 255],
+        //     isDark: true,
+        //     isLight: false
+        // }
+    })
+    .catch(function(e) {
+        console.error(e);
+    });
 ```
 
 ### `.getColorFromArray4(array, options)`
@@ -243,7 +221,7 @@ fac.getColorAsync(image2, function(color, data) {
  *
  * @param {Array|Uint8Array} arr
  * @param {Object} [options]
- * @param {string} [options.algorithm="sqrt"] "simple" or "sqrt"
+ * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
  * @param {number} [options.step=1]
  *
