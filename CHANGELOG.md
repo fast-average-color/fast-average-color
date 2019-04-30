@@ -2,6 +2,7 @@
 
 # v5.1.0
 - Add module property in package.json
+- Detailed error output
 
 # v5.0.0.
 - `getColorAsync()` with Promise, callbacks removed.

@@ -2,6 +2,8 @@ import dominantAlgorithm from './algorithm/dominant';
 import simpleAlgorithm from './algorithm/simple';
 import sqrtAlgorithm from './algorithm/sqrt';
 
+const ERROR_PREFIX = 'FastAverageColor: ';
+
 export default class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
@@ -16,6 +18,7 @@ export default class FastAverageColor {
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
+     * @param {boolean} [options.silent]
      * 
      * @returns {Promise}
      */
@@ -52,15 +55,12 @@ export default class FastAverageColor {
             originalSize = this._getOriginalSize(resource),
             size = this._prepareSizeAndPosition(originalSize, options);
 
-        let
-            error = null,
-            value = defaultColor;
+        let value = defaultColor;
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-            return this._prepareResult(
-                defaultColor,
-                new Error('FastAverageColor: Incorrect sizes.')
-            );
+            this._outputError(options, `incorrect sizes for resource "${resource.src}".`);
+
+            return this._prepareResult(defaultColor);
         }
 
         if (!this._ctx) {
@@ -68,10 +68,9 @@ export default class FastAverageColor {
             this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
             if (!this._ctx) {
-                return this._prepareResult(
-                    defaultColor,
-                    new Error('FastAverageColor: Canvas Context 2D is not supported in this browser.')
-                );
+                this._outputError(options, 'Canvas Context 2D is not supported in this browser.');
+
+                return this._prepareResult(defaultColor);
             }
         }
 
@@ -91,12 +90,10 @@ export default class FastAverageColor {
             const bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
             value = this.getColorFromArray4(bitmapData, options);
         } catch (e) {
-            // Security error, CORS
-            // https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image
-            error = e;
+            this._outputError(options, `security error (CORS) for resource ${resource.src}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, e);
         }
 
-        return this._prepareResult(value, error);
+        return this._prepareResult(value);
     }
 
     /**
@@ -138,7 +135,7 @@ export default class FastAverageColor {
                 algorithm = dominantAlgorithm;
                 break;
             default:
-                throw new Error(`FastAverageColor: ${options.algorithm} is unknown algorithm.`);            
+                throw new Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
         }
 
         return algorithm(arr, len, preparedStep);
@@ -231,12 +228,12 @@ export default class FastAverageColor {
                 onerror = () => {
                     unbindEvents();
 
-                    reject(new Error('Image error'));
+                    reject(new Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
                 },
                 onabort = () => {
                     unbindEvents();
 
-                    reject(new Error('Image abort'));
+                    reject(new Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
                 },
                 unbindEvents = () => {
                     resource.removeEventListener('load', onload);
@@ -250,14 +247,13 @@ export default class FastAverageColor {
         });
     }
 
-    _prepareResult(value, error) {
+    _prepareResult(value) {
         const
             rgb = value.slice(0, 3),
             rgba = [].concat(rgb, value[3] / 255),
             isDark = this._isDark(value);
 
         return {
-            error,
             value,
             rgb: 'rgb(' + rgb.join(',') + ')',
             rgba: 'rgba(' + rgba.join(',') + ')',
@@ -309,5 +305,17 @@ export default class FastAverageColor {
         return typeof window === 'undefined' ?
             new OffscreenCanvas(1, 1) :
             document.createElement('canvas');
+    }
+
+    _outputError(options, error, details) {
+        if (!options.silent) {
+            // eslint-disable-next-line no-console
+            console.error(`${ERROR_PREFIX}${error}`);
+
+            if (details) {
+                // eslint-disable-next-line no-console
+                console.error(details);
+            }
+        }
     }
 }
