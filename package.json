@@ -8,6 +8,7 @@
     "url": "https://github.com/fast-average-color/fast-average-color"
   },
   "main": "dist/index.js",
+  "module": "dist/index.es6.js",
   "homepage": "https://github.com/fast-average-color/fast-average-color",
   "license": "MIT",
   "repository": {

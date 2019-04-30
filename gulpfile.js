@@ -10,7 +10,7 @@ const
     copyright = '/*! Fast Average Color | © 2019 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */\n';
 
 gulp.task('js', function() {
-    return gulp.src('src/index.js')
+    return gulp.src('src/**/*.js')
         .pipe(rollup({
             input: 'src/index.js',
             output: {
@@ -20,7 +20,17 @@ gulp.task('js', function() {
             plugins: [babel()]
         }))
         .pipe(replace(/^/, copyright))
-        .pipe(rename('index.js'))
+        .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('es6', function() {
+    return gulp.src('src/**/*.js')
+        .pipe(rollup({
+            input: 'src/index.js',
+            output: { format: 'es' }
+        }))
+        .pipe(replace(/^/, copyright))
+        .pipe(rename('index.es6.js'))
         .pipe(gulp.dest('dist/'));
 });
 
@@ -30,13 +40,6 @@ gulp.task('min', gulp.series('js', function min() {
         .pipe(uglify({output: {comments: /^!/}}))
         .pipe(gulp.dest('dist/'));
 }));
-
-gulp.task('es6', function() {
-    return gulp.src('src/index.js')
-        .pipe(rename('index.es6.js'))
-        .pipe(replace(/^/, copyright))
-        .pipe(gulp.dest('dist/'));
-});
 
 gulp.task('watch', function() {
     gulp.watch(['src/**/*', 'examples/**/*']);

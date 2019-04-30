@@ -115,7 +115,7 @@ console.log(color);
 
 ### ES6
 ```js
-import FastAverageColor from 'fast-average-color/dist/index.es6';
+import FastAverageColor from 'fast-average-color';
 
 const fac = new FastAverageColor();
 const color = fac.getColor(document.querySelector('img'));
