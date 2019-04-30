@@ -9,10 +9,10 @@ interface IFastAverageColorOptions {
     width?: number;
     height?: number;
     defaultColor?: IFastAverageColorRgba;
+    silent?: boolean;
 }
 
 interface IFastAverageColorResult {
-    error?: Error;
     value: IFastAverageColorRgba;
     rgb: string;
     rgba: string;
