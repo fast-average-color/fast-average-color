@@ -139,6 +139,7 @@ console.log(color);
  * @param {number} [options.top=0]
  * @param {number} [options.width=width of resource]
  * @param {number} [options.height=height of resource]
+ * @param {boolean} [options.silent] Disable error output via console.error
  *
  * @returns {Object}
  */
@@ -187,6 +188,7 @@ color = fac.getColor(video);
  * @param {number} [options.top=0]
  * @param {number} [options.width=width of resource]
  * @param {number} [options.height=height of resource]
+ * @param {boolean} [options.silent] Disable error output via console.error
  * 
  * @returns {Promise}
  */
