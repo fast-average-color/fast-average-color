@@ -65,6 +65,88 @@ function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance");
 }
 
+function dominantAlgorithm(arr, len, preparedStep) {
+  var colorHash = {},
+      divider = 24;
+
+  for (var i = 0; i < len; i += preparedStep) {
+    var red = arr[i],
+        green = arr[i + 1],
+        blue = arr[i + 2],
+        alpha = arr[i + 3],
+        key = Math.round(red / divider) + ',' + Math.round(green / divider) + ',' + Math.round(blue / divider);
+
+    if (colorHash[key]) {
+      colorHash[key] = [colorHash[key][0] + red * alpha, colorHash[key][1] + green * alpha, colorHash[key][2] + blue * alpha, colorHash[key][3] + alpha, colorHash[key][4] + 1];
+    } else {
+      colorHash[key] = [red * alpha, green * alpha, blue * alpha, alpha, 1];
+    }
+  }
+
+  var buffer = Object.keys(colorHash).map(function (key) {
+    return colorHash[key];
+  }).sort(function (a, b) {
+    var countA = a[4],
+        countB = b[4];
+    return countA > countB ? -1 : countA === countB ? 0 : 1;
+  });
+
+  var _buffer$ = _slicedToArray(buffer[0], 5),
+      redTotal = _buffer$[0],
+      greenTotal = _buffer$[1],
+      blueTotal = _buffer$[2],
+      alphaTotal = _buffer$[3],
+      count = _buffer$[4];
+
+  return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
+}
+
+function simpleAlgorithm(arr, len, preparedStep) {
+  var redTotal = 0,
+      greenTotal = 0,
+      blueTotal = 0,
+      alphaTotal = 0,
+      count = 0;
+
+  for (var i = 0; i < len; i += preparedStep) {
+    var alpha = arr[i + 3],
+        red = arr[i] * alpha,
+        green = arr[i + 1] * alpha,
+        blue = arr[i + 2] * alpha;
+    redTotal += red;
+    greenTotal += green;
+    blueTotal += blue;
+    alphaTotal += alpha;
+    count++;
+  }
+
+  return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
+}
+
+function sqrtAlgorithm(arr, len, preparedStep) {
+  var redTotal = 0,
+      greenTotal = 0,
+      blueTotal = 0,
+      alphaTotal = 0,
+      count = 0;
+
+  for (var i = 0; i < len; i += preparedStep) {
+    var red = arr[i],
+        green = arr[i + 1],
+        blue = arr[i + 2],
+        alpha = arr[i + 3];
+    redTotal += red * red * alpha;
+    greenTotal += green * green * alpha;
+    blueTotal += blue * blue * alpha;
+    alphaTotal += alpha;
+    count++;
+  }
+
+  return alphaTotal ? [Math.round(Math.sqrt(redTotal / alphaTotal)), Math.round(Math.sqrt(greenTotal / alphaTotal)), Math.round(Math.sqrt(blueTotal / alphaTotal)), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
+}
+
+var ERROR_PREFIX = 'FastAverageColor: ';
+
 var FastAverageColor =
 /*#__PURE__*/
 function () {
@@ -81,7 +163,6 @@ function () {
      * @param {HTMLImageElement} resource
      * @param {Object|null} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
-     * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -89,6 +170,7 @@ function () {
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
+     * @param {boolean} [options.silent]
      * 
      * @returns {Promise}
      */
@@ -106,7 +188,6 @@ function () {
      * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
      * @param {Object|null} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
-     * @param {*}      [options.data]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -127,11 +208,12 @@ function () {
           originalSize = this._getOriginalSize(resource),
           size = this._prepareSizeAndPosition(originalSize, options);
 
-      var error = null,
-          value = defaultColor;
+      var value = defaultColor;
 
       if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-        return this._prepareResult(defaultColor, new Error('FastAverageColor: Incorrect sizes.'));
+        this._outputError(options, "incorrect sizes for resource \"".concat(resource.src, "\"."));
+
+        return this._prepareResult(defaultColor);
       }
 
       if (!this._ctx) {
@@ -139,7 +221,9 @@ function () {
         this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
         if (!this._ctx) {
-          return this._prepareResult(defaultColor, new Error('FastAverageColor: Canvas Context 2D is not supported in this browser.'));
+          this._outputError(options, 'Canvas Context 2D is not supported in this browser.');
+
+          return this._prepareResult(defaultColor);
         }
       }
 
@@ -155,12 +239,10 @@ function () {
 
         value = this.getColorFromArray4(bitmapData, options);
       } catch (e) {
-        // Security error, CORS
-        // https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image
-        error = e;
+        this._outputError(options, "security error (CORS) for resource ".concat(resource.src, ".\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image"), e);
       }
 
-      return this._prepareResult(value, error);
+      return this._prepareResult(value);
     }
     /**
      * Get the average color from a array when 1 pixel is 4 bytes.
@@ -186,14 +268,27 @@ function () {
       }
 
       var len = arrLength - arrLength % bytesPerPixel,
-          preparedStep = (options.step || 1) * bytesPerPixel,
-          algorithm = '_' + (options.algorithm || 'sqrt') + 'Algorithm';
+          preparedStep = (options.step || 1) * bytesPerPixel;
+      var algorithm;
 
-      if (typeof this[algorithm] !== 'function') {
-        throw new Error("FastAverageColor: ".concat(options.algorithm, " is unknown algorithm."));
+      switch (options.algorithm || 'sqrt') {
+        case 'simple':
+          algorithm = simpleAlgorithm;
+          break;
+
+        case 'sqrt':
+          algorithm = sqrtAlgorithm;
+          break;
+
+        case 'dominant':
+          algorithm = dominantAlgorithm;
+          break;
+
+        default:
+          throw new Error("".concat(ERROR_PREFIX).concat(options.algorithm, " is unknown algorithm."));
       }
 
-      return this[algorithm](arr, len, preparedStep);
+      return algorithm(arr, len, preparedStep);
     }
     /**
      * Destroy the instance.
@@ -265,89 +360,6 @@ function () {
       };
     }
   }, {
-    key: "_simpleAlgorithm",
-    value: function _simpleAlgorithm(arr, len, preparedStep) {
-      var redTotal = 0,
-          greenTotal = 0,
-          blueTotal = 0,
-          alphaTotal = 0,
-          count = 0;
-
-      for (var i = 0; i < len; i += preparedStep) {
-        var alpha = arr[i + 3],
-            red = arr[i] * alpha,
-            green = arr[i + 1] * alpha,
-            blue = arr[i + 2] * alpha;
-        redTotal += red;
-        greenTotal += green;
-        blueTotal += blue;
-        alphaTotal += alpha;
-        count++;
-      }
-
-      return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
-    }
-  }, {
-    key: "_sqrtAlgorithm",
-    value: function _sqrtAlgorithm(arr, len, preparedStep) {
-      var redTotal = 0,
-          greenTotal = 0,
-          blueTotal = 0,
-          alphaTotal = 0,
-          count = 0;
-
-      for (var i = 0; i < len; i += preparedStep) {
-        var red = arr[i],
-            green = arr[i + 1],
-            blue = arr[i + 2],
-            alpha = arr[i + 3];
-        redTotal += red * red * alpha;
-        greenTotal += green * green * alpha;
-        blueTotal += blue * blue * alpha;
-        alphaTotal += alpha;
-        count++;
-      }
-
-      return alphaTotal ? [Math.round(Math.sqrt(redTotal / alphaTotal)), Math.round(Math.sqrt(greenTotal / alphaTotal)), Math.round(Math.sqrt(blueTotal / alphaTotal)), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
-    }
-  }, {
-    key: "_dominantAlgorithm",
-    value: function _dominantAlgorithm(arr, len, preparedStep) {
-      var colorHash = {},
-          divider = 24;
-
-      for (var i = 0; i < len; i += preparedStep) {
-        var red = arr[i],
-            green = arr[i + 1],
-            blue = arr[i + 2],
-            alpha = arr[i + 3],
-            key = Math.round(red / divider) + ',' + Math.round(green / divider) + ',' + Math.round(blue / divider);
-
-        if (colorHash[key]) {
-          colorHash[key] = [colorHash[key][0] + red * alpha, colorHash[key][1] + green * alpha, colorHash[key][2] + blue * alpha, colorHash[key][3] + alpha, colorHash[key][4] + 1];
-        } else {
-          colorHash[key] = [red * alpha, green * alpha, blue * alpha, alpha, 1];
-        }
-      }
-
-      var buffer = Object.keys(colorHash).map(function (key) {
-        return colorHash[key];
-      }).sort(function (a, b) {
-        var countA = a[4],
-            countB = b[4];
-        return countA > countB ? -1 : countA === countB ? 0 : 1;
-      });
-
-      var _buffer$ = _slicedToArray(buffer[0], 5),
-          redTotal = _buffer$[0],
-          greenTotal = _buffer$[1],
-          blueTotal = _buffer$[2],
-          alphaTotal = _buffer$[3],
-          count = _buffer$[4];
-
-      return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
-    }
-  }, {
     key: "_bindImageEvents",
     value: function _bindImageEvents(resource, options) {
       var _this = this;
@@ -366,11 +378,11 @@ function () {
         },
             onerror = function onerror() {
           unbindEvents();
-          reject(new Error('Image error'));
+          reject(new Error("".concat(ERROR_PREFIX, "Error loading image ").concat(resource.src, ".")));
         },
             onabort = function onabort() {
           unbindEvents();
-          reject(new Error('Image abort'));
+          reject(new Error("".concat(ERROR_PREFIX, "Image \"").concat(resource.src, "\" loading aborted.")));
         },
             unbindEvents = function unbindEvents() {
           resource.removeEventListener('load', onload);
@@ -385,13 +397,12 @@ function () {
     }
   }, {
     key: "_prepareResult",
-    value: function _prepareResult(value, error) {
+    value: function _prepareResult(value) {
       var rgb = value.slice(0, 3),
           rgba = [].concat(rgb, value[3] / 255),
           isDark = this._isDark(value);
 
       return {
-        error: error,
         value: value,
         rgb: 'rgb(' + rgb.join(',') + ')',
         rgba: 'rgba(' + rgba.join(',') + ')',
@@ -445,6 +456,19 @@ function () {
     key: "_makeCanvas",
     value: function _makeCanvas() {
       return typeof window === 'undefined' ? new OffscreenCanvas(1, 1) : document.createElement('canvas');
+    }
+  }, {
+    key: "_outputError",
+    value: function _outputError(options, error, details) {
+      if (!options.silent) {
+        // eslint-disable-next-line no-console
+        console.error("".concat(ERROR_PREFIX).concat(error));
+
+        if (details) {
+          // eslint-disable-next-line no-console
+          console.error(details);
+        }
+      }
     }
   }]);
 
