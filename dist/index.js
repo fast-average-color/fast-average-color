@@ -170,7 +170,7 @@ function () {
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
-     * @param {boolean} [options.silent]
+     * @param {boolean} [options.silent] Disable error output via console.error
      * 
      * @returns {Promise}
      */
@@ -195,6 +195,7 @@ function () {
      * @param {number} [options.top=0]
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
+     * @param {boolean} [options.silent] Disable error output via console.error
      *
      * @returns {Object}
      */
