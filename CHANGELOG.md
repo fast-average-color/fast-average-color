@@ -1,5 +1,8 @@
 # Changelog
 
+# v5.1.0
+- Add module property in package.json
+
 # v5.0.0.
 - `getColorAsync()` with Promise, callbacks removed.
 Before:
