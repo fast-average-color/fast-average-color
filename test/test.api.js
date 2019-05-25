@@ -2,10 +2,31 @@
 
 const
     assert = require('chai').assert,
-    FastAverageColor = require('../dist/index');
+    FastAverageColor = require('../dist/index.common');
 
 describe('API', function() {
     const defaultColor = [255, 255, 255, 255];
+
+    describe('getColor()', function() {
+        it('if resource is null return default color', function() {
+            const fac = new FastAverageColor();
+            const result = fac.getColor(null);
+            assert.deepEqual(result.value, defaultColor);
+        });
+    });
+
+    describe('getColorAsync()', function(done) {
+        it('if resource is null return error', function() {
+            const fac = new FastAverageColor();
+            fac.getColorAsync(null)
+                .then(function() {
+                    assert.fail();
+                })
+                .catch(function() {
+                    done();
+                });
+        });
+    });
 
     describe('getColorFromArray4()', function() {
         it('if incorrect params should return default color', function() {

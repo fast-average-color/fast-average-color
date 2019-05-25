@@ -126,6 +126,16 @@ const color = fac.getColor(document.querySelector('img'));
 console.log(color);
 ```
 
+### TypeScript
+```ts
+import * as FastAverageColor from 'fast-average-color';
+
+const fac = new FastAverageColor();
+const color = fac.getColor(document.querySelector('img'));
+
+console.log(color);
+```
+
 ## API
 ### `.getColor(resource, [options])`
 ```js
