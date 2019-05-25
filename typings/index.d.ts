@@ -20,6 +20,7 @@ interface IFastAverageColorResult {
     hexa: string;
     isDark: boolean;
     isLight: boolean;
+    error?: Error;
 }
 
 interface IFastAverageColor {
@@ -36,5 +37,5 @@ interface IFastAverageColorStatic {
 declare module 'fast-average-color' {
     const FastAverageColor: IFastAverageColorStatic;
 
-    export = FastAverageColor;    
+    export = FastAverageColor;
 }
