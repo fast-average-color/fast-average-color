@@ -113,8 +113,8 @@ class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
      *
-     * @param {HTMLImageElement} resource
-     * @param {Object|null} [options]
+     * @param {HTMLImageElement | null} resource
+     * @param {Object} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
@@ -128,7 +128,9 @@ class FastAverageColor {
      * @returns {Promise}
      */
     getColorAsync(resource, options) {
-        if (resource.complete) {
+        if (!resource) {
+            return Promise.reject(Error('Call .getColorAsync(null) without resource.'));
+        } else if (resource.complete) {
             const result = this.getColor(resource, options);
             return result.error ? Promise.reject(result.error) : Promise.resolve(result);
         } else {
@@ -139,8 +141,8 @@ class FastAverageColor {
     /**
      * Get the average color from images, videos and canvas.
      *
-     * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
-     * @param {Object|null} [options]
+     * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
+     * @param {Object} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
@@ -156,12 +158,18 @@ class FastAverageColor {
     getColor(resource, options) {
         options = options || {};
 
-        const
-            defaultColor = this._getDefaultColor(options),
-            originalSize = this._getOriginalSize(resource),
-            size = this._prepareSizeAndPosition(originalSize, options);
+        const defaultColor = this._getDefaultColor(options);
 
         let value = defaultColor;
+        if (!resource) {
+            this._outputError(options, 'call .getColor(null) without resource.');
+
+            return this._prepareResult(defaultColor);
+        }
+
+        const 
+            originalSize = this._getOriginalSize(resource),
+            size = this._prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
             this._outputError(options, `incorrect sizes for resource "${resource.src}".`);

@@ -156,8 +156,8 @@ function () {
     /**
      * Get asynchronously the average color from not loaded image.
      *
-     * @param {HTMLImageElement} resource
-     * @param {Object|null} [options]
+     * @param {HTMLImageElement | null} resource
+     * @param {Object} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
@@ -171,7 +171,9 @@ function () {
      * @returns {Promise}
      */
     value: function getColorAsync(resource, options) {
-      if (resource.complete) {
+      if (!resource) {
+        return Promise.reject(Error('Call .getColorAsync(null) without resource.'));
+      } else if (resource.complete) {
         var result = this.getColor(resource, options);
         return result.error ? Promise.reject(result.error) : Promise.resolve(result);
       } else {
@@ -181,8 +183,8 @@ function () {
     /**
      * Get the average color from images, videos and canvas.
      *
-     * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
-     * @param {Object|null} [options]
+     * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
+     * @param {Object} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
@@ -201,11 +203,18 @@ function () {
     value: function getColor(resource, options) {
       options = options || {};
 
-      var defaultColor = this._getDefaultColor(options),
-          originalSize = this._getOriginalSize(resource),
-          size = this._prepareSizeAndPosition(originalSize, options);
+      var defaultColor = this._getDefaultColor(options);
 
       var value = defaultColor;
+
+      if (!resource) {
+        this._outputError(options, 'call .getColor(null) without resource.');
+
+        return this._prepareResult(defaultColor);
+      }
+
+      var originalSize = this._getOriginalSize(resource),
+          size = this._prepareSizeAndPosition(originalSize, options);
 
       if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
         this._outputError(options, "incorrect sizes for resource \"".concat(resource.src, "\"."));
