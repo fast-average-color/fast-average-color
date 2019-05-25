@@ -102,6 +102,7 @@ or
 ```
 
 ### CommonJS
+[Details](./dist/README.md)
 
 ```js
 'use strict';
@@ -113,9 +114,21 @@ const color = fac.getColor(document.querySelector('img'));
 console.log(color);
 ```
 
-### ES6
+### ES Modules
+[Details](./dist/README.md)
+
 ```js
 import FastAverageColor from 'fast-average-color';
+
+const fac = new FastAverageColor();
+const color = fac.getColor(document.querySelector('img'));
+
+console.log(color);
+```
+
+### TypeScript
+```ts
+import * as FastAverageColor from 'fast-average-color';
 
 const fac = new FastAverageColor();
 const color = fac.getColor(document.querySelector('img'));
@@ -129,7 +142,7 @@ console.log(color);
 /**
  * Get synchronously the average color from images, videos and canvas.
  *
- * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
+ * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
  * @param {Object} [options]
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
  * @param {string} [options.mode="speed"] "precision" or "speed"
@@ -179,7 +192,7 @@ color = fac.getColor(video);
 /**
  * Get asynchronously the average color from not loaded image.
  *
- * @param {HTMLImageElement} resource
+ * @param {HTMLImageElement | null} resource
  * @param {Object} [options]
  * @param {string} [options.mode="speed"] "precision" or "speed"
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
@@ -269,14 +282,7 @@ const fac = new FastAverageColor();
 console.log(fac.getColor(image, {algorithm: 'dominant'});
 ```
 
-## Different Builds
-In the `dist/` directory of [the NPM package](https://unpkg.com/fast-average-color/dist/) you will find many different builds.
-
-|Type              |Filename                 |
-|------------------|-------------------------|
-|Development       |`index.js`               |
-|Production        |`index.min.js`           |
-|ES6               |`index.es6.js`           |
+## [Different Builds](./dist/README.md)
 
 ## Development
 ```

@@ -20,16 +20,22 @@ interface IFastAverageColorResult {
     hexa: string;
     isDark: boolean;
     isLight: boolean;
+    error?: Error;
 }
 
 interface IFastAverageColor {
-    getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement, options: IFastAverageColorOptions): IFastAverageColorResult;
-    getColorAsync(resource: HTMLImageElement, options?: IFastAverageColorOptions): Promise<IFastAverageColorResult>;
-    getColorFromArray4(arr: number[] | Uint8Array, options: IFastAverageColorOptions): IFastAverageColorRgba;
+    getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: IFastAverageColorOptions): IFastAverageColorResult;
+    getColorAsync(resource: HTMLImageElement | null, options?: IFastAverageColorOptions): Promise<IFastAverageColorResult>;
+    getColorFromArray4(arr: number[] | Uint8Array, options?: IFastAverageColorOptions): IFastAverageColorRgba;
+    destroy(): void;
+}
+
+interface IFastAverageColorStatic {
+    new (): IFastAverageColor;
 }
 
 declare module 'fast-average-color' {
-	const FastAverageColor: IFastAverageColor;
+    const FastAverageColor: IFastAverageColorStatic;
 
-	export = FastAverageColor;
+    export = FastAverageColor;
 }

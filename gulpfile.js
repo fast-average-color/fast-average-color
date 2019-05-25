@@ -7,7 +7,9 @@ const
     uglify = require('gulp-uglify'),
     rollup = require('gulp-rollup'),
     babel = require('rollup-plugin-babel'),
-    copyright = '/*! Fast Average Color | © 2019 Denis Seleznev | MIT License | https://github.com/hcodes/fast-average-color/ */\n';
+    packageJson = require('./package'),
+    year = new Date().getFullYear(),
+    copyright = `/*! Fast Average Color | © ${year} ${packageJson.author.name} | MIT License | ${packageJson.homepage} */\n`;
 
 gulp.task('js', function() {
     return gulp.src('src/**/*.js')
@@ -23,16 +25,34 @@ gulp.task('js', function() {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('es6', function() {
+gulp.task('common.js', function() {
+    return gulp.src('src/**/*.js')
+        .pipe(rollup({
+            input: 'src/index.js',
+            output: { format: 'cjs' },
+            plugins: [babel()]
+        }))
+        .pipe(replace(/^/, copyright))
+        .pipe(rename('index.common.js'))
+        .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('esm', function() {
     return gulp.src('src/**/*.js')
         .pipe(rollup({
             input: 'src/index.js',
             output: { format: 'es' }
         }))
         .pipe(replace(/^/, copyright))
-        .pipe(rename('index.es6.js'))
+        .pipe(rename('index.esm.js'))
         .pipe(gulp.dest('dist/'));
 });
+
+gulp.task('es6', gulp.series('esm', function() {
+    return gulp.src('dist/index.esm.js')
+        .pipe(rename('index.es6.js'))
+        .pipe(gulp.dest('dist/'));
+}));
 
 gulp.task('min', gulp.series('js', function min() {
     return gulp.src('dist/index.js')
@@ -45,4 +65,4 @@ gulp.task('watch', function() {
     gulp.watch(['src/**/*', 'examples/**/*']);
 });
 
-gulp.task('default', gulp.parallel('min', 'es6'));
+gulp.task('default', gulp.parallel('min', 'common.js', 'es6'));

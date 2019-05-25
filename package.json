@@ -1,14 +1,16 @@
 {
   "name": "fast-average-color",
   "description": "A simple library that calculates the average color of images, videos and canvas in browser environment.",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
     "url": "https://github.com/fast-average-color/fast-average-color"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.es6.js",
+  "main": "dist/index.common.js",
+  "module": "dist/index.esm.js",
+  "unpkg": "dist/index.js",
+  "jsdelivr": "dist/index.js",
   "homepage": "https://github.com/fast-average-color/fast-average-color",
   "license": "MIT",
   "repository": {
@@ -26,10 +28,10 @@
   },
   "typings": "./typings/index.d.ts",
   "files": [
-    "dist/index.js",
-    "dist/index.min.js",
-    "dist/index.es6.js",
-    "typings/index.d.ts",
+    "src",
+    "dist/*.js",
+    "dist/README.md",
+    "typings/*.d.ts",
     "README.md",
     "LICENSE"
   ],

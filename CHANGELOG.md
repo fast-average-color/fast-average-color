@@ -1,5 +1,10 @@
 # Changelog
 
+# v5.2.0
+- Fixes for typings
+- Add `index.esm.js` and `index.common.js` in `/dist`
+- Add a check when resource is null
+
 # v5.1.0
 - Add module property in package.json
 - Detailed error output
