@@ -142,7 +142,7 @@ console.log(color);
 /**
  * Get synchronously the average color from images, videos and canvas.
  *
- * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} resource
+ * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
  * @param {Object} [options]
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
  * @param {string} [options.mode="speed"] "precision" or "speed"
@@ -192,7 +192,7 @@ color = fac.getColor(video);
 /**
  * Get asynchronously the average color from not loaded image.
  *
- * @param {HTMLImageElement} resource
+ * @param {HTMLImageElement | null} resource
  * @param {Object} [options]
  * @param {string} [options.mode="speed"] "precision" or "speed"
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
