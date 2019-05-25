@@ -1,9 +1,5 @@
 /*! Fast Average Color | © 2019 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.FastAverageColor = factory());
-}(this, (function () { 'use strict';
+'use strict';
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -476,6 +472,4 @@ function () {
   return FastAverageColor;
 }();
 
-return FastAverageColor;
-
-})));
+module.exports = FastAverageColor;

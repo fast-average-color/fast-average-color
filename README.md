@@ -102,6 +102,7 @@ or
 ```
 
 ### CommonJS
+[Details](./dist/README.md)
 
 ```js
 'use strict';
@@ -113,7 +114,9 @@ const color = fac.getColor(document.querySelector('img'));
 console.log(color);
 ```
 
-### ES6
+### ES Modules
+[Details](./dist/README.md)
+
 ```js
 import FastAverageColor from 'fast-average-color';
 
@@ -269,14 +272,7 @@ const fac = new FastAverageColor();
 console.log(fac.getColor(image, {algorithm: 'dominant'});
 ```
 
-## Different Builds
-In the `dist/` directory of [the NPM package](https://unpkg.com/fast-average-color/dist/) you will find many different builds.
-
-|Type              |Filename                 |
-|------------------|-------------------------|
-|Development       |`index.js`               |
-|Production        |`index.min.js`           |
-|ES6               |`index.es6.js`           |
+## [Different Builds](./dist/README.md)
 
 ## Development
 ```
