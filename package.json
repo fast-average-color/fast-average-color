@@ -53,11 +53,16 @@
   },
   "scripts": {
     "build": "gulp",
-    "prepare": "gulp",
+    "prepare": "npm run snyk-protect; gulp",
     "eslint": "eslint .",
     "test": "npm run build && npm run eslint && npm run unit-test-coverage && npm run test-typings",
     "unit-test": "mocha",
     "unit-test-coverage": "nyc mocha",
-    "test-typings": "tsc -p tsconfig.json"
+    "test-typings": "tsc -p tsconfig.json",
+    "snyk-protect": "snyk protect"
+  },
+  "snyk": true,
+  "dependencies": {
+    "snyk": "^1.189.0"
   }
 }
