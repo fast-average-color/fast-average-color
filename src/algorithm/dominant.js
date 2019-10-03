@@ -36,7 +36,14 @@ export default function dominantAlgorithm(arr, len, preparedStep) {
         return countA > countB ?  -1 : countA === countB ? 0 : 1;
     });
 
-    const [redTotal, greenTotal, blueTotal, alphaTotal, count] = buffer[0];
+    const max = buffer[0];
+
+    const redTotal = max[0];
+    const greenTotal = max[1];
+    const blueTotal = max[2];
+
+    const alphaTotal = max[3];
+    const count = max[4];
 
     return alphaTotal ? [
         Math.round(redTotal / alphaTotal),

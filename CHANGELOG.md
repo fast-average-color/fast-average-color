@@ -1,5 +1,8 @@
 # Changelog
 
+# v5.2.1
+Update dev deps in package.json.
+
 # v5.2.0
 - Fixes for typings
 - Add `index.esm.js` and `index.common.js` in `/dist`
