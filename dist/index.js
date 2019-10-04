@@ -27,44 +27,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-function _iterableToArrayLimit(arr, i) {
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
 function dominantAlgorithm(arr, len, preparedStep) {
   var colorHash = {},
       divider = 24;
@@ -90,14 +52,12 @@ function dominantAlgorithm(arr, len, preparedStep) {
         countB = b[4];
     return countA > countB ? -1 : countA === countB ? 0 : 1;
   });
-
-  var _buffer$ = _slicedToArray(buffer[0], 5),
-      redTotal = _buffer$[0],
-      greenTotal = _buffer$[1],
-      blueTotal = _buffer$[2],
-      alphaTotal = _buffer$[3],
-      count = _buffer$[4];
-
+  var max = buffer[0];
+  var redTotal = max[0];
+  var greenTotal = max[1];
+  var blueTotal = max[2];
+  var alphaTotal = max[3];
+  var count = max[4];
   return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
 }
 
