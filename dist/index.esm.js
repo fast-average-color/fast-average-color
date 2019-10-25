@@ -131,7 +131,7 @@ class FastAverageColor {
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
      * @param {boolean} [options.silent] Disable error output via console.error
-     * 
+     *
      * @returns {Promise}
      */
     getColorAsync(resource, options) {
@@ -174,7 +174,7 @@ class FastAverageColor {
             return this._prepareResult(defaultColor);
         }
 
-        const 
+        const
             originalSize = this._getOriginalSize(resource),
             size = this._prepareSizeAndPosition(originalSize, options);
 
@@ -344,7 +344,7 @@ class FastAverageColor {
                     } else {
                         resolve(result);
                     }
-                
+
                 },
                 onerror = () => {
                     unbindEvents();
@@ -430,11 +430,9 @@ class FastAverageColor {
 
     _outputError(options, error, details) {
         if (!options.silent) {
-            // eslint-disable-next-line no-console
             console.error(`${ERROR_PREFIX}${error}`);
 
             if (details) {
-                // eslint-disable-next-line no-console
                 console.error(details);
             }
         }

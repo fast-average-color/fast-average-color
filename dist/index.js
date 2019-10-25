@@ -131,7 +131,7 @@ function () {
      * @param {number} [options.width=width of resource]
      * @param {number} [options.height=height of resource]
      * @param {boolean} [options.silent] Disable error output via console.error
-     * 
+     *
      * @returns {Promise}
      */
     value: function getColorAsync(resource, options) {
@@ -431,11 +431,9 @@ function () {
     key: "_outputError",
     value: function _outputError(options, error, details) {
       if (!options.silent) {
-        // eslint-disable-next-line no-console
         console.error("".concat(ERROR_PREFIX).concat(error));
 
         if (details) {
-          // eslint-disable-next-line no-console
           console.error(details);
         }
       }
