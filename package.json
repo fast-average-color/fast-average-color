@@ -39,7 +39,6 @@
     "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "chai": "^4.2.0",
-    "del": "^5.1.0",
     "eslint": "^6.5.1",
     "gulp": "^4.0.2",
     "gulp-rename": "^1.4.0",
