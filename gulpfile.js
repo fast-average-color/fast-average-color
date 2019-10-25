@@ -54,7 +54,7 @@ gulp.task('es6', gulp.series('esm', function() {
         .pipe(gulp.dest('dist/'));
 }));
 
-gulp.task('min', gulp.series('js', function min() {
+gulp.task('min', gulp.series('js', function() {
     return gulp.src('dist/index.js')
         .pipe(rename('index.min.js'))
         .pipe(uglify({output: {comments: /^!/}}))

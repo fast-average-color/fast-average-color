@@ -232,7 +232,6 @@ export default class FastAverageColor {
                     } else {
                         resolve(result);
                     }
-
                 },
                 onerror = () => {
                     unbindEvents();
