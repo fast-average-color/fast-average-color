@@ -26,9 +26,9 @@ export default function dominantAlgorithm(arr, len, preparedStep) {
         }
     }
 
-    const buffer = Object.keys(colorHash).map(function(key) {
+    const buffer = Object.keys(colorHash).map(key => {
         return colorHash[key];
-    }).sort(function(a, b) {
+    }).sort((a, b) => {
         const
             countA = a[4],
             countB = b[4];

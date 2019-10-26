@@ -37,7 +37,12 @@
           }
         ],
         "space-infix-ops": 2,
-        "no-console": 2,
+        "no-console": [
+          2,
+          {
+            allow: ["error"]
+          }
+        ],
         "no-with": 2,
         "no-multiple-empty-lines": 2,
         "brace-style": [
