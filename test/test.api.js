@@ -15,8 +15,8 @@ describe('API', function() {
         });
     });
 
-    describe('getColorAsync()', function(done) {
-        it('if resource is null return error', function() {
+    describe('getColorAsync()', function() {
+        it('if resource is null return error', function(done) {
             const fac = new FastAverageColor();
             fac.getColorAsync(null)
                 .then(function() {

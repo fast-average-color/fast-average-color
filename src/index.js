@@ -24,7 +24,7 @@ export default class FastAverageColor {
      */
     getColorAsync(resource, options) {
         if (!resource) {
-            return Promise.reject(Error('Call .getColorAsync(null) without resource.'));
+            return Promise.reject(Error(`${ERROR_PREFIX}Call .getColorAsync(null) without resource.`));
         } else if (resource.complete) {
             const result = this.getColor(resource, options);
             return result.error ? Promise.reject(result.error) : Promise.resolve(result);
@@ -144,7 +144,7 @@ export default class FastAverageColor {
                 algorithm = dominantAlgorithm;
                 break;
             default:
-                throw new Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
+                throw Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
         }
 
         return algorithm(arr, len, preparedStep);
@@ -236,12 +236,12 @@ export default class FastAverageColor {
                 onerror = () => {
                     unbindEvents();
 
-                    reject(new Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
+                    reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
                 },
                 onabort = () => {
                     unbindEvents();
 
-                    reject(new Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
+                    reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
                 },
                 unbindEvents = () => {
                     resource.removeEventListener('load', onload);
