@@ -44,27 +44,24 @@ npm i fast-average-color
     </div>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
-        window.addEventListener('load', function() {
-            var
-                fac = new FastAverageColor(),
-                container = document.querySelector('.image-container'),
-                color = fac.getColor(container.querySelector('img'));
+        const
+            container = document.querySelector('.image-container'),
+            color = FastAverageColor.getColor(container.querySelector('img'));
 
-            container.style.backgroundColor = color.rgba;
-            container.style.color = color.isDark ? '#fff' : '#000';
+        container.style.backgroundColor = color.rgba;
+        container.style.color = color.isDark ? '#fff' : '#000';
 
-            console.log(color);
-            // {
-            //     error: null,
-            //     rgb: 'rgb(255, 0, 0)',
-            //     rgba: 'rgba(255, 0, 0, 1)',
-            //     hex: '#ff0000',
-            //     hexa: '#ff0000ff',
-            //     value: [255, 0, 0, 255],
-            //     isDark: true,
-            //     isLight: false
-            // }
-        }, false);
+        console.log(color);
+        // {
+        //     error: null,
+        //     rgb: 'rgb(255, 0, 0)',
+        //     rgba: 'rgba(255, 0, 0, 1)',
+        //     hex: '#ff0000',
+        //     hexa: '#ff0000ff',
+        //     value: [255, 0, 0, 255],
+        //     isDark: true,
+        //     isLight: false
+        // }
     </script>
 </body>
 </html>
@@ -85,17 +82,15 @@ or
     </div>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
-        var
-            fac = new FastAverageColor(),
-            container = document.querySelector('.image-container');
+        var container = document.querySelector('.image-container');
 
-        fac.getColorAsync(container.querySelector('img'))
+        FastAverageColor.getColor(container.querySelector('img'))
             .then(function(color) {
                 container.style.backgroundColor = color.rgba;
                 container.style.color = color.isDark ? '#fff' : '#000';
             })
             .catch(function(e) {
-                console.log(e);
+                console.error(e);
             });
     </script>
 </body>
@@ -109,36 +104,32 @@ or
 'use strict';
 
 const FastAverageColor = require('fast-average-color');
-const fac = new FastAverageColor();
-const color = fac.getColor(document.querySelector('img'));
-
-console.log(color);
+FastAverageColor.getColor(document.querySelector('img'))
+    .then((color) => {
+        console.log(color);
+    })
+    .catch((e) => {
+        console.error(e);
+    });
 ```
 
 ### ES Modules
 [Details](./dist/README.md)
 
 ```js
-import FastAverageColor from 'fast-average-color';
+import { getColor } from 'fast-average-color';
 
-const fac = new FastAverageColor();
-const color = fac.getColor(document.querySelector('img'));
-
-console.log(color);
-```
-
-### TypeScript
-```ts
-import * as FastAverageColor from 'fast-average-color';
-
-const fac = new FastAverageColor();
-const color = fac.getColor(document.querySelector('img'));
-
-console.log(color);
+getColor(document.querySelector('img'))
+    .then((result) => {
+        console.log(result);
+    })
+    .catch((e) => {
+        console.error(e);
+    });
 ```
 
 ## API
-### `.getColor(resource, [options])`
+### `.getColorSync(resource, [options])`
 ```js
 /**
  * Get synchronously the average color from images, videos and canvas.
@@ -166,29 +157,29 @@ const fac = new FastAverageColor();
 let color;
 
 // From loaded image (HTMLImageElement)
-color = fac.getColor(image);
+color = FastAverageColor.getColorSync(image);
 
 // From loaded image with default color
-color = fac.getColor({
-    // Set default color - red.  
+color = FastAverageColor.getColorSync({
+    // Set default color - red.
     defaultColor: [255, 0, 0, 255]
 });
 
 // From loaded image with precision
-color = fac.getColor({
+color = fac.getColorSync({
     // Modes: 'speed' (by default) or 'precision'.
     // Current mode is precision.
     mode: 'precision'
 });
 
 // From canvas (HTMLCanvasElement)
-color = fac.getColor(canvas);
+color = fac.getColorSync(canvas);
 
 // From video (HTMLVideoElement)
-color = fac.getColor(video);
+color = fac.getColorSync(video);
 ```
 
-### `.getColorAsync(resource, [options])`
+### `.getColor(resource, [options])`
 ```js
 /**
  * Get asynchronously the average color from not loaded image.
@@ -203,17 +194,15 @@ color = fac.getColor(video);
  * @param {number} [options.width=width of resource]
  * @param {number} [options.height=height of resource]
  * @param {boolean} [options.silent] Disable error output via console.error
- * 
+ *
  * @returns {Promise}
  */
 ```
 Get asynchronously the average color from a resource (not loaded images, videos or canvas).
 ```js
-const fac = new FastAverageColor();
-
 // From not loaded image (HTMLImageElement)
-fac.getColorAsync(image, { algorithm: 'dominant' })
-    .then(function(color) {
+FastAverageColor.getColor(image, { algorithm: 'dominant' })
+    .then((color) => {
         console.log(color);
         // {
         //     rgb: 'rgb(255, 0, 0)',
@@ -247,27 +236,25 @@ fac.getColorAsync(image, { algorithm: 'dominant' })
 
 Get the average color from a array when 1 pixel is 4 bytes.
 ```js
-const fac = new FastAverageColor();
 const buffer = [
     // red, green, blue, alpha
     200, 200, 200, 255,
     100, 100, 100, 255
 ];
-const color = fac.getColorFromArray4(buffer);
+const color = FastAverageColor.getColorFromArray4(buffer);
 console.log(color);
 // [150, 150, 150, 255]
 ```
 
 
-### `.destroy()`
+### `.removeCanvas()`
 ```js
-const fac = new FastAverageColor();
-const color = fac.getColor(document.querySelector('img'));
+const color = FastAverageColor.getColor(document.querySelector('img'));
 
 //...
 
-// The instance is no longer needed.
-fac.destroy();
+// Avoid memory.
+FastAverageColor.removeCanvas();
 ```
 
 ## Algorithms
@@ -275,7 +262,7 @@ fac.destroy();
 - `sqrt` (default)
 - `dominant`
 
-[Comparison of algorithms for photos](https://fast-average-color.github.io/examples/algorithms.html)  
+[Comparison of algorithms for photos](https://fast-average-color.github.io/examples/algorithms.html)
 [Comparison of algorithms for 2 colors](https://fast-average-color.github.io/compare/)
 
 ```js

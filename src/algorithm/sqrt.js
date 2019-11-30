@@ -1,4 +1,4 @@
-export default function sqrtAlgorithm(arr, len, preparedStep) {
+export function sqrtAlgorithm(arr, len, preparedStep) {
     let
         redTotal = 0,
         greenTotal = 0,

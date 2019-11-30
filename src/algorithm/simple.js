@@ -1,4 +1,4 @@
-export default function simpleAlgorithm(arr, len, preparedStep) {
+export function simpleAlgorithm(arr, len, preparedStep) {
     let
         redTotal = 0,
         greenTotal = 0,

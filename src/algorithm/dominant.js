@@ -1,4 +1,4 @@
-export default function dominantAlgorithm(arr, len, preparedStep) {
+export function dominantAlgorithm(arr, len, preparedStep) {
     const
         colorHash = {},
         divider = 24;
