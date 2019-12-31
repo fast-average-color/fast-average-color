@@ -32,21 +32,19 @@ color = fac.getColor(image);
 
 // From loaded image with default color
 color = fac.getColor({
-    // Set default color - red.  
-    defaultColor: [255, 0, 0, 255]
+    defaultColor: [255, 0, 0, 255] // red
 });
 
 // From loaded image without ignored color
 // For example, to ignore the white background in logos
 color = fac.getColor({
-    ignoredColor: [255, 255, 255, 255]
+    ignoredColor: [255, 255, 255, 255] // white
 });
 
 
 // From loaded image with precision
+// Modes: 'speed' (by default) or 'precision'.
 color = fac.getColor({
-    // Modes: 'speed' (by default) or 'precision'.
-    // Current mode is precision.
     mode: 'precision'
 });
 
@@ -101,7 +99,7 @@ fac.getColorAsync(image, { algorithm: 'dominant' })
     });
 ```
 
-## `.getColorFromArray4(array, [options])`
+## `.getColorFromArray4(arr, [options])`
 ```js
 /**
  * Get the average color from a array when 1 pixel is 4 bytes.
