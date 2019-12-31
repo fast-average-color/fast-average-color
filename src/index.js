@@ -8,7 +8,7 @@ export default class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
      *
-     * @param {HTMLImageElement | null} resource
+     * @param {HTMLImageElement | string | null} resource
      * @param {Object} [options]
      * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
      * @param {string} [options.mode="speed"] "precision" or "speed"
@@ -24,7 +24,9 @@ export default class FastAverageColor {
      */
     getColorAsync(resource, options) {
         if (!resource) {
-            return Promise.reject(Error(`${ERROR_PREFIX}Call .getColorAsync(null) without resource.`));
+            return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
+        } else if (typeof resource === 'string') {
+            return this._bindImageEvents(new Image(resource), options);
         } else if (resource.complete) {
             const result = this.getColor(resource, options);
             return result.error ? Promise.reject(result.error) : Promise.resolve(result);
