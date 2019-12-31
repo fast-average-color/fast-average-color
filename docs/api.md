@@ -35,7 +35,7 @@ color = fac.getColor({
     defaultColor: [255, 0, 0, 255] // red
 });
 
-// From loaded image without ignored color
+// From loaded image with ignored color
 // For example, to ignore the white background in logos
 color = fac.getColor({
     ignoredColor: [255, 255, 255, 255] // white

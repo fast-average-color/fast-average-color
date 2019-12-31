@@ -91,3 +91,25 @@
 </script>
 ...
 ```
+
+## Get average color with ignored color
+For example, to ignore white background in logos.
+
+```html
+...
+<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script>
+    var fac = new FastAverageColor();
+
+    fac.getColorAsync('./logo.png', {
+        ignoredColor: [255, 255, 255, 255] // white
+    })
+        .then(function(color) {
+            console.log('Average color', color);
+        })
+        .catch(function(e) {
+            console.log(e);
+        });
+</script>
+...
+```
