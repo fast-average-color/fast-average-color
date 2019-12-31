@@ -22,7 +22,7 @@ A simple library that calculates the average color of any images or videos in br
 - [API](./docs/api.md)
   + [.getColor(resource, [options])](./docs/api.md#getcolorresource-options)
   + [.getColorAsync(resource, [options])](./docs/api.md#getcolorasyncresource-options)
-  + [.getColorFromArray4(arr, [options])](./docs/api.md#getcolorfromarr4array-options)
+  + [.getColorFromArray4(arr, [options])](./docs/api.md#getcolorfromarray4arr-options)
   + [.destroy()](./docs/api.md#destroy)
 - [Storing an image from a foreign origin](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image#Storing_an_image_from_a_foreign_origin)
 - [Different Builds](./dist/README.md)
