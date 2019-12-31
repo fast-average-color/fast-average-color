@@ -1,5 +1,16 @@
 # Changelog
 
+# v6.0.0
+- Add `ignoredColor` option #39. [Example](./docs/examples.md#get-average-color-with-ignored-color)
+- Get average color from image url #38. [Example](./docs/examples.md#get-average-color-from-image-url)
+- Split `README.md` by files #40.
+- Update dev deps in package.json #41.
+
+*BREAKING CHANGES*
+`defaultColor` option is changed.
+Before: `[255, 255, 255, 255]`.
+After: `[0, 0, 0, 0]`.
+
 # v5.2.1
 Update dev deps in package.json.
 

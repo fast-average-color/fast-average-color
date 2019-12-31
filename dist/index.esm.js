@@ -1,16 +1,29 @@
 /*! Fast Average Color | © 2019 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
-function dominantAlgorithm(arr, len, preparedStep) {
+function isIgnoredColor(arr, num, ignoredColor) {
+    return arr[num] === ignoredColor[0] && // red
+        arr[num + 1] === ignoredColor[1] && // green
+        arr[num + 2] === ignoredColor[2] && // blue
+        arr[num + 3] === ignoredColor[3]; // alpha
+}
+
+function dominantAlgorithm(arr, len, options) {
     const
         colorHash = {},
-        divider = 24;
+        divider = 24,
+        ignoredColor = options.ignoredColor;
 
-    for (let i = 0; i < len; i += preparedStep) {
+    for (let i = 0; i < len; i += options.step) {
         let
             red = arr[i],
             green = arr[i + 1],
             blue = arr[i + 2],
-            alpha = arr[i + 3],
-            key = Math.round(red / divider) + ',' +
+            alpha = arr[i + 3];
+
+        if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
+            continue;
+        }
+
+        const key = Math.round(red / divider) + ',' +
                 Math.round(green / divider) + ',' +
                 Math.round(blue / divider);
 
@@ -51,10 +64,10 @@ function dominantAlgorithm(arr, len, preparedStep) {
         Math.round(greenTotal / alphaTotal),
         Math.round(blueTotal / alphaTotal),
         Math.round(alphaTotal / count)
-    ] : [0, 0, 0, 0];
+    ] : options.defaultColor;
 }
 
-function simpleAlgorithm(arr, len, preparedStep) {
+function simpleAlgorithm(arr, len, options) {
     let
         redTotal = 0,
         greenTotal = 0,
@@ -62,12 +75,18 @@ function simpleAlgorithm(arr, len, preparedStep) {
         alphaTotal = 0,
         count = 0;
 
-    for (let i = 0; i < len; i += preparedStep) {
+    const ignoredColor = options.ignoredColor;
+
+    for (let i = 0; i < len; i += options.step) {
         const
             alpha = arr[i + 3],
             red = arr[i] * alpha,
             green = arr[i + 1] * alpha,
             blue = arr[i + 2] * alpha;
+
+        if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
+            continue;
+        }
 
         redTotal += red;
         greenTotal += green;
@@ -81,10 +100,10 @@ function simpleAlgorithm(arr, len, preparedStep) {
         Math.round(greenTotal / alphaTotal),
         Math.round(blueTotal / alphaTotal),
         Math.round(alphaTotal / count)
-    ] : [0, 0, 0, 0];
+    ] : options.defaultColor;
 }
 
-function sqrtAlgorithm(arr, len, preparedStep) {
+function sqrtAlgorithm(arr, len, options) {
     let
         redTotal = 0,
         greenTotal = 0,
@@ -92,12 +111,18 @@ function sqrtAlgorithm(arr, len, preparedStep) {
         alphaTotal = 0,
         count = 0;
 
-    for (let i = 0; i < len; i += preparedStep) {
+    const ignoredColor = options.ignoredColor;
+
+    for (let i = 0; i < len; i += options.step) {
         const
             red = arr[i],
             green = arr[i + 1],
             blue = arr[i + 2],
             alpha = arr[i + 3];
+
+        if (ignoredColor && isIgnoredColor(arr, i, options)) {
+            continue;
+        }
 
         redTotal += red * red * alpha;
         greenTotal += green * green * alpha;
@@ -111,7 +136,7 @@ function sqrtAlgorithm(arr, len, preparedStep) {
         Math.round(Math.sqrt(greenTotal / alphaTotal)),
         Math.round(Math.sqrt(blueTotal / alphaTotal)),
         Math.round(alphaTotal / count)
-    ] : [0, 0, 0, 0];
+    ] : options.defaultColor;
 }
 
 const ERROR_PREFIX = 'FastAverageColor: ';
@@ -120,9 +145,10 @@ class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
      *
-     * @param {HTMLImageElement | null} resource
+     * @param {HTMLImageElement | string | null} resource
      * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -136,7 +162,9 @@ class FastAverageColor {
      */
     getColorAsync(resource, options) {
         if (!resource) {
-            return Promise.reject(Error('Call .getColorAsync(null) without resource.'));
+            return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
+        } else if (typeof resource === 'string') {
+            return this._bindImageEvents(new Image(resource), options);
         } else if (resource.complete) {
             const result = this.getColor(resource, options);
             return result.error ? Promise.reject(result.error) : Promise.resolve(result);
@@ -150,7 +178,8 @@ class FastAverageColor {
      *
      * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
      * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -223,7 +252,8 @@ class FastAverageColor {
      * @param {Array|Uint8Array} arr
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha] 
      * @param {number} [options.step=1]
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
@@ -233,15 +263,16 @@ class FastAverageColor {
 
         const
             bytesPerPixel = 4,
-            arrLength = arr.length;
+            arrLength = arr.length,
+            defaultColor = this._getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
-            return this._getDefaultColor(options);
+            return defaultColor;
         }
 
         const
             len = arrLength - arrLength % bytesPerPixel,
-            preparedStep = (options.step || 1) * bytesPerPixel;
+            step = (options.step || 1) * bytesPerPixel;
 
         let algorithm;
 
@@ -256,10 +287,14 @@ class FastAverageColor {
                 algorithm = dominantAlgorithm;
                 break;
             default:
-                throw new Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
+                throw Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
         }
 
-        return algorithm(arr, len, preparedStep);
+        return algorithm(arr, len, {
+            defaultColor,
+            ignoredColor: options.ignoredColor,
+            step
+        });
     }
 
     /**
@@ -271,7 +306,7 @@ class FastAverageColor {
     }
 
     _getDefaultColor(options) {
-        return this._getOption(options, 'defaultColor', [255, 255, 255, 255]);
+        return this._getOption(options, 'defaultColor', [0, 0, 0, 0]);
     }
 
     _getOption(options, name, defaultValue) {
@@ -348,12 +383,12 @@ class FastAverageColor {
                 onerror = () => {
                     unbindEvents();
 
-                    reject(new Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
+                    reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
                 },
                 onabort = () => {
                     unbindEvents();
 
-                    reject(new Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
+                    reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
                 },
                 unbindEvents = () => {
                     resource.removeEventListener('load', onload);

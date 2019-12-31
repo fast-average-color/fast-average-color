@@ -1,7 +1,7 @@
 {
   "name": "fast-average-color",
   "description": "A simple library that calculates the average color of images, videos and canvas in browser environment.",
-  "version": "5.2.1",
+  "version": "6.0.0",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
