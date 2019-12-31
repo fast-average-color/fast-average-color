@@ -15,10 +15,11 @@ A simple library that calculates the average color of any images or videos in br
   + [CommonJS](./docs/using.md#commonjs)
   + [ES Modules](./docs/using.md#es-modules)
   + [TypeScript](./docs/using.md-typescript)
-  + Get average color
+  + [Get average color](./docs/using.md#get-average-color)
     - [from loaded image](./docs/using.md#from-loaded-image)
     - [from unloaded image](./docs/using.md#from-unloaded-image)
     - [from image url](./docs/using.md#from-image-url)
+- [Algorithms](./docs/algorithms)
 - [API](./docs/api.md)
   + [.getColor(resource, [options])](./docs/api.md#getcolorresource-options)
   + [.getColorAsync()](./docs/api.md#getcolorasyncresource-options)
