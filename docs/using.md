@@ -40,7 +40,7 @@ console.log(color);
 
 ## Get average color
 
-### from loaded image
+### From loaded image
 ```html
 <html>
 <body>
@@ -80,7 +80,7 @@ console.log(color);
 </html>
 ```
 
-### from unloaded image
+### From unloaded image
 
 ```html
 <html>
@@ -112,7 +112,7 @@ console.log(color);
 </html>
 ```
 
-### color from image url
+### From image url
 ```html
 ...
 <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
