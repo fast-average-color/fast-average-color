@@ -98,7 +98,7 @@ fac.getColorAsync(image, { algorithm: 'dominant' })
     });
 ```
 
-## `.getColorFromArray4(array, options)`
+## `.getColorFromArray4(array, [options])`
 ```js
 /**
  * Get the average color from a array when 1 pixel is 4 bytes.
