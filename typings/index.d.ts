@@ -2,13 +2,20 @@ type IFastAverageColorRgba = [number, number, number, number]; // [red, green, b
 
 interface IFastAverageColorOptions {
     algorithm?: 'simple' | 'sqrt' | 'dominant';
+    
     mode?: 'precision' | 'speed';
+    
     step?: number;
+    
     left?: number;
     top?: number;
+
     width?: number;
     height?: number;
+
     defaultColor?: IFastAverageColorRgba;
+    ignoredColor?: IFastAverageColorRgba;
+
     silent?: boolean;
 }
 

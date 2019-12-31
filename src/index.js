@@ -10,7 +10,8 @@ export default class FastAverageColor {
      *
      * @param {HTMLImageElement | string | null} resource
      * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -40,7 +41,8 @@ export default class FastAverageColor {
      *
      * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
      * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -113,7 +115,8 @@ export default class FastAverageColor {
      * @param {Array|Uint8Array} arr
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha] 
      * @param {number} [options.step=1]
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
@@ -123,15 +126,16 @@ export default class FastAverageColor {
 
         const
             bytesPerPixel = 4,
-            arrLength = arr.length;
+            arrLength = arr.length,
+            defaultColor = this._getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
-            return this._getDefaultColor(options);
+            return defaultColor;
         }
 
         const
             len = arrLength - arrLength % bytesPerPixel,
-            preparedStep = (options.step || 1) * bytesPerPixel;
+            step = (options.step || 1) * bytesPerPixel;
 
         let algorithm;
 
@@ -149,7 +153,11 @@ export default class FastAverageColor {
                 throw Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
         }
 
-        return algorithm(arr, len, preparedStep);
+        return algorithm(arr, len, {
+            defaultColor,
+            ignoredColor: options.ignoredColor,
+            step
+        });
     }
 
     /**
@@ -161,7 +169,7 @@ export default class FastAverageColor {
     }
 
     _getDefaultColor(options) {
-        return this._getOption(options, 'defaultColor', [255, 255, 255, 255]);
+        return this._getOption(options, 'defaultColor', [0, 0, 0, 0]);
     }
 
     _getOption(options, name, defaultValue) {
