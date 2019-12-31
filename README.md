@@ -30,7 +30,7 @@ A simple library that calculates the average color of any images or videos in br
 npm i fast-average-color
 ```
 
-### Simple
+### Get average color from loaded image
 ```html
 <html>
 <body>
@@ -70,7 +70,7 @@ npm i fast-average-color
 </html>
 ```
 
-or
+### Get average color from unloaded image
 
 ```html
 <html>
@@ -100,6 +100,27 @@ or
     </script>
 </body>
 </html>
+```
+
+### Get average color from image url
+```html
+...
+<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script>
+    var fac = new FastAverageColor();
+
+    fac.getColorAsync('./image.jpg')
+        .then(function(color) {
+            container.style.backgroundColor = color.rgba;
+            container.style.color = color.isDark ? '#fff' : '#000';
+
+            console.log('Average color', color);
+        })
+        .catch(function(e) {
+            console.log(e);
+        });
+</script>
+...
 ```
 
 ### CommonJS
@@ -193,7 +214,7 @@ color = fac.getColor(video);
 /**
  * Get asynchronously the average color from not loaded image.
  *
- * @param {HTMLImageElement | null} resource
+ * @param {HTMLImageElement | string | null} resource
  * @param {Object} [options]
  * @param {string} [options.mode="speed"] "precision" or "speed"
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"

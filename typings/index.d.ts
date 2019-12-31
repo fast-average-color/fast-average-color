@@ -25,7 +25,7 @@ interface IFastAverageColorResult {
 
 interface IFastAverageColor {
     getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: IFastAverageColorOptions): IFastAverageColorResult;
-    getColorAsync(resource: HTMLImageElement | null, options?: IFastAverageColorOptions): Promise<IFastAverageColorResult>;
+    getColorAsync(resource: HTMLImageElement | string | null, options?: IFastAverageColorOptions): Promise<IFastAverageColorResult>;
     getColorFromArray4(arr: number[] | Uint8Array, options?: IFastAverageColorOptions): IFastAverageColorRgba;
     destroy(): void;
 }
