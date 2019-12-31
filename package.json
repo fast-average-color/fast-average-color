@@ -36,19 +36,20 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@babel/core": "^7.7.2",
-    "@babel/preset-env": "^7.7.1",
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
     "chai": "^4.2.0",
-    "eslint": "^6.6.0",
+    "eslint": "^6.8.0",
     "gulp": "^4.0.2",
-    "gulp-rename": "^1.4.0",
+    "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-rollup": "^2.16.2",
     "gulp-uglify": "^3.0.2",
     "mocha": "^6.2.2",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
+    "rollup": "^1.27.14",
     "rollup-plugin-babel": "^4.3.3",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.4"
   },
   "scripts": {
     "build": "gulp",
