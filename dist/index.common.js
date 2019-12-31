@@ -23,16 +23,29 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function dominantAlgorithm(arr, len, preparedStep) {
-  var colorHash = {},
-      divider = 24;
+function isIgnoredColor(arr, num, ignoredColor) {
+  return arr[num] === ignoredColor[0] && // red
+  arr[num + 1] === ignoredColor[1] && // green
+  arr[num + 2] === ignoredColor[2] && // blue
+  arr[num + 3] === ignoredColor[3]; // alpha
+}
 
-  for (var i = 0; i < len; i += preparedStep) {
+function dominantAlgorithm(arr, len, options) {
+  var colorHash = {},
+      divider = 24,
+      ignoredColor = options.ignoredColor;
+
+  for (var i = 0; i < len; i += options.step) {
     var red = arr[i],
         green = arr[i + 1],
         blue = arr[i + 2],
-        alpha = arr[i + 3],
-        key = Math.round(red / divider) + ',' + Math.round(green / divider) + ',' + Math.round(blue / divider);
+        alpha = arr[i + 3];
+
+    if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
+      continue;
+    }
+
+    var key = Math.round(red / divider) + ',' + Math.round(green / divider) + ',' + Math.round(blue / divider);
 
     if (colorHash[key]) {
       colorHash[key] = [colorHash[key][0] + red * alpha, colorHash[key][1] + green * alpha, colorHash[key][2] + blue * alpha, colorHash[key][3] + alpha, colorHash[key][4] + 1];
@@ -54,21 +67,27 @@ function dominantAlgorithm(arr, len, preparedStep) {
   var blueTotal = max[2];
   var alphaTotal = max[3];
   var count = max[4];
-  return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
+  return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : options.defaultColor;
 }
 
-function simpleAlgorithm(arr, len, preparedStep) {
+function simpleAlgorithm(arr, len, options) {
   var redTotal = 0,
       greenTotal = 0,
       blueTotal = 0,
       alphaTotal = 0,
       count = 0;
+  var ignoredColor = options.ignoredColor;
 
-  for (var i = 0; i < len; i += preparedStep) {
+  for (var i = 0; i < len; i += options.step) {
     var alpha = arr[i + 3],
         red = arr[i] * alpha,
         green = arr[i + 1] * alpha,
         blue = arr[i + 2] * alpha;
+
+    if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
+      continue;
+    }
+
     redTotal += red;
     greenTotal += green;
     blueTotal += blue;
@@ -76,21 +95,27 @@ function simpleAlgorithm(arr, len, preparedStep) {
     count++;
   }
 
-  return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
+  return alphaTotal ? [Math.round(redTotal / alphaTotal), Math.round(greenTotal / alphaTotal), Math.round(blueTotal / alphaTotal), Math.round(alphaTotal / count)] : options.defaultColor;
 }
 
-function sqrtAlgorithm(arr, len, preparedStep) {
+function sqrtAlgorithm(arr, len, options) {
   var redTotal = 0,
       greenTotal = 0,
       blueTotal = 0,
       alphaTotal = 0,
       count = 0;
+  var ignoredColor = options.ignoredColor;
 
-  for (var i = 0; i < len; i += preparedStep) {
+  for (var i = 0; i < len; i += options.step) {
     var red = arr[i],
         green = arr[i + 1],
         blue = arr[i + 2],
         alpha = arr[i + 3];
+
+    if (ignoredColor && isIgnoredColor(arr, i, options)) {
+      continue;
+    }
+
     redTotal += red * red * alpha;
     greenTotal += green * green * alpha;
     blueTotal += blue * blue * alpha;
@@ -98,7 +123,7 @@ function sqrtAlgorithm(arr, len, preparedStep) {
     count++;
   }
 
-  return alphaTotal ? [Math.round(Math.sqrt(redTotal / alphaTotal)), Math.round(Math.sqrt(greenTotal / alphaTotal)), Math.round(Math.sqrt(blueTotal / alphaTotal)), Math.round(alphaTotal / count)] : [0, 0, 0, 0];
+  return alphaTotal ? [Math.round(Math.sqrt(redTotal / alphaTotal)), Math.round(Math.sqrt(greenTotal / alphaTotal)), Math.round(Math.sqrt(blueTotal / alphaTotal)), Math.round(alphaTotal / count)] : options.defaultColor;
 }
 
 var ERROR_PREFIX = 'FastAverageColor: ';
@@ -116,9 +141,10 @@ function () {
     /**
      * Get asynchronously the average color from not loaded image.
      *
-     * @param {HTMLImageElement | null} resource
+     * @param {HTMLImageElement | string | null} resource
      * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -132,7 +158,9 @@ function () {
      */
     value: function getColorAsync(resource, options) {
       if (!resource) {
-        return Promise.reject(Error('Call .getColorAsync(null) without resource.'));
+        return Promise.reject(Error("".concat(ERROR_PREFIX, "call .getColorAsync() without resource.")));
+      } else if (typeof resource === 'string') {
+        return this._bindImageEvents(new Image(resource), options);
       } else if (resource.complete) {
         var result = this.getColor(resource, options);
         return result.error ? Promise.reject(result.error) : Promise.resolve(result);
@@ -145,7 +173,8 @@ function () {
      *
      * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
      * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {string} [options.mode="speed"] "precision" or "speed"
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {number} [options.step=1]
@@ -216,7 +245,8 @@ function () {
      * @param {Array|Uint8Array} arr
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha] 
      * @param {number} [options.step=1]
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
@@ -226,15 +256,17 @@ function () {
     key: "getColorFromArray4",
     value: function getColorFromArray4(arr, options) {
       options = options || {};
+
       var bytesPerPixel = 4,
-          arrLength = arr.length;
+          arrLength = arr.length,
+          defaultColor = this._getDefaultColor(options);
 
       if (arrLength < bytesPerPixel) {
-        return this._getDefaultColor(options);
+        return defaultColor;
       }
 
       var len = arrLength - arrLength % bytesPerPixel,
-          preparedStep = (options.step || 1) * bytesPerPixel;
+          step = (options.step || 1) * bytesPerPixel;
       var algorithm;
 
       switch (options.algorithm || 'sqrt') {
@@ -251,10 +283,14 @@ function () {
           break;
 
         default:
-          throw new Error("".concat(ERROR_PREFIX).concat(options.algorithm, " is unknown algorithm."));
+          throw Error("".concat(ERROR_PREFIX).concat(options.algorithm, " is unknown algorithm."));
       }
 
-      return algorithm(arr, len, preparedStep);
+      return algorithm(arr, len, {
+        defaultColor: defaultColor,
+        ignoredColor: options.ignoredColor,
+        step: step
+      });
     }
     /**
      * Destroy the instance.
@@ -269,7 +305,7 @@ function () {
   }, {
     key: "_getDefaultColor",
     value: function _getDefaultColor(options) {
-      return this._getOption(options, 'defaultColor', [255, 255, 255, 255]);
+      return this._getOption(options, 'defaultColor', [0, 0, 0, 0]);
     }
   }, {
     key: "_getOption",
@@ -344,11 +380,11 @@ function () {
         },
             onerror = function onerror() {
           unbindEvents();
-          reject(new Error("".concat(ERROR_PREFIX, "Error loading image ").concat(resource.src, ".")));
+          reject(Error("".concat(ERROR_PREFIX, "Error loading image ").concat(resource.src, ".")));
         },
             onabort = function onabort() {
           unbindEvents();
-          reject(new Error("".concat(ERROR_PREFIX, "Image \"").concat(resource.src, "\" loading aborted.")));
+          reject(Error("".concat(ERROR_PREFIX, "Image \"").concat(resource.src, "\" loading aborted.")));
         },
             unbindEvents = function unbindEvents() {
           resource.removeEventListener('load', onload);
