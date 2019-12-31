@@ -1,87 +1,11 @@
 # Using
+
+## Install
 ```
 npm i fast-average-color
 ```
 
-## CommonJS
-[Details](../dist/README.md)
-
-```js
-'use strict';
-
-const FastAverageColor = require('fast-average-color');
-const fac = new FastAverageColor();
-const color = fac.getColor(document.querySelector('img'));
-
-console.log(color);
-```
-
-## ES Modules
-[Details](../dist/README.md)
-
-```js
-import FastAverageColor from 'fast-average-color';
-
-const fac = new FastAverageColor();
-const color = fac.getColor(document.querySelector('img'));
-
-console.log(color);
-```
-
-## TypeScript
-```ts
-import * as FastAverageColor from 'fast-average-color';
-
-const fac = new FastAverageColor();
-const color = fac.getColor(document.querySelector('img'));
-
-console.log(color);
-```
-
-## Get average color
-
-### From loaded image
-```html
-<html>
-<body>
-    ...
-    <div class="image-container">
-        <img src="image.png" />
-        <div>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </div>
-    </div>
-    <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
-    <script>
-        window.addEventListener('load', function() {
-            var
-                fac = new FastAverageColor(),
-                container = document.querySelector('.image-container'),
-                color = fac.getColor(container.querySelector('img'));
-
-            container.style.backgroundColor = color.rgba;
-            container.style.color = color.isDark ? '#fff' : '#000';
-
-            console.log(color);
-            // {
-            //     error: null,
-            //     rgb: 'rgb(255, 0, 0)',
-            //     rgba: 'rgba(255, 0, 0, 1)',
-            //     hex: '#ff0000',
-            //     hexa: '#ff0000ff',
-            //     value: [255, 0, 0, 255],
-            //     isDark: true,
-            //     isLight: false
-            // }
-        }, false);
-    </script>
-</body>
-</html>
-```
-
-### From unloaded image
-
+### Browser
 ```html
 <html>
 <body>
@@ -112,23 +36,52 @@ console.log(color);
 </html>
 ```
 
-### From image url
-```html
-...
-<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
-<script>
-    var fac = new FastAverageColor();
+## CommonJS
+[Details](../dist/README.md)
 
-    fac.getColorAsync('./image.jpg')
-        .then(function(color) {
-            container.style.backgroundColor = color.rgba;
-            container.style.color = color.isDark ? '#fff' : '#000';
+```js
+'use strict';
 
-            console.log('Average color', color);
-        })
-        .catch(function(e) {
-            console.log(e);
-        });
-</script>
-...
+const FastAverageColor = require('fast-average-color');
+const fac = new FastAverageColor();
+fac.getColorAsync(container.querySelector('img'))
+    .then(function(color) {
+        container.style.backgroundColor = color.rgba;
+        container.style.color = color.isDark ? '#fff' : '#000';
+    })
+    .catch(function(e) {
+        console.log(e);
+    });
+```
+
+## ES Modules
+[Details](../dist/README.md)
+
+```js
+import FastAverageColor from 'fast-average-color';
+
+const fac = new FastAverageColor();
+fac.getColorAsync(container.querySelector('img'))
+    .then(function(color) {
+        container.style.backgroundColor = color.rgba;
+        container.style.color = color.isDark ? '#fff' : '#000';
+    })
+    .catch(function(e) {
+        console.log(e);
+    });
+```
+
+## TypeScript
+```ts
+import * as FastAverageColor from 'fast-average-color';
+
+const fac = new FastAverageColor();
+fac.getColorAsync(container.querySelector('img'))
+    .then(function(color) {
+        container.style.backgroundColor = color.rgba;
+        container.style.color = color.isDark ? '#fff' : '#000';
+    })
+    .catch(function(e) {
+        console.log(e);
+    });
 ```
