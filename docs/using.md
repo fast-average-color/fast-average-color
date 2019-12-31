@@ -38,7 +38,9 @@ const color = fac.getColor(document.querySelector('img'));
 console.log(color);
 ```
 
-## Get average color from loaded image
+## Get average color
+
+### from loaded image
 ```html
 <html>
 <body>
@@ -78,7 +80,7 @@ console.log(color);
 </html>
 ```
 
-## Get average color from unloaded image
+### from unloaded image
 
 ```html
 <html>
@@ -110,7 +112,7 @@ console.log(color);
 </html>
 ```
 
-## Get average color from image url
+### color from image url
 ```html
 ...
 <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
