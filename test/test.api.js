@@ -5,7 +5,7 @@ const
     FastAverageColor = require('../dist/index.common');
 
 describe('API', function() {
-    const defaultColor = [255, 255, 255, 255];
+    const defaultColor = [0, 0, 0, 0];
 
     describe('getColor()', function() {
         it('if resource is null return default color', function() {
@@ -117,6 +117,23 @@ describe('API', function() {
                 });
 
             assert.deepEqual(color, [197, 197, 197, 200]);
+        });
+
+        it('should return average color without ignored color using dominant algorithm', function() {
+            const
+                fac = new FastAverageColor(),
+                color = fac.getColorFromArray4([
+                    255, 255, 255, 255,
+                    255, 255, 255, 255,
+                    255, 0, 0, 255,
+                    255, 0, 0, 255,
+                ], {
+                    algorithm: 'dominant',
+                    ignoredColor: [255, 255, 255, 255],
+                    step: 1
+                });
+
+            assert.deepEqual(color, [255, 0, 0, 255]);
         });
 
         it('should return average color with step', function() {

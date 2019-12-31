@@ -195,6 +195,13 @@ color = fac.getColor({
     defaultColor: [255, 0, 0, 255]
 });
 
+// From loaded image without ignored color
+// For example, to ignore the white background in logos
+color = fac.getColor({
+    ignoredColor: [255, 255, 255, 255]
+});
+
+
 // From loaded image with precision
 color = fac.getColor({
     // Modes: 'speed' (by default) or 'precision'.
