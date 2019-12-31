@@ -6,7 +6,8 @@
  *
  * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
  * @param {Object} [options]
- * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+ * @param {Array}  [options.defaultColor=[0, 0, 0, 0]]
+ * @param {Array}  [options.ignoredColor] [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
  * @param {string} [options.mode="speed"] "precision" or "speed"
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {number} [options.step=1]
@@ -63,6 +64,8 @@ color = fac.getColor(video);
  *
  * @param {HTMLImageElement | string | null} resource
  * @param {Object} [options]
+ * @param {Array}  [options.defaultColor=[0, 0, 0, 0]]
+ * @param {Array}  [options.ignoredColor] [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
  * @param {string} [options.mode="speed"] "precision" or "speed"
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {number} [options.step=1]
@@ -107,6 +110,7 @@ fac.getColorAsync(image, { algorithm: 'dominant' })
  * @param {Object} [options]
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
+ * @param {Array}  [options.ignoredColor] [red (0-255), green (0-255), blue (0-255), alpha (0-255)] 
  * @param {number} [options.step=1]
  *
  * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
