@@ -1,4 +1,4 @@
-/*! Fast Average Color | © 2019 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
+/*! Fast Average Color | © 2020 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -116,7 +116,7 @@ function sqrtAlgorithm(arr, len, options) {
         blue = arr[i + 2],
         alpha = arr[i + 3];
 
-    if (ignoredColor && isIgnoredColor(arr, i, options)) {
+    if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
       continue;
     }
 
