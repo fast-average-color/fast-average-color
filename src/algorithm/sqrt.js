@@ -17,7 +17,7 @@ export default function sqrtAlgorithm(arr, len, options) {
             blue = arr[i + 2],
             alpha = arr[i + 3];
 
-        if (ignoredColor && isIgnoredColor(arr, i, options)) {
+        if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
             continue;
         }
 
