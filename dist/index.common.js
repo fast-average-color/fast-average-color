@@ -128,9 +128,7 @@ function sqrtAlgorithm(arr, len, options) {
 
 var ERROR_PREFIX = 'FastAverageColor: ';
 
-var FastAverageColor =
-/*#__PURE__*/
-function () {
+var FastAverageColor = /*#__PURE__*/function () {
   function FastAverageColor() {
     _classCallCheck(this, FastAverageColor);
   }
@@ -160,7 +158,9 @@ function () {
       if (!resource) {
         return Promise.reject(Error("".concat(ERROR_PREFIX, "call .getColorAsync() without resource.")));
       } else if (typeof resource === 'string') {
-        return this._bindImageEvents(new Image(resource), options);
+        var img = new Image();
+        img.src = resource;
+        return this._bindImageEvents(img, options);
       } else if (resource.complete) {
         var result = this.getColor(resource, options);
         return result.error ? Promise.reject(result.error) : Promise.resolve(result);
