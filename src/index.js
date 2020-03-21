@@ -27,7 +27,9 @@ export default class FastAverageColor {
         if (!resource) {
             return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
         } else if (typeof resource === 'string') {
-            return this._bindImageEvents(new Image(resource), options);
+            const img = new Image();
+            img.src = resource;            
+            return this._bindImageEvents(img, options);
         } else if (resource.complete) {
             const result = this.getColor(resource, options);
             return result.error ? Promise.reject(result.error) : Promise.resolve(result);
