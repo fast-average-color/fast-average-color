@@ -1,5 +1,8 @@
 # Changelog
 
+# v6.0.2
+Fixed image src for `getColorAsync` method.
+
 # v6.0.1
 Fixed `ignoredColor` option for sqrt algorithm.
 
