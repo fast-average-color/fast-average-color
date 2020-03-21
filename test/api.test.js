@@ -1,52 +1,46 @@
-'use strict';
+import FastAverageColor from '../dist/index.common';
 
-const
-    assert = require('chai').assert,
-    FastAverageColor = require('../dist/index.common');
-
-describe('API', function() {
+describe('API', () => {
     const defaultColor = [0, 0, 0, 0];
 
-    describe('getColor()', function() {
-        it('if resource is null return default color', function() {
+    describe('getColor()', () => {
+        it('if resource is null return default color', () => {
             const fac = new FastAverageColor();
             const result = fac.getColor(null);
-            assert.deepEqual(result.value, defaultColor);
+
+            expect(result.value).toEqual(defaultColor);
         });
     });
 
-    describe('getColorAsync()', function() {
-        it('if resource is null return error', function(done) {
+    describe('getColorAsync()', () => {
+        it('if resource is null return error', () => {
             const fac = new FastAverageColor();
-            fac.getColorAsync(null)
-                .then(function() {
-                    assert.fail();
-                })
-                .catch(function() {
-                    done();
-                });
+            
+            return fac.getColorAsync(null).then(() => {}).catch((e) => {
+                expect(e).toEqual(Error('FastAverageColor: call .getColorAsync() without resource.'));
+            });
         });
     });
 
-    describe('getColorFromArray4()', function() {
-        it('if incorrect params should return default color', function() {
+    describe('getColorFromArray4()', () => {
+        it('if incorrect params should return default color', () => {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([0]);
 
-            assert.deepEqual(color, defaultColor);
+            expect(color).toEqual(defaultColor);
         });
 
-        it('if incorrect params should return my default color', function() {
+        it('if incorrect params should return my default color', () => {
             const
                 myDefaultColor = [0, 0, 0, 0],
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([0], {defaultColor: myDefaultColor});
 
-            assert.deepEqual(color, myDefaultColor);
+            expect(color).toEqual(myDefaultColor);
         });
 
-        it('should return transparent color', function() {
+        it('should return transparent color', () => {
             const algorithms = ['simple', 'sqrt', 'dominant'];
             const fac = new FastAverageColor();
 
@@ -56,11 +50,11 @@ describe('API', function() {
                     0, 0, 0, 0
                 ], {algorithm});
 
-                assert.deepEqual(color, [0, 0, 0, 0]);
+                expect(color).toEqual([0, 0, 0, 0]);
             });
         });
 
-        it('should return sqrt average color', function() {
+        it('should return sqrt average color', () => {
             const fac = new FastAverageColor();
 
             let color = fac.getColorFromArray4([
@@ -68,17 +62,17 @@ describe('API', function() {
                 200, 200, 200, 200
             ]);
 
-            assert.deepEqual(color, [173, 173, 173, 150]);
+            expect(color).toEqual([173, 173, 173, 150]);
 
             color = fac.getColorFromArray4([
                 100, 100, 100, 255,
                 200, 200, 200, 255
             ]);
 
-            assert.deepEqual(color, [158, 158, 158, 255]);
+            expect(color).toEqual([158, 158, 158, 255]);
         });
 
-        it('should return average color using simple algorithm', function() {
+        it('should return average color using simple algorithm', () => {
             const fac = new FastAverageColor();
 
             let color = fac.getColorFromArray4([
@@ -89,7 +83,7 @@ describe('API', function() {
                 step: 1
             });
 
-            assert.deepEqual(color, [167, 167, 167, 150]);
+            expect(color).toEqual([167, 167, 167, 150]);
 
             color = fac.getColorFromArray4([
                 100, 100, 100, 255,
@@ -99,10 +93,10 @@ describe('API', function() {
                 step: 1
             });
 
-            assert.deepEqual(color, [150, 150, 150, 255]);
+            expect(color).toEqual([150, 150, 150, 255]);
         });
 
-        it('should return average color using dominant algorithm', function() {
+        it('should return average color using dominant algorithm', () => {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([
@@ -116,10 +110,10 @@ describe('API', function() {
                     step: 1
                 });
 
-            assert.deepEqual(color, [197, 197, 197, 200]);
+            expect(color).toEqual([197, 197, 197, 200]);
         });
 
-        it('should return simple average color with ignored color using sqrt algorithm', function() {
+        it('should return simple average color with ignored color using sqrt algorithm', () => {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([
@@ -133,10 +127,10 @@ describe('API', function() {
                     step: 1
                 });
 
-            assert.deepEqual(color, [255, 0, 0, 255]);
+            expect(color).toEqual([255, 0, 0, 255]);
         });
 
-        it('should return sqrt average color with ignored color using sqrt algorithm', function() {
+        it('should return sqrt average color with ignored color using sqrt algorithm', () => {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([
@@ -149,10 +143,10 @@ describe('API', function() {
                     step: 1
                 });
 
-            assert.deepEqual(color, [255, 0, 0, 255]);
+            expect(color).toEqual([255, 0, 0, 255]);
         });
 
-        it('should return dominant average color with ignored color using dominant algorithm', function() {
+        it('should return dominant average color with ignored color using dominant algorithm', () => {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4([
@@ -166,10 +160,10 @@ describe('API', function() {
                     step: 1
                 });
 
-            assert.deepEqual(color, [255, 0, 0, 255]);
+            expect(color).toEqual([255, 0, 0, 255]);
         });
 
-        it('should return average color with step', function() {
+        it('should return average color with step', () => {
             const
                 fac = new FastAverageColor(),
                 color = fac.getColorFromArray4(
@@ -182,61 +176,51 @@ describe('API', function() {
                     { step: 2 }
                 );
 
-            assert.deepEqual(color, [132, 132, 132, 125]);
+            expect(color).toEqual([132, 132, 132, 125]);
         });
     });
 
-    describe('_getOption()', function() {
-        it('should return default value', function() {
+    describe('_getOption()', () => {
+        it('should return default value', () => {
             const fac = new FastAverageColor();
-            assert.strictEqual(fac._getOption({}, 'left', 0), 0);
+            expect(fac._getOption({}, 'left', 0)).toEqual(0);
         });
 
-        it('should return the option', function() {
+        it('should return the option', () => {
             const fac = new FastAverageColor();
-            assert.strictEqual(fac._getOption({left: 10}, 'left', 0), 10);
+            expect(fac._getOption({left: 10}, 'left', 0)).toEqual(10);
         });
     });
 
-    describe('_prepareSizeAndPosition()', function() {
+    describe('_prepareSizeAndPosition()', () => {
         const fac = new FastAverageColor();
 
-        it('should return values', function() {
-            assert.deepEqual(
-                fac._prepareSizeAndPosition({width: 1000, height: 500}, {left: 10, top: 20, width: 300, height: 200}),
-                {srcLeft: 10, srcTop: 20, srcWidth: 300, srcHeight: 200, destWidth: 100, destHeight: 67}
-            );
+        it('should return values', () => {
+            expect(fac._prepareSizeAndPosition({width: 1000, height: 500}, {left: 10, top: 20, width: 300, height: 200}))
+                .toEqual({srcLeft: 10, srcTop: 20, srcWidth: 300, srcHeight: 200, destWidth: 100, destHeight: 67});
         });
 
-        it('should return default values with small sizes', function() {
-            assert.deepEqual(
-                fac._prepareSizeAndPosition({width: 50, height: 30}, {}),
-                {srcLeft: 0, srcTop: 0, srcWidth: 50, srcHeight: 30, destWidth: 50, destHeight: 30}
-            );
+        it('should return default values with small sizes', () => {
+            expect(fac._prepareSizeAndPosition({width: 50, height: 30}, {}))
+                .toEqual({srcLeft: 0, srcTop: 0, srcWidth: 50, srcHeight: 30, destWidth: 50, destHeight: 30});
         });
 
-        it('should return default values with big sizes', function() {
-            assert.deepEqual(
-                fac._prepareSizeAndPosition({width: 1000, height: 500}, {}),
-                {srcLeft: 0, srcTop: 0, srcWidth: 1000, srcHeight: 500, destWidth: 100, destHeight: 50}
-            );
+        it('should return default values with big sizes', () => {
+            expect(fac._prepareSizeAndPosition({width: 1000, height: 500}, {}))
+                .toEqual({srcLeft: 0, srcTop: 0, srcWidth: 1000, srcHeight: 500, destWidth: 100, destHeight: 50});
 
-            assert.deepEqual(
-                fac._prepareSizeAndPosition({width: 500, height: 1000}, {}),
-                {srcLeft: 0, srcTop: 0, srcWidth: 500, srcHeight: 1000, destWidth: 50, destHeight: 100}
-            );
+            expect(fac._prepareSizeAndPosition({width: 500, height: 1000}, {}))
+                .toEqual({srcLeft: 0, srcTop: 0, srcWidth: 500, srcHeight: 1000, destWidth: 50, destHeight: 100});
         });
 
-        it('should return default values with precision mode', function() {
-            assert.deepEqual(
-                fac._prepareSizeAndPosition({width: 1000, height: 500}, {mode: 'precision'}),
-                {srcLeft: 0, srcTop: 0, srcWidth: 1000, srcHeight: 500, destWidth: 1000, destHeight: 500}
-            );
+        it('should return default values with precision mode', () => {
+            expect(fac._prepareSizeAndPosition({width: 1000, height: 500}, {mode: 'precision'}))
+                .toEqual({srcLeft: 0, srcTop: 0, srcWidth: 1000, srcHeight: 500, destWidth: 1000, destHeight: 500});
         });
     });
 
-    describe('_isDark', function() {
-        it('should return dark color', function() {
+    describe('_isDark', () => {
+        it('should return dark color', () => {
             const fac = new FastAverageColor();
 
             [
@@ -248,7 +232,7 @@ describe('API', function() {
                 {color: [238, 144, 134], expected: false},
                 {color: [123, 151, 175], expected: false}
             ].forEach(item => {
-                assert.equal(fac._isDark(item.color), item.expected, item.color.join());
+                expect(fac._isDark(item.color)).toEqual(item.expected);
             });
         });
     });

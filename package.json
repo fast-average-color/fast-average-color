@@ -38,14 +38,13 @@
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
-    "chai": "^4.2.0",
     "eslint": "^6.8.0",
     "gulp": "^4.0.2",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-rollup": "^2.17.0",
     "gulp-uglify": "^3.0.2",
-    "mocha": "^7.1.1",
+    "jest": "^25.1.0",
     "nyc": "^15.0.0",
     "rollup": "^2.1.0",
     "rollup-plugin-babel": "^4.4.0",
@@ -56,8 +55,8 @@
     "prepare": "gulp",
     "eslint": "eslint .",
     "test": "npm run build && npm run eslint && npm run unit-test-coverage && npm run test-typings",
-    "unit-test": "mocha",
-    "unit-test-coverage": "nyc mocha",
+    "unit-test": "jest",
+    "unit-test-coverage": "nyc jest",
     "test-typings": "tsc -p tsconfig.json"
   }
 }
