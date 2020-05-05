@@ -73,7 +73,7 @@ fac.getColorAsync(container.querySelector('img'))
 
 ## TypeScript
 ```ts
-import * as FastAverageColor from 'fast-average-color';
+import FastAverageColor from 'fast-average-color';
 
 const fac = new FastAverageColor();
 fac.getColorAsync(container.querySelector('img'))
