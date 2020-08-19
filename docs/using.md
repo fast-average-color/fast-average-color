@@ -54,7 +54,7 @@ fac.getColorAsync(container.querySelector('img'))
     });
 ```
 
-## ES Modules
+## ES Modules or TypeScript
 [Details](../dist/README.md)
 
 ```js
@@ -71,17 +71,5 @@ fac.getColorAsync(container.querySelector('img'))
     });
 ```
 
-## TypeScript
-```ts
-import FastAverageColor from 'fast-average-color';
-
-const fac = new FastAverageColor();
-fac.getColorAsync(container.querySelector('img'))
-    .then(function(color) {
-        container.style.backgroundColor = color.rgba;
-        container.style.color = color.isDark ? '#fff' : '#000';
-    })
-    .catch(function(e) {
-        console.log(e);
-    });
-```
+## Node.js
+[Example](https://github.com/fast-average-color/examples/blob/master/nodejs/index.js)
