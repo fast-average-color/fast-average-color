@@ -1,5 +1,8 @@
 # Changelog
 
+# v6.0.3
+Small fixes for Rollup #52.
+
 # v6.0.2
 Fixed image src for `getColorAsync` method.
 
