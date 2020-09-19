@@ -1,21 +1,19 @@
 import { isIgnoredColor } from './ignoredColor';
 
 export default function sqrtAlgorithm(arr, len, options) {
-    let
-        redTotal = 0,
-        greenTotal = 0,
-        blueTotal = 0,
-        alphaTotal = 0,
-        count = 0;
+    let redTotal = 0;
+    let greenTotal = 0;
+    let blueTotal = 0;
+    let alphaTotal = 0;
+    let count = 0;
 
     const ignoredColor = options.ignoredColor;
 
     for (let i = 0; i < len; i += options.step) {
-        const
-            red = arr[i],
-            green = arr[i + 1],
-            blue = arr[i + 2],
-            alpha = arr[i + 3];
+        const red = arr[i];
+        const green = arr[i + 1];
+        const blue = arr[i + 2];
+        const alpha = arr[i + 3];
 
         if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
             continue;
