@@ -28,7 +28,7 @@ export default class FastAverageColor {
             return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
         } else if (typeof resource === 'string') {
             const img = new Image();
-            img.src = resource;            
+            img.src = resource;
             return this._bindImageEvents(img, options);
         } else if (resource.complete) {
             const result = this.getColor(resource, options);
@@ -68,9 +68,8 @@ export default class FastAverageColor {
             return this._prepareResult(defaultColor);
         }
 
-        const
-            originalSize = this._getOriginalSize(resource),
-            size = this._prepareSizeAndPosition(originalSize, options);
+        const originalSize = this._getOriginalSize(resource);
+        const size = this._prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
             this._outputError(options, `incorrect sizes for resource "${resource.src}".`);
@@ -118,7 +117,7 @@ export default class FastAverageColor {
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha] 
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {number} [options.step=1]
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
@@ -126,18 +125,16 @@ export default class FastAverageColor {
     getColorFromArray4(arr, options) {
         options = options || {};
 
-        const
-            bytesPerPixel = 4,
-            arrLength = arr.length,
-            defaultColor = this._getDefaultColor(options);
+        const bytesPerPixel = 4;
+        const arrLength = arr.length;
+        const defaultColor = this._getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
             return defaultColor;
         }
 
-        const
-            len = arrLength - arrLength % bytesPerPixel,
-            step = (options.step || 1) * bytesPerPixel;
+        const len = arrLength - arrLength % bytesPerPixel;
+        const step = (options.step || 1) * bytesPerPixel;
 
         let algorithm;
 
@@ -198,9 +195,8 @@ export default class FastAverageColor {
             };
         }
 
-        const
-            maxSize = 100,
-            minSize = 10;
+        const maxSize = 100;
+        const minSize = 10;
 
         let factor;
 
@@ -235,31 +231,34 @@ export default class FastAverageColor {
     _bindImageEvents(resource, options) {
         return new Promise((resolve, reject) => {
             const onload = () => {
-                    unbindEvents();
+                unbindEvents();
 
-                    const result = this.getColor(resource, options);
+                const result = this.getColor(resource, options);
 
-                    if (result.error) {
-                        reject(result.error);
-                    } else {
-                        resolve(result);
-                    }
-                },
-                onerror = () => {
-                    unbindEvents();
+                if (result.error) {
+                    reject(result.error);
+                } else {
+                    resolve(result);
+                }
+            };
 
-                    reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
-                },
-                onabort = () => {
-                    unbindEvents();
+            const onerror = () => {
+                unbindEvents();
 
-                    reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
-                },
-                unbindEvents = () => {
-                    resource.removeEventListener('load', onload);
-                    resource.removeEventListener('error', onerror);
-                    resource.removeEventListener('abort', onabort);
-                };
+                reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
+            };
+
+            const onabort = () => {
+                unbindEvents();
+
+                reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
+            };
+
+            const unbindEvents = () => {
+                resource.removeEventListener('load', onload);
+                resource.removeEventListener('error', onerror);
+                resource.removeEventListener('abort', onabort);
+            };
 
             resource.addEventListener('load', onload);
             resource.addEventListener('error', onerror);
@@ -268,10 +267,9 @@ export default class FastAverageColor {
     }
 
     _prepareResult(value) {
-        const
-            rgb = value.slice(0, 3),
-            rgba = [].concat(rgb, value[3] / 255),
-            isDark = this._isDark(value);
+        const rgb = value.slice(0, 3);
+        const rgba = [].concat(rgb, value[3] / 255);
+        const isDark = this._isDark(value);
 
         return {
             value,
@@ -307,6 +305,7 @@ export default class FastAverageColor {
 
     _toHex(num) {
         let str = num.toString(16);
+
         return str.length === 1 ? '0' + str : str;
     }
 

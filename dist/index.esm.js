@@ -7,17 +7,15 @@ function isIgnoredColor(arr, num, ignoredColor) {
 }
 
 function dominantAlgorithm(arr, len, options) {
-    const
-        colorHash = {},
-        divider = 24,
-        ignoredColor = options.ignoredColor;
+    const colorHash = {};
+    const divider = 24;
+    const ignoredColor = options.ignoredColor;
 
     for (let i = 0; i < len; i += options.step) {
-        let
-            red = arr[i],
-            green = arr[i + 1],
-            blue = arr[i + 2],
-            alpha = arr[i + 3];
+        let red = arr[i];
+        let green = arr[i + 1];
+        let blue = arr[i + 2];
+        let alpha = arr[i + 3];
 
         if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
             continue;
@@ -43,9 +41,8 @@ function dominantAlgorithm(arr, len, options) {
     const buffer = Object.keys(colorHash).map(key => {
         return colorHash[key];
     }).sort((a, b) => {
-        const
-            countA = a[4],
-            countB = b[4];
+        const countA = a[4];
+        const countB = b[4];
 
         return countA > countB ?  -1 : countA === countB ? 0 : 1;
     });
@@ -68,21 +65,19 @@ function dominantAlgorithm(arr, len, options) {
 }
 
 function simpleAlgorithm(arr, len, options) {
-    let
-        redTotal = 0,
-        greenTotal = 0,
-        blueTotal = 0,
-        alphaTotal = 0,
-        count = 0;
+    let redTotal = 0;
+    let greenTotal = 0;
+    let blueTotal = 0;
+    let alphaTotal = 0;
+    let count = 0;
 
     const ignoredColor = options.ignoredColor;
 
     for (let i = 0; i < len; i += options.step) {
-        const
-            alpha = arr[i + 3],
-            red = arr[i] * alpha,
-            green = arr[i + 1] * alpha,
-            blue = arr[i + 2] * alpha;
+        const alpha = arr[i + 3];
+        const red = arr[i] * alpha;
+        const green = arr[i + 1] * alpha;
+        const blue = arr[i + 2] * alpha;
 
         if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
             continue;
@@ -104,21 +99,19 @@ function simpleAlgorithm(arr, len, options) {
 }
 
 function sqrtAlgorithm(arr, len, options) {
-    let
-        redTotal = 0,
-        greenTotal = 0,
-        blueTotal = 0,
-        alphaTotal = 0,
-        count = 0;
+    let redTotal = 0;
+    let greenTotal = 0;
+    let blueTotal = 0;
+    let alphaTotal = 0;
+    let count = 0;
 
     const ignoredColor = options.ignoredColor;
 
     for (let i = 0; i < len; i += options.step) {
-        const
-            red = arr[i],
-            green = arr[i + 1],
-            blue = arr[i + 2],
-            alpha = arr[i + 3];
+        const red = arr[i];
+        const green = arr[i + 1];
+        const blue = arr[i + 2];
+        const alpha = arr[i + 3];
 
         if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
             continue;
@@ -165,7 +158,7 @@ class FastAverageColor {
             return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
         } else if (typeof resource === 'string') {
             const img = new Image();
-            img.src = resource;            
+            img.src = resource;
             return this._bindImageEvents(img, options);
         } else if (resource.complete) {
             const result = this.getColor(resource, options);
@@ -205,9 +198,8 @@ class FastAverageColor {
             return this._prepareResult(defaultColor);
         }
 
-        const
-            originalSize = this._getOriginalSize(resource),
-            size = this._prepareSizeAndPosition(originalSize, options);
+        const originalSize = this._getOriginalSize(resource);
+        const size = this._prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
             this._outputError(options, `incorrect sizes for resource "${resource.src}".`);
@@ -255,7 +247,7 @@ class FastAverageColor {
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha] 
+     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {number} [options.step=1]
      *
      * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
@@ -263,18 +255,16 @@ class FastAverageColor {
     getColorFromArray4(arr, options) {
         options = options || {};
 
-        const
-            bytesPerPixel = 4,
-            arrLength = arr.length,
-            defaultColor = this._getDefaultColor(options);
+        const bytesPerPixel = 4;
+        const arrLength = arr.length;
+        const defaultColor = this._getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
             return defaultColor;
         }
 
-        const
-            len = arrLength - arrLength % bytesPerPixel,
-            step = (options.step || 1) * bytesPerPixel;
+        const len = arrLength - arrLength % bytesPerPixel;
+        const step = (options.step || 1) * bytesPerPixel;
 
         let algorithm;
 
@@ -335,9 +325,8 @@ class FastAverageColor {
             };
         }
 
-        const
-            maxSize = 100,
-            minSize = 10;
+        const maxSize = 100;
+        const minSize = 10;
 
         let factor;
 
@@ -372,31 +361,34 @@ class FastAverageColor {
     _bindImageEvents(resource, options) {
         return new Promise((resolve, reject) => {
             const onload = () => {
-                    unbindEvents();
+                unbindEvents();
 
-                    const result = this.getColor(resource, options);
+                const result = this.getColor(resource, options);
 
-                    if (result.error) {
-                        reject(result.error);
-                    } else {
-                        resolve(result);
-                    }
-                },
-                onerror = () => {
-                    unbindEvents();
+                if (result.error) {
+                    reject(result.error);
+                } else {
+                    resolve(result);
+                }
+            };
 
-                    reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
-                },
-                onabort = () => {
-                    unbindEvents();
+            const onerror = () => {
+                unbindEvents();
 
-                    reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
-                },
-                unbindEvents = () => {
-                    resource.removeEventListener('load', onload);
-                    resource.removeEventListener('error', onerror);
-                    resource.removeEventListener('abort', onabort);
-                };
+                reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
+            };
+
+            const onabort = () => {
+                unbindEvents();
+
+                reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
+            };
+
+            const unbindEvents = () => {
+                resource.removeEventListener('load', onload);
+                resource.removeEventListener('error', onerror);
+                resource.removeEventListener('abort', onabort);
+            };
 
             resource.addEventListener('load', onload);
             resource.addEventListener('error', onerror);
@@ -405,10 +397,9 @@ class FastAverageColor {
     }
 
     _prepareResult(value) {
-        const
-            rgb = value.slice(0, 3),
-            rgba = [].concat(rgb, value[3] / 255),
-            isDark = this._isDark(value);
+        const rgb = value.slice(0, 3);
+        const rgba = [].concat(rgb, value[3] / 255);
+        const isDark = this._isDark(value);
 
         return {
             value,
@@ -444,6 +435,7 @@ class FastAverageColor {
 
     _toHex(num) {
         let str = num.toString(16);
+
         return str.length === 1 ? '0' + str : str;
     }
 

@@ -1,17 +1,15 @@
 import { isIgnoredColor } from './ignoredColor';
 
 export default function dominantAlgorithm(arr, len, options) {
-    const
-        colorHash = {},
-        divider = 24,
-        ignoredColor = options.ignoredColor;
+    const colorHash = {};
+    const divider = 24;
+    const ignoredColor = options.ignoredColor;
 
     for (let i = 0; i < len; i += options.step) {
-        let
-            red = arr[i],
-            green = arr[i + 1],
-            blue = arr[i + 2],
-            alpha = arr[i + 3];
+        let red = arr[i];
+        let green = arr[i + 1];
+        let blue = arr[i + 2];
+        let alpha = arr[i + 3];
 
         if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
             continue;
@@ -37,9 +35,8 @@ export default function dominantAlgorithm(arr, len, options) {
     const buffer = Object.keys(colorHash).map(key => {
         return colorHash[key];
     }).sort((a, b) => {
-        const
-            countA = a[4],
-            countB = b[4];
+        const countA = a[4];
+        const countB = b[4];
 
         return countA > countB ?  -1 : countA === countB ? 0 : 1;
     });

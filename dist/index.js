@@ -35,15 +35,15 @@
   }
 
   function dominantAlgorithm(arr, len, options) {
-    var colorHash = {},
-        divider = 24,
-        ignoredColor = options.ignoredColor;
+    var colorHash = {};
+    var divider = 24;
+    var ignoredColor = options.ignoredColor;
 
     for (var i = 0; i < len; i += options.step) {
-      var red = arr[i],
-          green = arr[i + 1],
-          blue = arr[i + 2],
-          alpha = arr[i + 3];
+      var red = arr[i];
+      var green = arr[i + 1];
+      var blue = arr[i + 2];
+      var alpha = arr[i + 3];
 
       if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
         continue;
@@ -61,8 +61,8 @@
     var buffer = Object.keys(colorHash).map(function (key) {
       return colorHash[key];
     }).sort(function (a, b) {
-      var countA = a[4],
-          countB = b[4];
+      var countA = a[4];
+      var countB = b[4];
       return countA > countB ? -1 : countA === countB ? 0 : 1;
     });
     var max = buffer[0];
@@ -75,18 +75,18 @@
   }
 
   function simpleAlgorithm(arr, len, options) {
-    var redTotal = 0,
-        greenTotal = 0,
-        blueTotal = 0,
-        alphaTotal = 0,
-        count = 0;
+    var redTotal = 0;
+    var greenTotal = 0;
+    var blueTotal = 0;
+    var alphaTotal = 0;
+    var count = 0;
     var ignoredColor = options.ignoredColor;
 
     for (var i = 0; i < len; i += options.step) {
-      var alpha = arr[i + 3],
-          red = arr[i] * alpha,
-          green = arr[i + 1] * alpha,
-          blue = arr[i + 2] * alpha;
+      var alpha = arr[i + 3];
+      var red = arr[i] * alpha;
+      var green = arr[i + 1] * alpha;
+      var blue = arr[i + 2] * alpha;
 
       if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
         continue;
@@ -103,18 +103,18 @@
   }
 
   function sqrtAlgorithm(arr, len, options) {
-    var redTotal = 0,
-        greenTotal = 0,
-        blueTotal = 0,
-        alphaTotal = 0,
-        count = 0;
+    var redTotal = 0;
+    var greenTotal = 0;
+    var blueTotal = 0;
+    var alphaTotal = 0;
+    var count = 0;
     var ignoredColor = options.ignoredColor;
 
     for (var i = 0; i < len; i += options.step) {
-      var red = arr[i],
-          green = arr[i + 1],
-          blue = arr[i + 2],
-          alpha = arr[i + 3];
+      var red = arr[i];
+      var green = arr[i + 1];
+      var blue = arr[i + 2];
+      var alpha = arr[i + 3];
 
       if (ignoredColor && isIgnoredColor(arr, i, ignoredColor)) {
         continue;
@@ -206,8 +206,9 @@
           return this._prepareResult(defaultColor);
         }
 
-        var originalSize = this._getOriginalSize(resource),
-            size = this._prepareSizeAndPosition(originalSize, options);
+        var originalSize = this._getOriginalSize(resource);
+
+        var size = this._prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
           this._outputError(options, "incorrect sizes for resource \"".concat(resource.src, "\"."));
@@ -250,7 +251,7 @@
        * @param {Object} [options]
        * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
        * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-       * @param {Array}  [options.ignoredColor] [red, green, blue, alpha] 
+       * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
        * @param {number} [options.step=1]
        *
        * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
@@ -260,17 +261,17 @@
       key: "getColorFromArray4",
       value: function getColorFromArray4(arr, options) {
         options = options || {};
+        var bytesPerPixel = 4;
+        var arrLength = arr.length;
 
-        var bytesPerPixel = 4,
-            arrLength = arr.length,
-            defaultColor = this._getDefaultColor(options);
+        var defaultColor = this._getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
           return defaultColor;
         }
 
-        var len = arrLength - arrLength % bytesPerPixel,
-            step = (options.step || 1) * bytesPerPixel;
+        var len = arrLength - arrLength % bytesPerPixel;
+        var step = (options.step || 1) * bytesPerPixel;
         var algorithm;
 
         switch (options.algorithm || 'sqrt') {
@@ -337,8 +338,8 @@
           };
         }
 
-        var maxSize = 100,
-            minSize = 10;
+        var maxSize = 100;
+        var minSize = 10;
         var factor;
 
         if (srcWidth > srcHeight) {
@@ -381,16 +382,19 @@
             } else {
               resolve(result);
             }
-          },
-              onerror = function onerror() {
+          };
+
+          var onerror = function onerror() {
             unbindEvents();
             reject(Error("".concat(ERROR_PREFIX, "Error loading image ").concat(resource.src, ".")));
-          },
-              onabort = function onabort() {
+          };
+
+          var onabort = function onabort() {
             unbindEvents();
             reject(Error("".concat(ERROR_PREFIX, "Image \"").concat(resource.src, "\" loading aborted.")));
-          },
-              unbindEvents = function unbindEvents() {
+          };
+
+          var unbindEvents = function unbindEvents() {
             resource.removeEventListener('load', onload);
             resource.removeEventListener('error', onerror);
             resource.removeEventListener('abort', onabort);
@@ -404,9 +408,10 @@
     }, {
       key: "_prepareResult",
       value: function _prepareResult(value) {
-        var rgb = value.slice(0, 3),
-            rgba = [].concat(rgb, value[3] / 255),
-            isDark = this._isDark(value);
+        var rgb = value.slice(0, 3);
+        var rgba = [].concat(rgb, value[3] / 255);
+
+        var isDark = this._isDark(value);
 
         return {
           value: value,
