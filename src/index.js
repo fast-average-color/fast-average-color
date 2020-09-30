@@ -28,7 +28,7 @@ export default class FastAverageColor {
             return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
         } else if (typeof resource === 'string') {
             const img = new Image();
-            img.setAttribute('crossOrigin', '');
+            img.crossOrigin = '';
             img.src = resource;
             return this._bindImageEvents(img, options);
         } else if (resource.complete) {
