@@ -159,6 +159,7 @@ var FastAverageColor = /*#__PURE__*/function () {
         return Promise.reject(Error("".concat(ERROR_PREFIX, "call .getColorAsync() without resource.")));
       } else if (typeof resource === 'string') {
         var img = new Image();
+        img.crossOrigin = '';
         img.src = resource;
         return this._bindImageEvents(img, options);
       } else if (resource.complete) {
