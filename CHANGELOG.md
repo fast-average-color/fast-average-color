@@ -1,5 +1,8 @@
 # Changelog
 
+# v6.1.0
+Add crossorigin attribute for a image #54 @fuleinist.
+
 # v6.0.3
 Small fixes for Rollup #52.
 
