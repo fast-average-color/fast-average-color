@@ -1,5 +1,8 @@
 # Changelog
 
+# v6.1.1
+Fixes for typings.
+
 # v6.1.0
 Add crossorigin attribute for a image #54 @fuleinist.
 
