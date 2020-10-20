@@ -114,7 +114,7 @@ export default class FastAverageColor {
     /**
      * Get the average color from a array when 1 pixel is 4 bytes.
      *
-     * @param {Array|Uint8Array} arr
+     * @param {Array|Uint8Array|Uint8ClampedArray} arr
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
      * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]

@@ -2,11 +2,11 @@ type IFastAverageColorRgba = [number, number, number, number]; // [red, green, b
 
 interface IFastAverageColorOptions {
     algorithm?: 'simple' | 'sqrt' | 'dominant';
-    
+
     mode?: 'precision' | 'speed';
-    
+
     step?: number;
-    
+
     left?: number;
     top?: number;
 
@@ -33,7 +33,7 @@ interface IFastAverageColorResult {
 interface IFastAverageColor {
     getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: IFastAverageColorOptions): IFastAverageColorResult;
     getColorAsync(resource: HTMLImageElement | string | null, options?: IFastAverageColorOptions): Promise<IFastAverageColorResult>;
-    getColorFromArray4(arr: number[] | Uint8Array, options?: IFastAverageColorOptions): IFastAverageColorRgba;
+    getColorFromArray4(arr: number[] | Uint8Array | Uint8ClampedArray, options?: IFastAverageColorOptions): IFastAverageColorRgba;
     destroy(): void;
 }
 
