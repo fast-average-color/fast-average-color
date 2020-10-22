@@ -24,10 +24,19 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 function isIgnoredColor(arr, num, ignoredColor) {
-  return arr[num] === ignoredColor[0] && // red
-  arr[num + 1] === ignoredColor[1] && // green
-  arr[num + 2] === ignoredColor[2] && // blue
-  arr[num + 3] === ignoredColor[3]; // alpha
+  for (var i = 0; i < ignoredColor.length; i++) {
+    var item = ignoredColor[i];
+
+    if (arr[num] === item[0] && // red
+    arr[num + 1] === item[1] && // green
+    arr[num + 2] === item[2] && // blue
+    arr[num + 3] === item[3] // alpha
+    ) {
+        return true;
+      }
+  }
+
+  return false;
 }
 
 function dominantAlgorithm(arr, len, options) {
@@ -140,24 +149,16 @@ var FastAverageColor = /*#__PURE__*/function () {
      * Get asynchronously the average color from not loaded image.
      *
      * @param {HTMLImageElement | string | null} resource
-     * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
-     * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {number} [options.step=1]
-     * @param {number} [options.left=0]
-     * @param {number} [options.top=0]
-     * @param {number} [options.width=width of resource]
-     * @param {number} [options.height=height of resource]
-     * @param {boolean} [options.silent] Disable error output via console.error
+     * @param {FastAverageColorOptions} [options]
      *
-     * @returns {Promise}
+     * @returns {Promise<FastAverageColorOptions>}
      */
     value: function getColorAsync(resource, options) {
       if (!resource) {
         return Promise.reject(Error("".concat(ERROR_PREFIX, "call .getColorAsync() without resource.")));
-      } else if (typeof resource === 'string') {
+      }
+
+      if (typeof resource === 'string') {
         var img = new Image();
         img.crossOrigin = '';
         img.src = resource;
@@ -173,19 +174,9 @@ var FastAverageColor = /*#__PURE__*/function () {
      * Get the average color from images, videos and canvas.
      *
      * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
-     * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
-     * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {number} [options.step=1]
-     * @param {number} [options.left=0]
-     * @param {number} [options.top=0]
-     * @param {number} [options.width=width of resource]
-     * @param {number} [options.height=height of resource]
-     * @param {boolean} [options.silent] Disable error output via console.error
+     * @param {FastAverageColorOptions} [options]
      *
-     * @returns {Object}
+     * @returns {FastAverageColorResult}
      */
 
   }, {
@@ -195,12 +186,10 @@ var FastAverageColor = /*#__PURE__*/function () {
 
       var defaultColor = this._getDefaultColor(options);
 
-      var value = defaultColor;
-
       if (!resource) {
         this._outputError(options, 'call .getColor(null) without resource.');
 
-        return this._prepareResult(defaultColor);
+        return this.prepareResult(defaultColor);
       }
 
       var originalSize = this._getOriginalSize(resource);
@@ -210,7 +199,7 @@ var FastAverageColor = /*#__PURE__*/function () {
       if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
         this._outputError(options, "incorrect sizes for resource \"".concat(resource.src, "\"."));
 
-        return this._prepareResult(defaultColor);
+        return this.prepareResult(defaultColor);
       }
 
       if (!this._ctx) {
@@ -220,12 +209,13 @@ var FastAverageColor = /*#__PURE__*/function () {
         if (!this._ctx) {
           this._outputError(options, 'Canvas Context 2D is not supported in this browser.');
 
-          return this._prepareResult(defaultColor);
+          return this.prepareResult(defaultColor);
         }
       }
 
       this._canvas.width = size.destWidth;
       this._canvas.height = size.destHeight;
+      var value = defaultColor;
 
       try {
         this._ctx.clearRect(0, 0, size.destWidth, size.destHeight);
@@ -239,19 +229,19 @@ var FastAverageColor = /*#__PURE__*/function () {
         this._outputError(options, "security error (CORS) for resource ".concat(resource.src, ".\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image"), e);
       }
 
-      return this._prepareResult(value);
+      return this.prepareResult(value);
     }
     /**
      * Get the average color from a array when 1 pixel is 4 bytes.
      *
-     * @param {Array|Uint8Array|Uint8ClampedArray} arr
+     * @param {number[]|Uint8Array|Uint8ClampedArray} arr
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
+     * @param {number[]}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {number[]}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {number} [options.step=1]
      *
-     * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+     * @returns {number[]} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
      */
 
   }, {
@@ -290,9 +280,40 @@ var FastAverageColor = /*#__PURE__*/function () {
 
       return algorithm(arr, len, {
         defaultColor: defaultColor,
-        ignoredColor: options.ignoredColor,
+        ignoredColor: this._prepareIgnoredColor(options.ignoredColor),
         step: step
       });
+    }
+    /**
+     * Get color data from value ([r, g, b, a]).
+     *
+     * @param {number[]} value
+     *
+     * @returns {FastAverageColorResult}
+     */
+
+  }, {
+    key: "prepareResult",
+    value: function prepareResult(value) {
+      var rgb = value.slice(0, 3);
+      var rgba = [].concat(rgb, value[3] / 255);
+
+      var isDark = this._isDark(value);
+
+      return {
+        value: value,
+        rgb: 'rgb(' + rgb.join(',') + ')',
+        rgba: 'rgba(' + rgba.join(',') + ')',
+        hex: this._arrayToHex(rgb),
+        hexa: this._arrayToHex(value),
+        isDark: isDark,
+        isLight: !isDark
+      };
+    }
+  }, {
+    key: "_prepareIgnoredColor",
+    value: function _prepareIgnoredColor(color) {
+      return Array.isArray(color) && !Array.isArray(color[0]) ? [[].concat(color)] : color;
     }
     /**
      * Destroy the instance.
@@ -317,12 +338,16 @@ var FastAverageColor = /*#__PURE__*/function () {
   }, {
     key: "_prepareSizeAndPosition",
     value: function _prepareSizeAndPosition(originalSize, options) {
-      var srcLeft = this._getOption(options, 'left', 0),
-          srcTop = this._getOption(options, 'top', 0),
-          srcWidth = this._getOption(options, 'width', originalSize.width),
-          srcHeight = this._getOption(options, 'height', originalSize.height),
-          destWidth = srcWidth,
-          destHeight = srcHeight;
+      var srcLeft = this._getOption(options, 'left', 0);
+
+      var srcTop = this._getOption(options, 'top', 0);
+
+      var srcWidth = this._getOption(options, 'width', originalSize.width);
+
+      var srcHeight = this._getOption(options, 'height', originalSize.height);
+
+      var destWidth = srcWidth;
+      var destHeight = srcHeight;
 
       if (options.mode === 'precision') {
         return {
@@ -401,24 +426,6 @@ var FastAverageColor = /*#__PURE__*/function () {
         resource.addEventListener('error', onerror);
         resource.addEventListener('abort', onabort);
       });
-    }
-  }, {
-    key: "_prepareResult",
-    value: function _prepareResult(value) {
-      var rgb = value.slice(0, 3);
-      var rgba = [].concat(rgb, value[3] / 255);
-
-      var isDark = this._isDark(value);
-
-      return {
-        value: value,
-        rgb: 'rgb(' + rgb.join(',') + ')',
-        rgba: 'rgba(' + rgba.join(',') + ')',
-        hex: this._arrayToHex(rgb),
-        hexa: this._arrayToHex(value),
-        isDark: isDark,
-        isLight: !isDark
-      };
     }
   }, {
     key: "_getOriginalSize",
