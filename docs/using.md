@@ -19,16 +19,15 @@ npm i fast-average-color
     </div>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
-        var
-            fac = new FastAverageColor(),
-            container = document.querySelector('.image-container');
+        const fac = new FastAverageColor();
+        const container = document.querySelector('.image-container');
 
         fac.getColorAsync(container.querySelector('img'))
-            .then(function(color) {
+            .then(color => {
                 container.style.backgroundColor = color.rgba;
                 container.style.color = color.isDark ? '#fff' : '#000';
             })
-            .catch(function(e) {
+            .catch(e => {
                 console.log(e);
             });
     </script>
@@ -45,11 +44,11 @@ npm i fast-average-color
 const FastAverageColor = require('fast-average-color');
 const fac = new FastAverageColor();
 fac.getColorAsync(container.querySelector('img'))
-    .then(function(color) {
+    .then(color => {
         container.style.backgroundColor = color.rgba;
         container.style.color = color.isDark ? '#fff' : '#000';
     })
-    .catch(function(e) {
+    .catch(e => {
         console.log(e);
     });
 ```
@@ -62,14 +61,14 @@ import FastAverageColor from 'fast-average-color';
 
 const fac = new FastAverageColor();
 fac.getColorAsync(container.querySelector('img'))
-    .then(function(color) {
+    .then(color => {
         container.style.backgroundColor = color.rgba;
         container.style.color = color.isDark ? '#fff' : '#000';
     })
-    .catch(function(e) {
+    .catch(e => {
         console.log(e);
     });
 ```
 
-## Node.js
-[Example](https://github.com/fast-average-color/examples/blob/master/nodejs/index.js)
+## [Node.js](https://github.com/fast-average-color/fast-average-color-node/)
+Use [fast-average-color-node](https://github.com/fast-average-color/fast-average-color-node/) package.

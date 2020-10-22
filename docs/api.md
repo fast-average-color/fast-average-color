@@ -6,8 +6,8 @@
  *
  * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
  * @param {Object} [options]
- * @param {Array}  [options.defaultColor=[0, 0, 0, 0]]
- * @param {Array}  [options.ignoredColor] [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+ * @param {number[]}  [options.defaultColor=[0, 0, 0, 0]]
+ * @param {number[] | number[][]}  [options.ignoredColor] [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
  * @param {string} [options.mode="speed"] "precision" or "speed"
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {number} [options.step=1]
@@ -72,7 +72,7 @@ color = fac.getColor(video);
  * @param {number} [options.width=width of resource]
  * @param {number} [options.height=height of resource]
  * @param {boolean} [options.silent] Disable error output via console.error
- * 
+ *
  * @returns {Promise}
  */
 ```
@@ -82,7 +82,7 @@ const fac = new FastAverageColor();
 
 // From not loaded image (HTMLImageElement)
 fac.getColorAsync(image, { algorithm: 'dominant' })
-    .then(function(color) {
+    .then(color => {
         console.log(color);
         // {
         //     rgb: 'rgb(255, 0, 0)',
@@ -94,7 +94,7 @@ fac.getColorAsync(image, { algorithm: 'dominant' })
         //     isLight: false
         // }
     })
-    .catch(function(e) {
+    .catch(e => {
         console.error(e);
     });
 ```
@@ -108,7 +108,7 @@ fac.getColorAsync(image, { algorithm: 'dominant' })
  * @param {Object} [options]
  * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
  * @param {Array}  [options.defaultColor=[255, 255, 255, 255]]
- * @param {Array}  [options.ignoredColor] [red (0-255), green (0-255), blue (0-255), alpha (0-255)] 
+ * @param {Array}  [options.ignoredColor] [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
  * @param {number} [options.step=1]
  *
  * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
