@@ -9,24 +9,16 @@ export default class FastAverageColor {
      * Get asynchronously the average color from not loaded image.
      *
      * @param {HTMLImageElement | string | null} resource
-     * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
-     * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {number} [options.step=1]
-     * @param {number} [options.left=0]
-     * @param {number} [options.top=0]
-     * @param {number} [options.width=width of resource]
-     * @param {number} [options.height=height of resource]
-     * @param {boolean} [options.silent] Disable error output via console.error
+     * @param {FastAverageColorOptions} [options]
      *
-     * @returns {Promise}
+     * @returns {Promise<FastAverageColorOptions>}
      */
     getColorAsync(resource, options) {
         if (!resource) {
             return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
-        } else if (typeof resource === 'string') {
+        }
+
+        if (typeof resource === 'string') {
             const img = new Image();
             img.crossOrigin = '';
             img.src = resource;
@@ -43,30 +35,19 @@ export default class FastAverageColor {
      * Get the average color from images, videos and canvas.
      *
      * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
-     * @param {Object} [options]
-     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
-     * @param {string} [options.mode="speed"] "precision" or "speed"
-     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {number} [options.step=1]
-     * @param {number} [options.left=0]
-     * @param {number} [options.top=0]
-     * @param {number} [options.width=width of resource]
-     * @param {number} [options.height=height of resource]
-     * @param {boolean} [options.silent] Disable error output via console.error
+     * @param {FastAverageColorOptions} [options]
      *
-     * @returns {Object}
+     * @returns {FastAverageColorResult}
      */
     getColor(resource, options) {
         options = options || {};
 
         const defaultColor = this._getDefaultColor(options);
 
-        let value = defaultColor;
         if (!resource) {
             this._outputError(options, 'call .getColor(null) without resource.');
 
-            return this._prepareResult(defaultColor);
+            return this.prepareResult(defaultColor);
         }
 
         const originalSize = this._getOriginalSize(resource);
@@ -75,7 +56,7 @@ export default class FastAverageColor {
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
             this._outputError(options, `incorrect sizes for resource "${resource.src}".`);
 
-            return this._prepareResult(defaultColor);
+            return this.prepareResult(defaultColor);
         }
 
         if (!this._ctx) {
@@ -85,12 +66,14 @@ export default class FastAverageColor {
             if (!this._ctx) {
                 this._outputError(options, 'Canvas Context 2D is not supported in this browser.');
 
-                return this._prepareResult(defaultColor);
+                return this.prepareResult(defaultColor);
             }
         }
 
         this._canvas.width = size.destWidth;
         this._canvas.height = size.destHeight;
+
+        let value = defaultColor;
 
         try {
             this._ctx.clearRect(0, 0, size.destWidth, size.destHeight);
@@ -108,20 +91,20 @@ export default class FastAverageColor {
             this._outputError(options, `security error (CORS) for resource ${resource.src}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, e);
         }
 
-        return this._prepareResult(value);
+        return this.prepareResult(value);
     }
 
     /**
      * Get the average color from a array when 1 pixel is 4 bytes.
      *
-     * @param {Array|Uint8Array|Uint8ClampedArray} arr
+     * @param {number[]|Uint8Array|Uint8ClampedArray} arr
      * @param {Object} [options]
      * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {Array}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {Array}  [options.ignoredColor] [red, green, blue, alpha]
+     * @param {number[]}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+     * @param {number[]}  [options.ignoredColor] [red, green, blue, alpha]
      * @param {number} [options.step=1]
      *
-     * @returns {Array} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
+     * @returns {number[]} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
      */
     getColorFromArray4(arr, options) {
         options = options || {};
@@ -155,9 +138,38 @@ export default class FastAverageColor {
 
         return algorithm(arr, len, {
             defaultColor,
-            ignoredColor: options.ignoredColor,
+            ignoredColor: this._prepareIgnoredColor(options.ignoredColor),
             step
         });
+    }
+
+    /**
+     * Get color data from value ([r, g, b, a]).
+     *
+     * @param {number[]} value
+     *
+     * @returns {FastAverageColorResult}
+     */
+    prepareResult(value) {
+        const rgb = value.slice(0, 3);
+        const rgba = [].concat(rgb, value[3] / 255);
+        const isDark = this._isDark(value);
+
+        return {
+            value,
+            rgb: 'rgb(' + rgb.join(',') + ')',
+            rgba: 'rgba(' + rgba.join(',') + ')',
+            hex: this._arrayToHex(rgb),
+            hexa: this._arrayToHex(value),
+            isDark,
+            isLight: !isDark
+        };
+    }
+
+    _prepareIgnoredColor(color) {
+        return Array.isArray(color) && !Array.isArray(color[0]) ?
+            [[].concat(color)] :
+            color;
     }
 
     /**
@@ -177,13 +189,13 @@ export default class FastAverageColor {
     }
 
     _prepareSizeAndPosition(originalSize, options) {
-        let
-            srcLeft = this._getOption(options, 'left', 0),
-            srcTop = this._getOption(options, 'top', 0),
-            srcWidth = this._getOption(options, 'width', originalSize.width),
-            srcHeight = this._getOption(options, 'height', originalSize.height),
-            destWidth = srcWidth,
-            destHeight = srcHeight;
+        const srcLeft = this._getOption(options, 'left', 0);
+        const srcTop = this._getOption(options, 'top', 0);
+        const srcWidth = this._getOption(options, 'width', originalSize.width);
+        const srcHeight = this._getOption(options, 'height', originalSize.height);
+
+        let destWidth = srcWidth;
+        let destHeight = srcHeight;
 
         if (options.mode === 'precision') {
             return {
@@ -267,22 +279,6 @@ export default class FastAverageColor {
         });
     }
 
-    _prepareResult(value) {
-        const rgb = value.slice(0, 3);
-        const rgba = [].concat(rgb, value[3] / 255);
-        const isDark = this._isDark(value);
-
-        return {
-            value,
-            rgb: 'rgb(' + rgb.join(',') + ')',
-            rgba: 'rgba(' + rgba.join(',') + ')',
-            hex: this._arrayToHex(rgb),
-            hexa: this._arrayToHex(value),
-            isDark,
-            isLight: !isDark
-        };
-    }
-
     _getOriginalSize(resource) {
         if (resource instanceof HTMLImageElement) {
             return {
@@ -305,7 +301,7 @@ export default class FastAverageColor {
     }
 
     _toHex(num) {
-        let str = num.toString(16);
+        const str = num.toString(16);
 
         return str.length === 1 ? '0' + str : str;
     }
@@ -337,3 +333,31 @@ export default class FastAverageColor {
         }
     }
 }
+
+/**
+ * @typeof {Object} FastAverageColorOptions
+ *
+ * @param {number[]}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
+ * @param {number[]}  [options.ignoredColor] [red, green, blue, alpha]
+ * @param {string} [options.mode="speed"] "precision" or "speed"
+ * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
+ * @param {number} [options.step=1]
+ * @param {number} [options.left=0]
+ * @param {number} [options.top=0]
+ * @param {number} [options.width=width of resource]
+ * @param {number} [options.height=height of resource]
+ * @param {boolean} [options.silent] Disable error output via console.error
+ */
+
+/**
+ * @typedef {Object} FastAverageColorResult
+ *
+ * @property {string} rgba
+ * @property {string} rgb
+ * @property {string} hex
+ * @property {string} hexa
+ * @property {number[]} value
+ * @property {boolean} isDark
+ * @property {boolean} isLight
+ * @property {Error?} error
+ */

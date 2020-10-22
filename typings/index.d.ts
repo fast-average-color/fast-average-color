@@ -14,7 +14,7 @@ interface IFastAverageColorOptions {
     height?: number;
 
     defaultColor?: IFastAverageColorRgba;
-    ignoredColor?: IFastAverageColorRgba;
+    ignoredColor?: IFastAverageColorRgba | IFastAverageColorRgba[];
 
     silent?: boolean;
 }
@@ -34,6 +34,7 @@ interface IFastAverageColor {
     getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: IFastAverageColorOptions): IFastAverageColorResult;
     getColorAsync(resource: HTMLImageElement | string | null, options?: IFastAverageColorOptions): Promise<IFastAverageColorResult>;
     getColorFromArray4(arr: number[] | Uint8Array | Uint8ClampedArray, options?: IFastAverageColorOptions): IFastAverageColorRgba;
+    prepareResult(value: IFastAverageColorRgba): IFastAverageColorResult;
     destroy(): void;
 }
 

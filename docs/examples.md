@@ -15,10 +15,9 @@
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
         window.addEventListener('load', function() {
-            var
-                fac = new FastAverageColor(),
-                container = document.querySelector('.image-container'),
-                color = fac.getColor(container.querySelector('img'));
+            const fac = new FastAverageColor();
+            const container = document.querySelector('.image-container');
+            const color = fac.getColor(container.querySelector('img'));
 
             container.style.backgroundColor = color.rgba;
             container.style.color = color.isDark ? '#fff' : '#000';
@@ -54,16 +53,15 @@
     </div>
     <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
     <script>
-        var
-            fac = new FastAverageColor(),
-            container = document.querySelector('.image-container');
+        const fac = new FastAverageColor();
+        const container = document.querySelector('.image-container');
 
         fac.getColorAsync(container.querySelector('img'))
-            .then(function(color) {
+            .then(color => {
                 container.style.backgroundColor = color.rgba;
                 container.style.color = color.isDark ? '#fff' : '#000';
             })
-            .catch(function(e) {
+            .catch(e => {
                 console.log(e);
             });
     </script>
@@ -76,16 +74,16 @@
 ...
 <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
 <script>
-    var fac = new FastAverageColor();
+    const fac = new FastAverageColor();
 
     fac.getColorAsync('./image.jpg')
-        .then(function(color) {
+        .then(color => {
             container.style.backgroundColor = color.rgba;
             container.style.color = color.isDark ? '#fff' : '#000';
 
             console.log('Average color', color);
         })
-        .catch(function(e) {
+        .catch(e => {
             console.log(e);
         });
 </script>
@@ -99,15 +97,40 @@ For example, to ignore white background in logos.
 ...
 <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
 <script>
-    var fac = new FastAverageColor();
+    const fac = new FastAverageColor();
 
     fac.getColorAsync('./logo.png', {
         ignoredColor: [255, 255, 255, 255] // white
     })
-        .then(function(color) {
+        .then(color => {
             console.log('Average color', color);
         })
-        .catch(function(e) {
+        .catch(e => {
+            console.log(e);
+        });
+</script>
+...
+```
+
+## Get average color with multiple ignored colors
+For example, to ignore white and black background in logos.
+
+```html
+...
+<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script>
+    const fac = new FastAverageColor();
+
+    fac.getColorAsync('./logo.png', {
+        ignoredColor: [
+            [255, 255, 255, 255], // white
+            [0, 0, 0, 255] // black
+        ]
+    })
+        .then(color => {
+            console.log('Average color', color);
+        })
+        .catch(e => {
             console.log(e);
         });
 </script>
