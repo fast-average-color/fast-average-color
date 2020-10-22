@@ -1,5 +1,26 @@
 # Changelog
 
+# v6.2.0
+- [`fast-average-color-node`](https://github.com/fast-average-color/fast-average-color-node/) separate package for Node.js.
+- Ability to specify multiple colors in `ignoredColor` option #45.
+
+```js
+{
+    ignoredColor: [
+        [0, 0, 0, 255],
+        [0, 255, 0, 255],
+        [100, 255, 0, 255],
+        // ...
+    ]
+}
+```
+or
+```js
+{
+    ignoredColor: [0, 0, 0, 255]
+}
+```
+
 # v6.1.1
 Fixes for typings.
 
