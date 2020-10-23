@@ -44,3 +44,6 @@ A simple library that calculates the average color of any images or videos in br
 
 ## [License](LICENSE)
 MIT License
+
+## Links
+- [fast-average-color-node](https://github.com/fast-average-color/fast-average-color-node/)
