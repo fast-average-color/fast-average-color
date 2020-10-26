@@ -25,7 +25,11 @@ function _createClass(Constructor, protoProps, staticProps) {
 
 function isIgnoredColor(arr, num, ignoredColor) {
   for (var i = 0; i < ignoredColor.length; i++) {
-    var item = ignoredColor[i];
+    var item = ignoredColor[i]; // Ignore rgb components if the pixel are fully transparent.
+
+    if (!arr[num + 3] && !item[3]) {
+      return true;
+    }
 
     if (arr[num] === item[0] && // red
     arr[num + 1] === item[1] && // green
