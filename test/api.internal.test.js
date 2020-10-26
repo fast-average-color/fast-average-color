@@ -1,4 +1,4 @@
-import FastAverageColor from '../dist/index.common';
+import FastAverageColor from '../src';
 
 describe('Internal API', () => {
     describe('_getOption()', () => {

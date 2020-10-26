@@ -60,7 +60,7 @@
     "build": "gulp",
     "prepare": "gulp",
     "eslint": "eslint .",
-    "test": "npm run build && npm run eslint && npm run unit-test-coverage && npm run test-typings",
+    "test": "npm run eslint && npm run unit-test-coverage && npm run test-typings",
     "unit-test": "jest",
     "unit-test-coverage": "nyc jest",
     "test-typings": "tsc -p tsconfig.json"
