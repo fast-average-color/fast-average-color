@@ -1,15 +1,15 @@
 import FastAverageColor from '../src';
+import { getOption } from '../src/helpers/option';
+import { isDark } from '../src/helpers/color';
 
 describe('Internal API', () => {
-    describe('_getOption()', () => {
+    describe('getOption()', () => {
         it('should return default value', () => {
-            const fac = new FastAverageColor();
-            expect(fac._getOption({}, 'left', 0)).toEqual(0);
+            expect(getOption({}, 'left', 0)).toEqual(0);
         });
 
         it('should return the option', () => {
-            const fac = new FastAverageColor();
-            expect(fac._getOption({left: 10}, 'left', 0)).toEqual(10);
+            expect(getOption({left: 10}, 'left', 0)).toEqual(10);
         });
     });
 
@@ -40,10 +40,8 @@ describe('Internal API', () => {
         });
     });
 
-    describe('_isDark', () => {
+    describe('isDark', () => {
         it('should return dark color', () => {
-            const fac = new FastAverageColor();
-
             [
                 {color: [0, 0, 0], expected: true},
                 {color: [255, 255, 255], expected: false},
@@ -53,7 +51,7 @@ describe('Internal API', () => {
                 {color: [238, 144, 134], expected: false},
                 {color: [123, 151, 175], expected: false}
             ].forEach(item => {
-                expect(fac._isDark(item.color)).toEqual(item.expected);
+                expect(isDark(item.color)).toEqual(item.expected);
             });
         });
     });
