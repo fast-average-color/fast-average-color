@@ -36,7 +36,6 @@ Fixed image src for `getColorAsync` method.
 # v6.0.1
 Fixed `ignoredColor` option for sqrt algorithm.
 
-
 # v6.0.0
 - Add `ignoredColor` option #39. [Example](./docs/examples.md#get-average-color-with-ignored-color)
 - Get average color from image url #38. [Example](./docs/examples.md#get-average-color-from-image-url)

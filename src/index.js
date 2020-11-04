@@ -2,32 +2,37 @@ import dominantAlgorithm from './algorithm/dominant';
 import simpleAlgorithm from './algorithm/simple';
 import sqrtAlgorithm from './algorithm/sqrt';
 
-const ERROR_PREFIX = 'FastAverageColor: ';
+import { arrayToHex, isDark, prepareIgnoredColor } from './helpers/color';
+import { getOption, getDefaultColor } from './helpers/option';
+import { makeCanvas, getOriginalSize } from './helpers/dom';
+import { outputError, getError } from './helpers/error';
 
 export default class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
      *
-     * @param {HTMLImageElement | string | null} resource
+     * @param {string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
      * @param {FastAverageColorOptions} [options]
      *
      * @returns {Promise<FastAverageColorOptions>}
      */
     getColorAsync(resource, options) {
         if (!resource) {
-            return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
+            return Promise.reject(getError('call .getColorAsync() without resource.'));
         }
 
         if (typeof resource === 'string') {
             const img = new Image();
             img.crossOrigin = '';
             img.src = resource;
+
             return this._bindImageEvents(img, options);
-        } else if (resource.complete) {
-            const result = this.getColor(resource, options);
-            return result.error ? Promise.reject(result.error) : Promise.resolve(result);
-        } else {
+        } else if (resource instanceof Image && !resource.complete) {
             return this._bindImageEvents(resource, options);
+        } else {
+            const result = this.getColor(resource, options);
+
+            return result.error ? Promise.reject(result.error) : Promise.resolve(result);
         }
     }
 
@@ -42,29 +47,29 @@ export default class FastAverageColor {
     getColor(resource, options) {
         options = options || {};
 
-        const defaultColor = this._getDefaultColor(options);
+        const defaultColor = getDefaultColor(options);
 
         if (!resource) {
-            this._outputError(options, 'call .getColor(null) without resource.');
+            outputError(options, 'call .getColor(null) without resource.');
 
             return this.prepareResult(defaultColor);
         }
 
-        const originalSize = this._getOriginalSize(resource);
+        const originalSize = getOriginalSize(resource);
         const size = this._prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-            this._outputError(options, `incorrect sizes for resource "${resource.src}".`);
+            outputError(options, `incorrect sizes for resource "${resource.src}".`);
 
             return this.prepareResult(defaultColor);
         }
 
         if (!this._ctx) {
-            this._canvas = this._makeCanvas();
+            this._canvas = makeCanvas();
             this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
             if (!this._ctx) {
-                this._outputError(options, 'Canvas Context 2D is not supported in this browser.');
+                outputError(options, 'Canvas Context 2D is not supported in this browser.');
 
                 return this.prepareResult(defaultColor);
             }
@@ -88,7 +93,7 @@ export default class FastAverageColor {
             const bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
             value = this.getColorFromArray4(bitmapData, options);
         } catch (e) {
-            this._outputError(options, `security error (CORS) for resource ${resource.src}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, e);
+            outputError(options, `security error (CORS) for resource ${resource.src}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, e);
         }
 
         return this.prepareResult(value);
@@ -111,7 +116,7 @@ export default class FastAverageColor {
 
         const bytesPerPixel = 4;
         const arrLength = arr.length;
-        const defaultColor = this._getDefaultColor(options);
+        const defaultColor = getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
             return defaultColor;
@@ -133,12 +138,12 @@ export default class FastAverageColor {
                 algorithm = dominantAlgorithm;
                 break;
             default:
-                throw Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
+                throw getError(`${options.algorithm} is unknown algorithm.`);
         }
 
         return algorithm(arr, len, {
             defaultColor,
-            ignoredColor: this._prepareIgnoredColor(options.ignoredColor),
+            ignoredColor: prepareIgnoredColor(options.ignoredColor),
             step
         });
     }
@@ -153,23 +158,17 @@ export default class FastAverageColor {
     prepareResult(value) {
         const rgb = value.slice(0, 3);
         const rgba = [].concat(rgb, value[3] / 255);
-        const isDark = this._isDark(value);
+        const isDarkColor = isDark(value);
 
         return {
             value,
             rgb: 'rgb(' + rgb.join(',') + ')',
             rgba: 'rgba(' + rgba.join(',') + ')',
-            hex: this._arrayToHex(rgb),
-            hexa: this._arrayToHex(value),
-            isDark,
-            isLight: !isDark
+            hex: arrayToHex(rgb),
+            hexa: arrayToHex(value),
+            isDark: isDarkColor,
+            isLight: !isDarkColor
         };
-    }
-
-    _prepareIgnoredColor(color) {
-        return Array.isArray(color) && !Array.isArray(color[0]) ?
-            [[].concat(color)] :
-            color;
     }
 
     /**
@@ -180,19 +179,11 @@ export default class FastAverageColor {
         delete this._ctx;
     }
 
-    _getDefaultColor(options) {
-        return this._getOption(options, 'defaultColor', [0, 0, 0, 0]);
-    }
-
-    _getOption(options, name, defaultValue) {
-        return typeof options[name] === 'undefined' ? defaultValue : options[name];
-    }
-
     _prepareSizeAndPosition(originalSize, options) {
-        const srcLeft = this._getOption(options, 'left', 0);
-        const srcTop = this._getOption(options, 'top', 0);
-        const srcWidth = this._getOption(options, 'width', originalSize.width);
-        const srcHeight = this._getOption(options, 'height', originalSize.height);
+        const srcLeft = getOption(options, 'left', 0);
+        const srcTop = getOption(options, 'top', 0);
+        const srcWidth = getOption(options, 'width', originalSize.width);
+        const srcHeight = getOption(options, 'height', originalSize.height);
 
         let destWidth = srcWidth;
         let destHeight = srcHeight;
@@ -258,13 +249,13 @@ export default class FastAverageColor {
             const onerror = () => {
                 unbindEvents();
 
-                reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
+                reject(getError(`Error loading image ${resource.src}.`));
             };
 
             const onabort = () => {
                 unbindEvents();
 
-                reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
+                reject(getError(`Image "${resource.src}" loading aborted.`));
             };
 
             const unbindEvents = () => {
@@ -277,60 +268,6 @@ export default class FastAverageColor {
             resource.addEventListener('error', onerror);
             resource.addEventListener('abort', onabort);
         });
-    }
-
-    _getOriginalSize(resource) {
-        if (resource instanceof HTMLImageElement) {
-            return {
-                width: resource.naturalWidth,
-                height: resource.naturalHeight
-            };
-        }
-
-        if (resource instanceof HTMLVideoElement) {
-            return {
-                width: resource.videoWidth,
-                height: resource.videoHeight
-            };
-        }
-
-        return {
-            width: resource.width,
-            height: resource.height
-        };
-    }
-
-    _toHex(num) {
-        const str = num.toString(16);
-
-        return str.length === 1 ? '0' + str : str;
-    }
-
-    _arrayToHex(arr) {
-        return '#' + arr.map(this._toHex).join('');
-    }
-
-    _isDark(color) {
-        // http://www.w3.org/TR/AERT#color-contrast
-        const result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
-
-        return result < 128;
-    }
-
-    _makeCanvas() {
-        return typeof window === 'undefined' ?
-            new OffscreenCanvas(1, 1) :
-            document.createElement('canvas');
-    }
-
-    _outputError(options, error, details) {
-        if (!options.silent) {
-            console.error(`${ERROR_PREFIX}${error}`);
-
-            if (details) {
-                console.error(details);
-            }
-        }
     }
 }
 
