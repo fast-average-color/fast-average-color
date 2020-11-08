@@ -1,4 +1,4 @@
-import { isIgnoredColor } from './ignoredColor';
+import { isIgnoredColor } from '../helpers/color';
 
 export default function dominantAlgorithm(arr, len, options) {
     const colorHash = {};

@@ -1,4 +1,4 @@
-import { isIgnoredColor } from './ignoredColor';
+import { isIgnoredColor } from '../helpers/color';
 
 export default function sqrtAlgorithm(arr, len, options) {
     let redTotal = 0;

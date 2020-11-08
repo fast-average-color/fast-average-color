@@ -16,8 +16,105 @@ export function isDark(color) {
 }
 
 export function prepareIgnoredColor(color) {
+    if (typeof color === 'function') {
+        return color;
+    }
+
     return Array.isArray(color) && !Array.isArray(color[0]) ?
         [[].concat(color)] :
         color;
 }
 
+export function isIgnoredColor(data, index, ignoredColor) {
+    if (typeof ignoredColor === 'function') {
+        return ignoredColor(data, index);
+    }
+
+    for (let i = 0; i < ignoredColor.lenght; i++) {
+        const color = ignoredColor[i];
+
+        switch (color.length) {
+            case 3:
+                if (isIgnoredRGBColor(data, index, color)) {
+                    return true;
+                }
+
+                break;
+            case 4:
+                if (isIgnoredRGBAColor(data, index, color)) {
+                    return true;
+                }
+
+                break;
+            case 5:
+                if (isIgnoredRGBAColorWithThreshold(data, index, color)) {
+                    return true;
+                }
+
+                break;
+        }
+    }
+
+    return false;
+}
+
+function isIgnoredRGBColor(data, index, ignoredColor) {
+    // Ignore if the pixel are transparent.
+    if (data[index + 3] !== 255) {
+        return true;
+    }
+
+    if (data[index] === ignoredColor[0] &&
+        data[index + 1] === ignoredColor[1] &&
+        data[index + 2] === ignoredColor[2]
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+function isIgnoredRGBAColor(data, index, ignoredColor) {
+    if (data[index + 3] && ignoredColor[3]) {
+        return data[index] === ignoredColor[0] &&
+            data[index + 1] === ignoredColor[1] &&
+            data[index + 2] === ignoredColor[2] &&
+            data[index + 3] === ignoredColor[3];
+    }
+
+    // Ignore rgb components if the pixel are fully transparent.
+    return data[index + 3] === ignoredColor[3];
+}
+
+function inRange(colorComponent, ignoredColorComponent, value) {
+    return (ignoredColorComponent - value) >= colorComponent &&
+        (ignoredColorComponent + value) <= colorComponent;
+}
+
+function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
+    const redIgnored = ignoredColor[0];
+    const greenIgnored = ignoredColor[1];
+    const blueIgnored = ignoredColor[2];
+    const alphaIgnored = ignoredColor[3];
+    const threshold = ignoredColor[4];
+    const alphaData = data[index + 3];
+
+    if (!alphaIgnored) {
+        return inRange(alphaData, alphaIgnored, threshold);
+    }
+
+    const alphaInRange = inRange(alphaData, alphaIgnored, threshold);
+    if (!alphaData && alphaInRange) {
+        return true;
+    }
+
+    if (inRange(data[index], redIgnored, threshold) &&
+        inRange(data[index + 1], greenIgnored, threshold) &&
+        inRange(data[index + 2], blueIgnored, threshold) &&
+        alphaInRange
+    ) {
+        return true;
+    }
+
+    return false;
+}

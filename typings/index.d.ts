@@ -1,4 +1,12 @@
-type IFastAverageColorRgba = [number, number, number, number]; // [red, green, blue, opacity]
+type IFastAverageColorRgb = [number, number, number, number]; // [red 0-255, green 0-255, blue 0-255]
+type IFastAverageColorRgba = [number, number, number, number]; // [red 0-255, green 0-255, blue 0-255, opacity 0-255]
+type IFastAverageColorRgbaWithThreshold = [number, number, number, number, number]; // [red 0-255, green 0-255, blue 0-255, alpha 0-255, threshold 0-255]
+
+type IFastAverageColorIgnoredColorCallback = (data: IFastAverageColorData, index: number) => boolean;
+
+type IFastAverageIgnoredColor = IFastAverageColorRgb | IFastAverageColorRgba | IFastAverageColorIgnoredColorCallback;
+
+type IFastAverageColorData = number[] | Uint8Array | Uint8ClampedArray;
 
 interface IFastAverageColorOptions {
     algorithm?: 'simple' | 'sqrt' | 'dominant';
@@ -14,7 +22,7 @@ interface IFastAverageColorOptions {
     height?: number;
 
     defaultColor?: IFastAverageColorRgba;
-    ignoredColor?: IFastAverageColorRgba | IFastAverageColorRgba[];
+    ignoredColor?: IFastAverageIgnoredColor;
 
     silent?: boolean;
 }
@@ -33,7 +41,7 @@ interface IFastAverageColorResult {
 interface IFastAverageColor {
     getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: IFastAverageColorOptions): IFastAverageColorResult;
     getColorAsync(resource: string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: IFastAverageColorOptions): Promise<IFastAverageColorResult>;
-    getColorFromArray4(arr: number[] | Uint8Array | Uint8ClampedArray, options?: IFastAverageColorOptions): IFastAverageColorRgba;
+    getColorFromArray4(arr: IFastAverageColorData, options?: IFastAverageColorOptions): IFastAverageColorRgba;
     prepareResult(value: IFastAverageColorRgba): IFastAverageColorResult;
     destroy(): void;
 }

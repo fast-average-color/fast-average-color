@@ -1,19 +1,120 @@
 /*! Fast Average Color | © 2020 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
-function isIgnoredColor(arr, num, ignoredColor) {
-    for (let i = 0; i < ignoredColor.length; i++) {
-        const item = ignoredColor[i];
-        // Ignore rgb components if the pixel are fully transparent.
-        if (!arr[num + 3] && !item[3]) {
-            return true;
-        }
+function toHex(num) {
+    const str = num.toString(16);
 
-        if (arr[num] === item[0] && // red
-            arr[num + 1] === item[1] && // green
-            arr[num + 2] === item[2] && // blue
-            arr[num + 3] === item[3] // alpha
-        ) {
-            return true;
+    return str.length === 1 ? '0' + str : str;
+}
+
+function arrayToHex(arr) {
+    return '#' + arr.map(toHex).join('');
+}
+
+function isDark(color) {
+    // http://www.w3.org/TR/AERT#color-contrast
+    const result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
+
+    return result < 128;
+}
+
+function prepareIgnoredColor(color) {
+    if (typeof color === 'function') {
+        return color;
+    }
+
+    return Array.isArray(color) && !Array.isArray(color[0]) ?
+        [[].concat(color)] :
+        color;
+}
+
+function isIgnoredColor(data, index, ignoredColor) {
+    if (typeof ignoredColor === 'function') {
+        return ignoredColor(data, index);
+    }
+
+    for (let i = 0; i < ignoredColor.lenght; i++) {
+        const color = ignoredColor[i];
+
+        switch (color.length) {
+            case 3:
+                if (isIgnoredRGBColor(data, index, color)) {
+                    return true;
+                }
+
+                break;
+            case 4:
+                if (isIgnoredRGBAColor(data, index, color)) {
+                    return true;
+                }
+
+                break;
+            case 5:
+                if (isIgnoredRGBAColorWithThreshold(data, index, color)) {
+                    return true;
+                }
+
+                break;
         }
+    }
+
+    return false;
+}
+
+function isIgnoredRGBColor(data, index, ignoredColor) {
+    // Ignore if the pixel are transparent.
+    if (data[index + 3] !== 255) {
+        return true;
+    }
+
+    if (data[index] === ignoredColor[0] &&
+        data[index + 1] === ignoredColor[1] &&
+        data[index + 2] === ignoredColor[2]
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+function isIgnoredRGBAColor(data, index, ignoredColor) {
+    if (data[index + 3] && ignoredColor[3]) {
+        return data[index] === ignoredColor[0] &&
+            data[index + 1] === ignoredColor[1] &&
+            data[index + 2] === ignoredColor[2] &&
+            data[index + 3] === ignoredColor[3];
+    }
+
+    // Ignore rgb components if the pixel are fully transparent.
+    return data[index + 3] === ignoredColor[3];
+}
+
+function inRange(colorComponent, ignoredColorComponent, value) {
+    return (ignoredColorComponent - value) >= colorComponent &&
+        (ignoredColorComponent + value) <= colorComponent;
+}
+
+function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
+    const redIgnored = ignoredColor[0];
+    const greenIgnored = ignoredColor[1];
+    const blueIgnored = ignoredColor[2];
+    const alphaIgnored = ignoredColor[3];
+    const threshold = ignoredColor[4];
+    const alphaData = data[index + 3];
+
+    if (!alphaIgnored) {
+        return inRange(alphaData, alphaIgnored, threshold);
+    }
+
+    const alphaInRange = inRange(alphaData, alphaIgnored, threshold);
+    if (!alphaData && alphaInRange) {
+        return true;
+    }
+
+    if (inRange(data[index], redIgnored, threshold) &&
+        inRange(data[index + 1], greenIgnored, threshold) &&
+        inRange(data[index + 2], blueIgnored, threshold) &&
+        alphaInRange
+    ) {
+        return true;
     }
 
     return false;
@@ -145,32 +246,83 @@ function sqrtAlgorithm(arr, len, options) {
     ] : options.defaultColor;
 }
 
+function getDefaultColor(options) {
+    return getOption(options, 'defaultColor', [0, 0, 0, 0]);
+}
+
+function getOption(options, name, defaultValue) {
+    return typeof options[name] === 'undefined' ? defaultValue : options[name];
+}
+
+function getOriginalSize(resource) {
+    if (resource instanceof HTMLImageElement) {
+        return {
+            width: resource.naturalWidth,
+            height: resource.naturalHeight
+        };
+    }
+
+    if (resource instanceof HTMLVideoElement) {
+        return {
+            width: resource.videoWidth,
+            height: resource.videoHeight
+        };
+    }
+
+    return {
+        width: resource.width,
+        height: resource.height
+    };
+}
+
+function makeCanvas() {
+    return typeof window === 'undefined' ?
+        new OffscreenCanvas(1, 1) :
+        document.createElement('canvas');
+}
+
 const ERROR_PREFIX = 'FastAverageColor: ';
+
+function outputError(options, error, details) {
+    if (!options.silent) {
+        console.error(`${ERROR_PREFIX}${error}`);
+
+        if (details) {
+            console.error(details);
+        }
+    }
+}
+
+function getError(text) {
+    return Error(ERROR_PREFIX + text);
+}
 
 class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
      *
-     * @param {HTMLImageElement | string | null} resource
+     * @param {string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
      * @param {FastAverageColorOptions} [options]
      *
      * @returns {Promise<FastAverageColorOptions>}
      */
     getColorAsync(resource, options) {
         if (!resource) {
-            return Promise.reject(Error(`${ERROR_PREFIX}call .getColorAsync() without resource.`));
+            return Promise.reject(getError('call .getColorAsync() without resource.'));
         }
 
         if (typeof resource === 'string') {
             const img = new Image();
             img.crossOrigin = '';
             img.src = resource;
+
             return this._bindImageEvents(img, options);
-        } else if (resource.complete) {
-            const result = this.getColor(resource, options);
-            return result.error ? Promise.reject(result.error) : Promise.resolve(result);
-        } else {
+        } else if (resource instanceof Image && !resource.complete) {
             return this._bindImageEvents(resource, options);
+        } else {
+            const result = this.getColor(resource, options);
+
+            return result.error ? Promise.reject(result.error) : Promise.resolve(result);
         }
     }
 
@@ -185,29 +337,29 @@ class FastAverageColor {
     getColor(resource, options) {
         options = options || {};
 
-        const defaultColor = this._getDefaultColor(options);
+        const defaultColor = getDefaultColor(options);
 
         if (!resource) {
-            this._outputError(options, 'call .getColor(null) without resource.');
+            outputError(options, 'call .getColor(null) without resource.');
 
             return this.prepareResult(defaultColor);
         }
 
-        const originalSize = this._getOriginalSize(resource);
+        const originalSize = getOriginalSize(resource);
         const size = this._prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-            this._outputError(options, `incorrect sizes for resource "${resource.src}".`);
+            outputError(options, `incorrect sizes for resource "${resource.src}".`);
 
             return this.prepareResult(defaultColor);
         }
 
         if (!this._ctx) {
-            this._canvas = this._makeCanvas();
+            this._canvas = makeCanvas();
             this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
             if (!this._ctx) {
-                this._outputError(options, 'Canvas Context 2D is not supported in this browser.');
+                outputError(options, 'Canvas Context 2D is not supported in this browser.');
 
                 return this.prepareResult(defaultColor);
             }
@@ -231,7 +383,7 @@ class FastAverageColor {
             const bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
             value = this.getColorFromArray4(bitmapData, options);
         } catch (e) {
-            this._outputError(options, `security error (CORS) for resource ${resource.src}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, e);
+            outputError(options, `security error (CORS) for resource ${resource.src}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, e);
         }
 
         return this.prepareResult(value);
@@ -254,7 +406,7 @@ class FastAverageColor {
 
         const bytesPerPixel = 4;
         const arrLength = arr.length;
-        const defaultColor = this._getDefaultColor(options);
+        const defaultColor = getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
             return defaultColor;
@@ -276,12 +428,12 @@ class FastAverageColor {
                 algorithm = dominantAlgorithm;
                 break;
             default:
-                throw Error(`${ERROR_PREFIX}${options.algorithm} is unknown algorithm.`);
+                throw getError(`${options.algorithm} is unknown algorithm.`);
         }
 
         return algorithm(arr, len, {
             defaultColor,
-            ignoredColor: this._prepareIgnoredColor(options.ignoredColor),
+            ignoredColor: prepareIgnoredColor(options.ignoredColor),
             step
         });
     }
@@ -296,23 +448,17 @@ class FastAverageColor {
     prepareResult(value) {
         const rgb = value.slice(0, 3);
         const rgba = [].concat(rgb, value[3] / 255);
-        const isDark = this._isDark(value);
+        const isDarkColor = isDark(value);
 
         return {
             value,
             rgb: 'rgb(' + rgb.join(',') + ')',
             rgba: 'rgba(' + rgba.join(',') + ')',
-            hex: this._arrayToHex(rgb),
-            hexa: this._arrayToHex(value),
-            isDark,
-            isLight: !isDark
+            hex: arrayToHex(rgb),
+            hexa: arrayToHex(value),
+            isDark: isDarkColor,
+            isLight: !isDarkColor
         };
-    }
-
-    _prepareIgnoredColor(color) {
-        return Array.isArray(color) && !Array.isArray(color[0]) ?
-            [[].concat(color)] :
-            color;
     }
 
     /**
@@ -323,19 +469,11 @@ class FastAverageColor {
         delete this._ctx;
     }
 
-    _getDefaultColor(options) {
-        return this._getOption(options, 'defaultColor', [0, 0, 0, 0]);
-    }
-
-    _getOption(options, name, defaultValue) {
-        return typeof options[name] === 'undefined' ? defaultValue : options[name];
-    }
-
     _prepareSizeAndPosition(originalSize, options) {
-        const srcLeft = this._getOption(options, 'left', 0);
-        const srcTop = this._getOption(options, 'top', 0);
-        const srcWidth = this._getOption(options, 'width', originalSize.width);
-        const srcHeight = this._getOption(options, 'height', originalSize.height);
+        const srcLeft = getOption(options, 'left', 0);
+        const srcTop = getOption(options, 'top', 0);
+        const srcWidth = getOption(options, 'width', originalSize.width);
+        const srcHeight = getOption(options, 'height', originalSize.height);
 
         let destWidth = srcWidth;
         let destHeight = srcHeight;
@@ -401,13 +539,13 @@ class FastAverageColor {
             const onerror = () => {
                 unbindEvents();
 
-                reject(Error(`${ERROR_PREFIX}Error loading image ${resource.src}.`));
+                reject(getError(`Error loading image ${resource.src}.`));
             };
 
             const onabort = () => {
                 unbindEvents();
 
-                reject(Error(`${ERROR_PREFIX}Image "${resource.src}" loading aborted.`));
+                reject(getError(`Image "${resource.src}" loading aborted.`));
             };
 
             const unbindEvents = () => {
@@ -420,60 +558,6 @@ class FastAverageColor {
             resource.addEventListener('error', onerror);
             resource.addEventListener('abort', onabort);
         });
-    }
-
-    _getOriginalSize(resource) {
-        if (resource instanceof HTMLImageElement) {
-            return {
-                width: resource.naturalWidth,
-                height: resource.naturalHeight
-            };
-        }
-
-        if (resource instanceof HTMLVideoElement) {
-            return {
-                width: resource.videoWidth,
-                height: resource.videoHeight
-            };
-        }
-
-        return {
-            width: resource.width,
-            height: resource.height
-        };
-    }
-
-    _toHex(num) {
-        const str = num.toString(16);
-
-        return str.length === 1 ? '0' + str : str;
-    }
-
-    _arrayToHex(arr) {
-        return '#' + arr.map(this._toHex).join('');
-    }
-
-    _isDark(color) {
-        // http://www.w3.org/TR/AERT#color-contrast
-        const result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
-
-        return result < 128;
-    }
-
-    _makeCanvas() {
-        return typeof window === 'undefined' ?
-            new OffscreenCanvas(1, 1) :
-            document.createElement('canvas');
-    }
-
-    _outputError(options, error, details) {
-        if (!options.silent) {
-            console.error(`${ERROR_PREFIX}${error}`);
-
-            if (details) {
-                console.error(details);
-            }
-        }
     }
 }
 

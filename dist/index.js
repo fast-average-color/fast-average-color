@@ -27,21 +27,107 @@
     return Constructor;
   }
 
-  function isIgnoredColor(arr, num, ignoredColor) {
-    for (var i = 0; i < ignoredColor.length; i++) {
-      var item = ignoredColor[i]; // Ignore rgb components if the pixel are fully transparent.
+  function toHex(num) {
+    var str = num.toString(16);
+    return str.length === 1 ? '0' + str : str;
+  }
 
-      if (!arr[num + 3] && !item[3]) {
-        return true;
+  function arrayToHex(arr) {
+    return '#' + arr.map(toHex).join('');
+  }
+  function isDark(color) {
+    // http://www.w3.org/TR/AERT#color-contrast
+    var result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
+    return result < 128;
+  }
+  function prepareIgnoredColor(color) {
+    if (typeof color === 'function') {
+      return color;
+    }
+
+    return Array.isArray(color) && !Array.isArray(color[0]) ? [[].concat(color)] : color;
+  }
+  function isIgnoredColor(data, index, ignoredColor) {
+    if (typeof ignoredColor === 'function') {
+      return ignoredColor(data, index);
+    }
+
+    for (var i = 0; i < ignoredColor.lenght; i++) {
+      var color = ignoredColor[i];
+
+      switch (color.length) {
+        case 3:
+          if (isIgnoredRGBColor(data, index, color)) {
+            return true;
+          }
+
+          break;
+
+        case 4:
+          if (isIgnoredRGBAColor(data, index, color)) {
+            return true;
+          }
+
+          break;
+
+        case 5:
+          if (isIgnoredRGBAColorWithThreshold(data, index, color)) {
+            return true;
+          }
+
+          break;
       }
+    }
 
-      if (arr[num] === item[0] && // red
-      arr[num + 1] === item[1] && // green
-      arr[num + 2] === item[2] && // blue
-      arr[num + 3] === item[3] // alpha
-      ) {
-          return true;
-        }
+    return false;
+  }
+
+  function isIgnoredRGBColor(data, index, ignoredColor) {
+    // Ignore if the pixel are transparent.
+    if (data[index + 3] !== 255) {
+      return true;
+    }
+
+    if (data[index] === ignoredColor[0] && data[index + 1] === ignoredColor[1] && data[index + 2] === ignoredColor[2]) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function isIgnoredRGBAColor(data, index, ignoredColor) {
+    if (data[index + 3] && ignoredColor[3]) {
+      return data[index] === ignoredColor[0] && data[index + 1] === ignoredColor[1] && data[index + 2] === ignoredColor[2] && data[index + 3] === ignoredColor[3];
+    } // Ignore rgb components if the pixel are fully transparent.
+
+
+    return data[index + 3] === ignoredColor[3];
+  }
+
+  function inRange(colorComponent, ignoredColorComponent, value) {
+    return ignoredColorComponent - value >= colorComponent && ignoredColorComponent + value <= colorComponent;
+  }
+
+  function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
+    var redIgnored = ignoredColor[0];
+    var greenIgnored = ignoredColor[1];
+    var blueIgnored = ignoredColor[2];
+    var alphaIgnored = ignoredColor[3];
+    var threshold = ignoredColor[4];
+    var alphaData = data[index + 3];
+
+    if (!alphaIgnored) {
+      return inRange(alphaData, alphaIgnored, threshold);
+    }
+
+    var alphaInRange = inRange(alphaData, alphaIgnored, threshold);
+
+    if (!alphaData && alphaInRange) {
+      return true;
+    }
+
+    if (inRange(data[index], redIgnored, threshold) && inRange(data[index + 1], greenIgnored, threshold) && inRange(data[index + 2], blueIgnored, threshold) && alphaInRange) {
+      return true;
     }
 
     return false;
@@ -143,7 +229,50 @@
     return alphaTotal ? [Math.round(Math.sqrt(redTotal / alphaTotal)), Math.round(Math.sqrt(greenTotal / alphaTotal)), Math.round(Math.sqrt(blueTotal / alphaTotal)), Math.round(alphaTotal / count)] : options.defaultColor;
   }
 
+  function getDefaultColor(options) {
+    return getOption(options, 'defaultColor', [0, 0, 0, 0]);
+  }
+  function getOption(options, name, defaultValue) {
+    return typeof options[name] === 'undefined' ? defaultValue : options[name];
+  }
+
+  function getOriginalSize(resource) {
+    if (resource instanceof HTMLImageElement) {
+      return {
+        width: resource.naturalWidth,
+        height: resource.naturalHeight
+      };
+    }
+
+    if (resource instanceof HTMLVideoElement) {
+      return {
+        width: resource.videoWidth,
+        height: resource.videoHeight
+      };
+    }
+
+    return {
+      width: resource.width,
+      height: resource.height
+    };
+  }
+  function makeCanvas() {
+    return typeof window === 'undefined' ? new OffscreenCanvas(1, 1) : document.createElement('canvas');
+  }
+
   var ERROR_PREFIX = 'FastAverageColor: ';
+  function outputError(options, error, details) {
+    if (!options.silent) {
+      console.error("".concat(ERROR_PREFIX).concat(error));
+
+      if (details) {
+        console.error(details);
+      }
+    }
+  }
+  function getError(text) {
+    return Error(ERROR_PREFIX + text);
+  }
 
   var FastAverageColor = /*#__PURE__*/function () {
     function FastAverageColor() {
@@ -156,14 +285,14 @@
       /**
        * Get asynchronously the average color from not loaded image.
        *
-       * @param {HTMLImageElement | string | null} resource
+       * @param {string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
        * @param {FastAverageColorOptions} [options]
        *
        * @returns {Promise<FastAverageColorOptions>}
        */
       value: function getColorAsync(resource, options) {
         if (!resource) {
-          return Promise.reject(Error("".concat(ERROR_PREFIX, "call .getColorAsync() without resource.")));
+          return Promise.reject(getError('call .getColorAsync() without resource.'));
         }
 
         if (typeof resource === 'string') {
@@ -171,11 +300,11 @@
           img.crossOrigin = '';
           img.src = resource;
           return this._bindImageEvents(img, options);
-        } else if (resource.complete) {
+        } else if (resource instanceof Image && !resource.complete) {
+          return this._bindImageEvents(resource, options);
+        } else {
           var result = this.getColor(resource, options);
           return result.error ? Promise.reject(result.error) : Promise.resolve(result);
-        } else {
-          return this._bindImageEvents(resource, options);
         }
       }
       /**
@@ -191,32 +320,28 @@
       key: "getColor",
       value: function getColor(resource, options) {
         options = options || {};
-
-        var defaultColor = this._getDefaultColor(options);
+        var defaultColor = getDefaultColor(options);
 
         if (!resource) {
-          this._outputError(options, 'call .getColor(null) without resource.');
-
+          outputError(options, 'call .getColor(null) without resource.');
           return this.prepareResult(defaultColor);
         }
 
-        var originalSize = this._getOriginalSize(resource);
+        var originalSize = getOriginalSize(resource);
 
         var size = this._prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-          this._outputError(options, "incorrect sizes for resource \"".concat(resource.src, "\"."));
-
+          outputError(options, "incorrect sizes for resource \"".concat(resource.src, "\"."));
           return this.prepareResult(defaultColor);
         }
 
         if (!this._ctx) {
-          this._canvas = this._makeCanvas();
+          this._canvas = makeCanvas();
           this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
 
           if (!this._ctx) {
-            this._outputError(options, 'Canvas Context 2D is not supported in this browser.');
-
+            outputError(options, 'Canvas Context 2D is not supported in this browser.');
             return this.prepareResult(defaultColor);
           }
         }
@@ -234,7 +359,7 @@
 
           value = this.getColorFromArray4(bitmapData, options);
         } catch (e) {
-          this._outputError(options, "security error (CORS) for resource ".concat(resource.src, ".\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image"), e);
+          outputError(options, "security error (CORS) for resource ".concat(resource.src, ".\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image"), e);
         }
 
         return this.prepareResult(value);
@@ -258,8 +383,7 @@
         options = options || {};
         var bytesPerPixel = 4;
         var arrLength = arr.length;
-
-        var defaultColor = this._getDefaultColor(options);
+        var defaultColor = getDefaultColor(options);
 
         if (arrLength < bytesPerPixel) {
           return defaultColor;
@@ -283,12 +407,12 @@
             break;
 
           default:
-            throw Error("".concat(ERROR_PREFIX).concat(options.algorithm, " is unknown algorithm."));
+            throw getError("".concat(options.algorithm, " is unknown algorithm."));
         }
 
         return algorithm(arr, len, {
           defaultColor: defaultColor,
-          ignoredColor: this._prepareIgnoredColor(options.ignoredColor),
+          ignoredColor: prepareIgnoredColor(options.ignoredColor),
           step: step
         });
       }
@@ -305,23 +429,16 @@
       value: function prepareResult(value) {
         var rgb = value.slice(0, 3);
         var rgba = [].concat(rgb, value[3] / 255);
-
-        var isDark = this._isDark(value);
-
+        var isDarkColor = isDark(value);
         return {
           value: value,
           rgb: 'rgb(' + rgb.join(',') + ')',
           rgba: 'rgba(' + rgba.join(',') + ')',
-          hex: this._arrayToHex(rgb),
-          hexa: this._arrayToHex(value),
-          isDark: isDark,
-          isLight: !isDark
+          hex: arrayToHex(rgb),
+          hexa: arrayToHex(value),
+          isDark: isDarkColor,
+          isLight: !isDarkColor
         };
-      }
-    }, {
-      key: "_prepareIgnoredColor",
-      value: function _prepareIgnoredColor(color) {
-        return Array.isArray(color) && !Array.isArray(color[0]) ? [[].concat(color)] : color;
       }
       /**
        * Destroy the instance.
@@ -334,26 +451,12 @@
         delete this._ctx;
       }
     }, {
-      key: "_getDefaultColor",
-      value: function _getDefaultColor(options) {
-        return this._getOption(options, 'defaultColor', [0, 0, 0, 0]);
-      }
-    }, {
-      key: "_getOption",
-      value: function _getOption(options, name, defaultValue) {
-        return typeof options[name] === 'undefined' ? defaultValue : options[name];
-      }
-    }, {
       key: "_prepareSizeAndPosition",
       value: function _prepareSizeAndPosition(originalSize, options) {
-        var srcLeft = this._getOption(options, 'left', 0);
-
-        var srcTop = this._getOption(options, 'top', 0);
-
-        var srcWidth = this._getOption(options, 'width', originalSize.width);
-
-        var srcHeight = this._getOption(options, 'height', originalSize.height);
-
+        var srcLeft = getOption(options, 'left', 0);
+        var srcTop = getOption(options, 'top', 0);
+        var srcWidth = getOption(options, 'width', originalSize.width);
+        var srcHeight = getOption(options, 'height', originalSize.height);
         var destWidth = srcWidth;
         var destHeight = srcHeight;
 
@@ -416,12 +519,12 @@
 
           var onerror = function onerror() {
             unbindEvents();
-            reject(Error("".concat(ERROR_PREFIX, "Error loading image ").concat(resource.src, ".")));
+            reject(getError("Error loading image ".concat(resource.src, ".")));
           };
 
           var onabort = function onabort() {
             unbindEvents();
-            reject(Error("".concat(ERROR_PREFIX, "Image \"").concat(resource.src, "\" loading aborted.")));
+            reject(getError("Image \"".concat(resource.src, "\" loading aborted.")));
           };
 
           var unbindEvents = function unbindEvents() {
@@ -434,62 +537,6 @@
           resource.addEventListener('error', onerror);
           resource.addEventListener('abort', onabort);
         });
-      }
-    }, {
-      key: "_getOriginalSize",
-      value: function _getOriginalSize(resource) {
-        if (resource instanceof HTMLImageElement) {
-          return {
-            width: resource.naturalWidth,
-            height: resource.naturalHeight
-          };
-        }
-
-        if (resource instanceof HTMLVideoElement) {
-          return {
-            width: resource.videoWidth,
-            height: resource.videoHeight
-          };
-        }
-
-        return {
-          width: resource.width,
-          height: resource.height
-        };
-      }
-    }, {
-      key: "_toHex",
-      value: function _toHex(num) {
-        var str = num.toString(16);
-        return str.length === 1 ? '0' + str : str;
-      }
-    }, {
-      key: "_arrayToHex",
-      value: function _arrayToHex(arr) {
-        return '#' + arr.map(this._toHex).join('');
-      }
-    }, {
-      key: "_isDark",
-      value: function _isDark(color) {
-        // http://www.w3.org/TR/AERT#color-contrast
-        var result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
-        return result < 128;
-      }
-    }, {
-      key: "_makeCanvas",
-      value: function _makeCanvas() {
-        return typeof window === 'undefined' ? new OffscreenCanvas(1, 1) : document.createElement('canvas');
-      }
-    }, {
-      key: "_outputError",
-      value: function _outputError(options, error, details) {
-        if (!options.silent) {
-          console.error("".concat(ERROR_PREFIX).concat(error));
-
-          if (details) {
-            console.error(details);
-          }
-        }
       }
     }]);
 

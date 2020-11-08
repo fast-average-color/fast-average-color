@@ -79,4 +79,56 @@ describe('Options: ignoredColor', () => {
 
         expect(color).toEqual([255, 255, 255, 255]);
     });
+
+    it('should return correct average color if ignored color is RGB color', () => {
+        const color = fac.getColorFromArray4([
+            100, 100, 100, 255,
+            210, 220, 230, 255,
+            30, 30, 30, 255,
+            0, 0, 0, 0,
+            100, 100, 100, 30,
+            200, 200, 200, 60,
+        ], {
+            algorithm: 'simple',
+            ignoredColor: [30, 30, 30],
+            step: 1
+        });
+
+        expect(color).toEqual([155, 160, 165, 255]);
+    });
+
+    it('should return correct average color if ignored color is own function', () => {
+        const color = fac.getColorFromArray4([
+            250, 0, 0, 255,
+            100, 100, 100, 255,
+            200, 0, 0, 255,
+            0, 0, 0, 255,
+        ], {
+            algorithm: 'simple',
+            ignoredColor: (data, index) => {
+                return data[index] < 128;
+            },
+            step: 1
+        });
+
+        expect(color).toEqual([225, 0, 0, 255]);
+    });
+
+    it('should return correct average color with threshold', () => {
+        const color = fac.getColorFromArray4([
+            100, 0, 0, 255,
+            99, 1, 1, 251,
+            95, 5, 5, 0,
+            100, 0, 0, 0,
+            200, 0, 0, 255,
+        ], {
+            algorithm: 'simple',
+            ignoredColor: [
+                [100, 0, 0, 255, 5],
+            ],
+            step: 1
+        });
+
+        expect(color).toEqual([255, 0, 0, 255]);
+    });
 });

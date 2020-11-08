@@ -40,7 +40,7 @@
         "no-console": [
           2,
           {
-            allow: ["error"]
+            "allow": ["error"]
           }
         ],
         "no-with": 2,
