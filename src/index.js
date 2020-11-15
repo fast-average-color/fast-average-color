@@ -3,8 +3,8 @@ import simpleAlgorithm from './algorithm/simple';
 import sqrtAlgorithm from './algorithm/sqrt';
 
 import { arrayToHex, isDark, prepareIgnoredColor } from './helpers/color';
-import { getOption, getDefaultColor } from './helpers/option';
-import { makeCanvas, getOriginalSize } from './helpers/dom';
+import { getDefaultColor } from './helpers/option';
+import { prepareSizeAndPosition, makeCanvas, getOriginalSize } from './helpers/dom';
 import { outputError, getError } from './helpers/error';
 
 export default class FastAverageColor {
@@ -56,7 +56,7 @@ export default class FastAverageColor {
         }
 
         const originalSize = getOriginalSize(resource);
-        const size = this._prepareSizeAndPosition(originalSize, options);
+        const size = prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
             outputError(options, `incorrect sizes for resource "${resource.src}".`);
@@ -179,59 +179,6 @@ export default class FastAverageColor {
         delete this._ctx;
     }
 
-    _prepareSizeAndPosition(originalSize, options) {
-        const srcLeft = getOption(options, 'left', 0);
-        const srcTop = getOption(options, 'top', 0);
-        const srcWidth = getOption(options, 'width', originalSize.width);
-        const srcHeight = getOption(options, 'height', originalSize.height);
-
-        let destWidth = srcWidth;
-        let destHeight = srcHeight;
-
-        if (options.mode === 'precision') {
-            return {
-                srcLeft,
-                srcTop,
-                srcWidth,
-                srcHeight,
-                destWidth,
-                destHeight
-            };
-        }
-
-        const maxSize = 100;
-        const minSize = 10;
-
-        let factor;
-
-        if (srcWidth > srcHeight) {
-            factor = srcWidth / srcHeight;
-            destWidth = maxSize;
-            destHeight = Math.round(destWidth / factor);
-        } else {
-            factor = srcHeight / srcWidth;
-            destHeight = maxSize;
-            destWidth = Math.round(destHeight / factor);
-        }
-
-        if (
-            destWidth > srcWidth || destHeight > srcHeight ||
-            destWidth < minSize || destHeight < minSize
-        ) {
-            destWidth = srcWidth;
-            destHeight = srcHeight;
-        }
-
-        return {
-            srcLeft,
-            srcTop,
-            srcWidth,
-            srcHeight,
-            destWidth,
-            destHeight
-        };
-    }
-
     _bindImageEvents(resource, options) {
         return new Promise((resolve, reject) => {
             const onload = () => {
@@ -249,7 +196,7 @@ export default class FastAverageColor {
             const onerror = () => {
                 unbindEvents();
 
-                reject(getError(`Error loading image ${resource.src}.`));
+                reject(getError(`Error loading image "${resource.src}".`));
             };
 
             const onabort = () => {
