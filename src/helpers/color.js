@@ -30,7 +30,7 @@ export function isIgnoredColor(data, index, ignoredColor) {
         return ignoredColor(data, index);
     }
 
-    for (let i = 0; i < ignoredColor.lenght; i++) {
+    for (let i = 0; i < ignoredColor.length; i++) {
         const color = ignoredColor[i];
 
         switch (color.length) {
@@ -87,8 +87,8 @@ function isIgnoredRGBAColor(data, index, ignoredColor) {
 }
 
 function inRange(colorComponent, ignoredColorComponent, value) {
-    return (ignoredColorComponent - value) >= colorComponent &&
-        (ignoredColorComponent + value) <= colorComponent;
+    return colorComponent >= (ignoredColorComponent - value) &&
+        colorComponent <= (ignoredColorComponent + value);
 }
 
 function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
@@ -99,11 +99,11 @@ function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
     const threshold = ignoredColor[4];
     const alphaData = data[index + 3];
 
+    const alphaInRange = inRange(alphaData, alphaIgnored, threshold);
     if (!alphaIgnored) {
-        return inRange(alphaData, alphaIgnored, threshold);
+        return alphaInRange;
     }
 
-    const alphaInRange = inRange(alphaData, alphaIgnored, threshold);
     if (!alphaData && alphaInRange) {
         return true;
     }

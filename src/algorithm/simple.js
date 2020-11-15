@@ -8,8 +8,9 @@ export default function simpleAlgorithm(arr, len, options) {
     let count = 0;
 
     const ignoredColor = options.ignoredColor;
+    const step = options.step;
 
-    for (let i = 0; i < len; i += options.step) {
+    for (let i = 0; i < len; i += step) {
         const alpha = arr[i + 3];
         const red = arr[i] * alpha;
         const green = arr[i + 1] * alpha;
@@ -23,6 +24,7 @@ export default function simpleAlgorithm(arr, len, options) {
         greenTotal += green;
         blueTotal += blue;
         alphaTotal += alpha;
+
         count++;
     }
 

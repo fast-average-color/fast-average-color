@@ -1,8 +1,8 @@
 export const ERROR_PREFIX = 'FastAverageColor: ';
 
-export function outputError(options, error, details) {
+export function outputError(options, text, details) {
     if (!options.silent) {
-        console.error(`${ERROR_PREFIX}${error}`);
+        console.error(ERROR_PREFIX + text);
 
         if (details) {
             console.error(details);

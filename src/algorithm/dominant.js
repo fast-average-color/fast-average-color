@@ -4,8 +4,9 @@ export default function dominantAlgorithm(arr, len, options) {
     const colorHash = {};
     const divider = 24;
     const ignoredColor = options.ignoredColor;
+    const step = options.step;
 
-    for (let i = 0; i < len; i += options.step) {
+    for (let i = 0; i < len; i += step) {
         const red = arr[i];
         const green = arr[i + 1];
         const blue = arr[i + 2];

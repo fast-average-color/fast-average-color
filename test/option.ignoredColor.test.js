@@ -129,6 +129,24 @@ describe('Options: ignoredColor', () => {
             step: 1
         });
 
-        expect(color).toEqual([255, 0, 0, 255]);
+        expect(color).toEqual([200, 0, 0, 85]);
+    });
+
+    it('should return correct average color with transparent ignored color and threshold', () => {
+        const color = fac.getColorFromArray4([
+            100, 0, 0, 255,
+            99, 1, 1, 251,
+            95, 5, 5, 2,
+            100, 0, 0, 2,
+            200, 0, 0, 255,
+        ], {
+            algorithm: 'simple',
+            ignoredColor: [
+                [100, 0, 0, 0, 5],
+            ],
+            step: 1
+        });
+
+        expect(color).toEqual([133, 0, 0, 254]);
     });
 });
