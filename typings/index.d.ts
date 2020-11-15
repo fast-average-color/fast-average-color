@@ -2,9 +2,7 @@ type IFastAverageColorRgb = [number, number, number, number]; // [red 0-255, gre
 type IFastAverageColorRgba = [number, number, number, number]; // [red 0-255, green 0-255, blue 0-255, opacity 0-255]
 type IFastAverageColorRgbaWithThreshold = [number, number, number, number, number]; // [red 0-255, green 0-255, blue 0-255, alpha 0-255, threshold 0-255]
 
-type IFastAverageColorIgnoredColorCallback = (data: IFastAverageColorData, index: number) => boolean;
-
-type IFastAverageIgnoredColor = IFastAverageColorRgb | IFastAverageColorRgba | IFastAverageColorIgnoredColorCallback;
+type IFastAverageIgnoredColor =  IFastAverageColorRgb | IFastAverageColorRgb[] | IFastAverageColorRgba | IFastAverageColorRgba[] | IFastAverageColorRgbaWithThreshold | IFastAverageColorRgbaWithThreshold[];
 
 type IFastAverageColorData = number[] | Uint8Array | Uint8ClampedArray;
 
