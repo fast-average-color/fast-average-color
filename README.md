@@ -7,6 +7,21 @@
 A simple library that calculates the average color of any images or videos in browser environment.
 <img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/fast-average-color/fast-average-color/master/img/title.png" />
 
+## Features
+- Bet on speed
+- Some algorithms: simple, sqrt (default) and dominant
+- Small bundle size, tree shaking
+- Average color can be obtained from:
+  + image
+  + string (url of image)
+  + video
+  + canvas
+  + array of numbers, `Uint8Array` or `Uint8ClampedArray`
+- Average color can be obtained from specific part of resource
+- Support for transparency (PNG, SVG and other formats)
+- Support for web workers
+- [Support for Node.js](https://github.com/fast-average-color/fast-average-color-node/)
+
 ## Table of contents
 - [Using](./docs/using.md)
   + [Install](./docs/using.md)

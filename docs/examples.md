@@ -136,3 +136,28 @@ For example, to ignore white and black background in logos.
 </script>
 ...
 ```
+## Get average color with ignored color and threshold
+```html
+...
+<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script>
+    const fac = new FastAverageColor();
+
+    fac.getColorAsync('./logo.png', {
+        ignoredColor: [
+            // [red (0-255), green (0-255), blue (0-255), alpha (0-255), treshold (0-255)]
+            [255, 0, 100, 255, 5]
+        ],
+    })
+        .then(color => {
+            console.log('Average color', color);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+</script>
+...
+```
+
+
+

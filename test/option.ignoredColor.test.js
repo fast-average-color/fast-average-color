@@ -12,7 +12,6 @@ describe('Options: ignoredColor', () => {
         ], {
             algorithm: 'simple',
             ignoredColor: [255, 255, 255, 255],
-            step: 1
         });
 
         expect(color).toEqual([255, 0, 0, 255]);
@@ -31,7 +30,6 @@ describe('Options: ignoredColor', () => {
                 [255, 255, 255, 255],
                 [0, 0, 0, 255]
             ],
-            step: 1
         });
 
         expect(color).toEqual([255, 0, 0, 255]);
@@ -45,7 +43,6 @@ describe('Options: ignoredColor', () => {
             255, 0, 0, 255,
         ], {
             ignoredColor: [255, 255, 255, 255],
-            step: 1
         });
 
         expect(color).toEqual([255, 0, 0, 255]);
@@ -60,7 +57,6 @@ describe('Options: ignoredColor', () => {
         ], {
             algorithm: 'dominant',
             ignoredColor: [255, 255, 255, 255],
-            step: 1
         });
 
         expect(color).toEqual([255, 0, 0, 255]);
@@ -74,7 +70,6 @@ describe('Options: ignoredColor', () => {
             200, 200, 200, 0,
         ], {
             ignoredColor: [10, 10, 10, 0],
-            step: 1
         });
 
         expect(color).toEqual([255, 255, 255, 255]);
@@ -91,27 +86,9 @@ describe('Options: ignoredColor', () => {
         ], {
             algorithm: 'simple',
             ignoredColor: [30, 30, 30],
-            step: 1
         });
 
         expect(color).toEqual([155, 160, 165, 255]);
-    });
-
-    it('should return correct average color if ignored color is own function', () => {
-        const color = fac.getColorFromArray4([
-            250, 0, 0, 255,
-            100, 100, 100, 255,
-            200, 0, 0, 255,
-            0, 0, 0, 255,
-        ], {
-            algorithm: 'simple',
-            ignoredColor: (data, index) => {
-                return data[index] < 128;
-            },
-            step: 1
-        });
-
-        expect(color).toEqual([225, 0, 0, 255]);
     });
 
     it('should return correct average color with threshold', () => {
@@ -126,7 +103,6 @@ describe('Options: ignoredColor', () => {
             ignoredColor: [
                 [100, 0, 0, 255, 5],
             ],
-            step: 1
         });
 
         expect(color).toEqual([200, 0, 0, 85]);
@@ -144,7 +120,6 @@ describe('Options: ignoredColor', () => {
             ignoredColor: [
                 [100, 0, 0, 0, 5],
             ],
-            step: 1
         });
 
         expect(color).toEqual([133, 0, 0, 254]);

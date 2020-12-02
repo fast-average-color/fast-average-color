@@ -16,46 +16,51 @@ export function isDark(color) {
 }
 
 export function prepareIgnoredColor(color) {
-    if (typeof color === 'function') {
-        return color;
+    if (!color) { return color; }
+
+    if (Array.isArray(color)) {
+        return typeof color[0] === 'number' ? [color.slice()] : color;
     }
 
-    return Array.isArray(color) && !Array.isArray(color[0]) ?
-        [[].concat(color)] :
-        color;
+    return [color];
 }
 
 export function isIgnoredColor(data, index, ignoredColor) {
-    if (typeof ignoredColor === 'function') {
-        return ignoredColor(data, index);
-    }
-
     for (let i = 0; i < ignoredColor.length; i++) {
-        const color = ignoredColor[i];
-
-        switch (color.length) {
-            case 3:
-                if (isIgnoredRGBColor(data, index, color)) {
-                    return true;
-                }
-
-                break;
-            case 4:
-                if (isIgnoredRGBAColor(data, index, color)) {
-                    return true;
-                }
-
-                break;
-            case 5:
-                if (isIgnoredRGBAColorWithThreshold(data, index, color)) {
-                    return true;
-                }
-
-                break;
+        if (isIgnoredColorAsNumbers(data, index, ignoredColor[i])) {
+            return true;
         }
     }
 
     return false;
+}
+
+function isIgnoredColorAsNumbers(data, index, ignoredColor) {
+    switch (ignoredColor.length) {
+        case 3:
+            // [red, green, blue]
+            if (isIgnoredRGBColor(data, index, ignoredColor)) {
+                return true;
+            }
+
+            break;
+        case 4:
+            // [red, green, blue, alpha]
+            if (isIgnoredRGBAColor(data, index, ignoredColor)) {
+                return true;
+            }
+
+            break;
+        case 5:
+            // [red, green, blue, alpha, threshold]
+            if (isIgnoredRGBAColorWithThreshold(data, index, ignoredColor)) {
+                return true;
+            }
+
+            break;
+        default:
+            return false;
+    }
 }
 
 function isIgnoredRGBColor(data, index, ignoredColor) {

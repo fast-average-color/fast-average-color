@@ -1,5 +1,18 @@
 # Changelog
 
+# v6.3.0
+- Support for SVG images without width and height (only viewBox) attributes.
+- Ignored color with threshold.
+
+```js
+{
+    ignoredColor: [
+        // [red (0-255), green (0-255), blue (0-255), alpha (0-255), threshold (0-255)]
+        [255, 100, 0, 255, 5],
+    ]
+}
+```
+
 # v6.2.0
 - [`fast-average-color-node`](https://github.com/fast-average-color/fast-average-color-node/) separate package for Node.js.
 - Ability to specify multiple colors in `ignoredColor` option #45.
