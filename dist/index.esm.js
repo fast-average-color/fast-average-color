@@ -17,46 +17,51 @@ function isDark(color) {
 }
 
 function prepareIgnoredColor(color) {
-    if (typeof color === 'function') {
-        return color;
+    if (!color) { return color; }
+
+    if (Array.isArray(color)) {
+        return typeof color[0] === 'number' ? [color.slice()] : color;
     }
 
-    return Array.isArray(color) && !Array.isArray(color[0]) ?
-        [[].concat(color)] :
-        color;
+    return [color];
 }
 
 function isIgnoredColor(data, index, ignoredColor) {
-    if (typeof ignoredColor === 'function') {
-        return ignoredColor(data, index);
-    }
-
-    for (let i = 0; i < ignoredColor.lenght; i++) {
-        const color = ignoredColor[i];
-
-        switch (color.length) {
-            case 3:
-                if (isIgnoredRGBColor(data, index, color)) {
-                    return true;
-                }
-
-                break;
-            case 4:
-                if (isIgnoredRGBAColor(data, index, color)) {
-                    return true;
-                }
-
-                break;
-            case 5:
-                if (isIgnoredRGBAColorWithThreshold(data, index, color)) {
-                    return true;
-                }
-
-                break;
+    for (let i = 0; i < ignoredColor.length; i++) {
+        if (isIgnoredColorAsNumbers(data, index, ignoredColor[i])) {
+            return true;
         }
     }
 
     return false;
+}
+
+function isIgnoredColorAsNumbers(data, index, ignoredColor) {
+    switch (ignoredColor.length) {
+        case 3:
+            // [red, green, blue]
+            if (isIgnoredRGBColor(data, index, ignoredColor)) {
+                return true;
+            }
+
+            break;
+        case 4:
+            // [red, green, blue, alpha]
+            if (isIgnoredRGBAColor(data, index, ignoredColor)) {
+                return true;
+            }
+
+            break;
+        case 5:
+            // [red, green, blue, alpha, threshold]
+            if (isIgnoredRGBAColorWithThreshold(data, index, ignoredColor)) {
+                return true;
+            }
+
+            break;
+        default:
+            return false;
+    }
 }
 
 function isIgnoredRGBColor(data, index, ignoredColor) {
@@ -88,8 +93,8 @@ function isIgnoredRGBAColor(data, index, ignoredColor) {
 }
 
 function inRange(colorComponent, ignoredColorComponent, value) {
-    return (ignoredColorComponent - value) >= colorComponent &&
-        (ignoredColorComponent + value) <= colorComponent;
+    return colorComponent >= (ignoredColorComponent - value) &&
+        colorComponent <= (ignoredColorComponent + value);
 }
 
 function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
@@ -100,11 +105,11 @@ function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
     const threshold = ignoredColor[4];
     const alphaData = data[index + 3];
 
+    const alphaInRange = inRange(alphaData, alphaIgnored, threshold);
     if (!alphaIgnored) {
-        return inRange(alphaData, alphaIgnored, threshold);
+        return alphaInRange;
     }
 
-    const alphaInRange = inRange(alphaData, alphaIgnored, threshold);
     if (!alphaData && alphaInRange) {
         return true;
     }
@@ -124,8 +129,9 @@ function dominantAlgorithm(arr, len, options) {
     const colorHash = {};
     const divider = 24;
     const ignoredColor = options.ignoredColor;
+    const step = options.step;
 
-    for (let i = 0; i < len; i += options.step) {
+    for (let i = 0; i < len; i += step) {
         const red = arr[i];
         const green = arr[i + 1];
         const blue = arr[i + 2];
@@ -186,8 +192,9 @@ function simpleAlgorithm(arr, len, options) {
     let count = 0;
 
     const ignoredColor = options.ignoredColor;
+    const step = options.step;
 
-    for (let i = 0; i < len; i += options.step) {
+    for (let i = 0; i < len; i += step) {
         const alpha = arr[i + 3];
         const red = arr[i] * alpha;
         const green = arr[i + 1] * alpha;
@@ -201,6 +208,7 @@ function simpleAlgorithm(arr, len, options) {
         greenTotal += green;
         blueTotal += blue;
         alphaTotal += alpha;
+
         count++;
     }
 
@@ -220,8 +228,9 @@ function sqrtAlgorithm(arr, len, options) {
     let count = 0;
 
     const ignoredColor = options.ignoredColor;
+    const step = options.step;
 
-    for (let i = 0; i < len; i += options.step) {
+    for (let i = 0; i < len; i += step) {
         const red = arr[i];
         const green = arr[i + 1];
         const blue = arr[i + 2];
@@ -235,6 +244,7 @@ function sqrtAlgorithm(arr, len, options) {
         greenTotal += green * green * alpha;
         blueTotal += blue * blue * alpha;
         alphaTotal += alpha;
+
         count++;
     }
 
@@ -254,11 +264,26 @@ function getOption(options, name, defaultValue) {
     return typeof options[name] === 'undefined' ? defaultValue : options[name];
 }
 
+const MIN_SIZE = 10;
+const MAX_SIZE = 100;
+
+function isSvg(filename) {
+    return filename.search(/\.svg(\?|$)/i) !== -1;
+}
+
 function getOriginalSize(resource) {
     if (resource instanceof HTMLImageElement) {
+        let width = resource.naturalWidth;
+        let height = resource.naturalHeight;
+
+        // For SVG images with only viewBox attr.
+        if (!resource.naturalWidth && isSvg(resource.src)) {
+            width = height = MAX_SIZE;
+        }
+
         return {
-            width: resource.naturalWidth,
-            height: resource.naturalHeight
+            width,
+            height,
         };
     }
 
@@ -275,6 +300,56 @@ function getOriginalSize(resource) {
     };
 }
 
+function prepareSizeAndPosition(originalSize, options) {
+    const srcLeft = getOption(options, 'left', 0);
+    const srcTop = getOption(options, 'top', 0);
+    const srcWidth = getOption(options, 'width', originalSize.width);
+    const srcHeight = getOption(options, 'height', originalSize.height);
+
+    let destWidth = srcWidth;
+    let destHeight = srcHeight;
+
+    if (options.mode === 'precision') {
+        return {
+            srcLeft,
+            srcTop,
+            srcWidth,
+            srcHeight,
+            destWidth,
+            destHeight
+        };
+    }
+
+    let factor;
+
+    if (srcWidth > srcHeight) {
+        factor = srcWidth / srcHeight;
+        destWidth = MAX_SIZE;
+        destHeight = Math.round(destWidth / factor);
+    } else {
+        factor = srcHeight / srcWidth;
+        destHeight = MAX_SIZE;
+        destWidth = Math.round(destHeight / factor);
+    }
+
+    if (
+        destWidth > srcWidth || destHeight > srcHeight ||
+        destWidth < MIN_SIZE || destHeight < MIN_SIZE
+    ) {
+        destWidth = srcWidth;
+        destHeight = srcHeight;
+    }
+
+    return {
+        srcLeft,
+        srcTop,
+        srcWidth,
+        srcHeight,
+        destWidth,
+        destHeight
+    };
+}
+
 function makeCanvas() {
     return typeof window === 'undefined' ?
         new OffscreenCanvas(1, 1) :
@@ -283,9 +358,9 @@ function makeCanvas() {
 
 const ERROR_PREFIX = 'FastAverageColor: ';
 
-function outputError(options, error, details) {
+function outputError(options, text, details) {
     if (!options.silent) {
-        console.error(`${ERROR_PREFIX}${error}`);
+        console.error(ERROR_PREFIX + text);
 
         if (details) {
             console.error(details);
@@ -346,7 +421,7 @@ class FastAverageColor {
         }
 
         const originalSize = getOriginalSize(resource);
-        const size = this._prepareSizeAndPosition(originalSize, options);
+        const size = prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
             outputError(options, `incorrect sizes for resource "${resource.src}".`);
@@ -469,59 +544,6 @@ class FastAverageColor {
         delete this._ctx;
     }
 
-    _prepareSizeAndPosition(originalSize, options) {
-        const srcLeft = getOption(options, 'left', 0);
-        const srcTop = getOption(options, 'top', 0);
-        const srcWidth = getOption(options, 'width', originalSize.width);
-        const srcHeight = getOption(options, 'height', originalSize.height);
-
-        let destWidth = srcWidth;
-        let destHeight = srcHeight;
-
-        if (options.mode === 'precision') {
-            return {
-                srcLeft,
-                srcTop,
-                srcWidth,
-                srcHeight,
-                destWidth,
-                destHeight
-            };
-        }
-
-        const maxSize = 100;
-        const minSize = 10;
-
-        let factor;
-
-        if (srcWidth > srcHeight) {
-            factor = srcWidth / srcHeight;
-            destWidth = maxSize;
-            destHeight = Math.round(destWidth / factor);
-        } else {
-            factor = srcHeight / srcWidth;
-            destHeight = maxSize;
-            destWidth = Math.round(destHeight / factor);
-        }
-
-        if (
-            destWidth > srcWidth || destHeight > srcHeight ||
-            destWidth < minSize || destHeight < minSize
-        ) {
-            destWidth = srcWidth;
-            destHeight = srcHeight;
-        }
-
-        return {
-            srcLeft,
-            srcTop,
-            srcWidth,
-            srcHeight,
-            destWidth,
-            destHeight
-        };
-    }
-
     _bindImageEvents(resource, options) {
         return new Promise((resolve, reject) => {
             const onload = () => {
@@ -539,7 +561,7 @@ class FastAverageColor {
             const onerror = () => {
                 unbindEvents();
 
-                reject(getError(`Error loading image ${resource.src}.`));
+                reject(getError(`Error loading image "${resource.src}".`));
             };
 
             const onabort = () => {

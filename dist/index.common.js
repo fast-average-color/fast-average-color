@@ -37,45 +37,55 @@ function isDark(color) {
   return result < 128;
 }
 function prepareIgnoredColor(color) {
-  if (typeof color === 'function') {
+  if (!color) {
     return color;
   }
 
-  return Array.isArray(color) && !Array.isArray(color[0]) ? [[].concat(color)] : color;
-}
-function isIgnoredColor(data, index, ignoredColor) {
-  if (typeof ignoredColor === 'function') {
-    return ignoredColor(data, index);
+  if (Array.isArray(color)) {
+    return typeof color[0] === 'number' ? [color.slice()] : color;
   }
 
-  for (var i = 0; i < ignoredColor.lenght; i++) {
-    var color = ignoredColor[i];
-
-    switch (color.length) {
-      case 3:
-        if (isIgnoredRGBColor(data, index, color)) {
-          return true;
-        }
-
-        break;
-
-      case 4:
-        if (isIgnoredRGBAColor(data, index, color)) {
-          return true;
-        }
-
-        break;
-
-      case 5:
-        if (isIgnoredRGBAColorWithThreshold(data, index, color)) {
-          return true;
-        }
-
-        break;
+  return [color];
+}
+function isIgnoredColor(data, index, ignoredColor) {
+  for (var i = 0; i < ignoredColor.length; i++) {
+    if (isIgnoredColorAsNumbers(data, index, ignoredColor[i])) {
+      return true;
     }
   }
 
   return false;
+}
+
+function isIgnoredColorAsNumbers(data, index, ignoredColor) {
+  switch (ignoredColor.length) {
+    case 3:
+      // [red, green, blue]
+      if (isIgnoredRGBColor(data, index, ignoredColor)) {
+        return true;
+      }
+
+      break;
+
+    case 4:
+      // [red, green, blue, alpha]
+      if (isIgnoredRGBAColor(data, index, ignoredColor)) {
+        return true;
+      }
+
+      break;
+
+    case 5:
+      // [red, green, blue, alpha, threshold]
+      if (isIgnoredRGBAColorWithThreshold(data, index, ignoredColor)) {
+        return true;
+      }
+
+      break;
+
+    default:
+      return false;
+  }
 }
 
 function isIgnoredRGBColor(data, index, ignoredColor) {
@@ -101,7 +111,7 @@ function isIgnoredRGBAColor(data, index, ignoredColor) {
 }
 
 function inRange(colorComponent, ignoredColorComponent, value) {
-  return ignoredColorComponent - value >= colorComponent && ignoredColorComponent + value <= colorComponent;
+  return colorComponent >= ignoredColorComponent - value && colorComponent <= ignoredColorComponent + value;
 }
 
 function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
@@ -111,12 +121,11 @@ function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
   var alphaIgnored = ignoredColor[3];
   var threshold = ignoredColor[4];
   var alphaData = data[index + 3];
+  var alphaInRange = inRange(alphaData, alphaIgnored, threshold);
 
   if (!alphaIgnored) {
-    return inRange(alphaData, alphaIgnored, threshold);
+    return alphaInRange;
   }
-
-  var alphaInRange = inRange(alphaData, alphaIgnored, threshold);
 
   if (!alphaData && alphaInRange) {
     return true;
@@ -133,8 +142,9 @@ function dominantAlgorithm(arr, len, options) {
   var colorHash = {};
   var divider = 24;
   var ignoredColor = options.ignoredColor;
+  var step = options.step;
 
-  for (var i = 0; i < len; i += options.step) {
+  for (var i = 0; i < len; i += step) {
     var red = arr[i];
     var green = arr[i + 1];
     var blue = arr[i + 2];
@@ -176,8 +186,9 @@ function simpleAlgorithm(arr, len, options) {
   var alphaTotal = 0;
   var count = 0;
   var ignoredColor = options.ignoredColor;
+  var step = options.step;
 
-  for (var i = 0; i < len; i += options.step) {
+  for (var i = 0; i < len; i += step) {
     var alpha = arr[i + 3];
     var red = arr[i] * alpha;
     var green = arr[i + 1] * alpha;
@@ -204,8 +215,9 @@ function sqrtAlgorithm(arr, len, options) {
   var alphaTotal = 0;
   var count = 0;
   var ignoredColor = options.ignoredColor;
+  var step = options.step;
 
-  for (var i = 0; i < len; i += options.step) {
+  for (var i = 0; i < len; i += step) {
     var red = arr[i];
     var green = arr[i + 1];
     var blue = arr[i + 2];
@@ -232,11 +244,23 @@ function getOption(options, name, defaultValue) {
   return typeof options[name] === 'undefined' ? defaultValue : options[name];
 }
 
+var MIN_SIZE = 10;
+var MAX_SIZE = 100;
+function isSvg(filename) {
+  return filename.search(/\.svg(\?|$)/i) !== -1;
+}
 function getOriginalSize(resource) {
   if (resource instanceof HTMLImageElement) {
+    var width = resource.naturalWidth;
+    var height = resource.naturalHeight; // For SVG images with only viewBox attr.
+
+    if (!resource.naturalWidth && isSvg(resource.src)) {
+      width = height = MAX_SIZE;
+    }
+
     return {
-      width: resource.naturalWidth,
-      height: resource.naturalHeight
+      width: width,
+      height: height
     };
   }
 
@@ -252,14 +276,59 @@ function getOriginalSize(resource) {
     height: resource.height
   };
 }
+function prepareSizeAndPosition(originalSize, options) {
+  var srcLeft = getOption(options, 'left', 0);
+  var srcTop = getOption(options, 'top', 0);
+  var srcWidth = getOption(options, 'width', originalSize.width);
+  var srcHeight = getOption(options, 'height', originalSize.height);
+  var destWidth = srcWidth;
+  var destHeight = srcHeight;
+
+  if (options.mode === 'precision') {
+    return {
+      srcLeft: srcLeft,
+      srcTop: srcTop,
+      srcWidth: srcWidth,
+      srcHeight: srcHeight,
+      destWidth: destWidth,
+      destHeight: destHeight
+    };
+  }
+
+  var factor;
+
+  if (srcWidth > srcHeight) {
+    factor = srcWidth / srcHeight;
+    destWidth = MAX_SIZE;
+    destHeight = Math.round(destWidth / factor);
+  } else {
+    factor = srcHeight / srcWidth;
+    destHeight = MAX_SIZE;
+    destWidth = Math.round(destHeight / factor);
+  }
+
+  if (destWidth > srcWidth || destHeight > srcHeight || destWidth < MIN_SIZE || destHeight < MIN_SIZE) {
+    destWidth = srcWidth;
+    destHeight = srcHeight;
+  }
+
+  return {
+    srcLeft: srcLeft,
+    srcTop: srcTop,
+    srcWidth: srcWidth,
+    srcHeight: srcHeight,
+    destWidth: destWidth,
+    destHeight: destHeight
+  };
+}
 function makeCanvas() {
   return typeof window === 'undefined' ? new OffscreenCanvas(1, 1) : document.createElement('canvas');
 }
 
 var ERROR_PREFIX = 'FastAverageColor: ';
-function outputError(options, error, details) {
+function outputError(options, text, details) {
   if (!options.silent) {
-    console.error("".concat(ERROR_PREFIX).concat(error));
+    console.error(ERROR_PREFIX + text);
 
     if (details) {
       console.error(details);
@@ -324,8 +393,7 @@ var FastAverageColor = /*#__PURE__*/function () {
       }
 
       var originalSize = getOriginalSize(resource);
-
-      var size = this._prepareSizeAndPosition(originalSize, options);
+      var size = prepareSizeAndPosition(originalSize, options);
 
       if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
         outputError(options, "incorrect sizes for resource \"".concat(resource.src, "\"."));
@@ -447,55 +515,6 @@ var FastAverageColor = /*#__PURE__*/function () {
       delete this._ctx;
     }
   }, {
-    key: "_prepareSizeAndPosition",
-    value: function _prepareSizeAndPosition(originalSize, options) {
-      var srcLeft = getOption(options, 'left', 0);
-      var srcTop = getOption(options, 'top', 0);
-      var srcWidth = getOption(options, 'width', originalSize.width);
-      var srcHeight = getOption(options, 'height', originalSize.height);
-      var destWidth = srcWidth;
-      var destHeight = srcHeight;
-
-      if (options.mode === 'precision') {
-        return {
-          srcLeft: srcLeft,
-          srcTop: srcTop,
-          srcWidth: srcWidth,
-          srcHeight: srcHeight,
-          destWidth: destWidth,
-          destHeight: destHeight
-        };
-      }
-
-      var maxSize = 100;
-      var minSize = 10;
-      var factor;
-
-      if (srcWidth > srcHeight) {
-        factor = srcWidth / srcHeight;
-        destWidth = maxSize;
-        destHeight = Math.round(destWidth / factor);
-      } else {
-        factor = srcHeight / srcWidth;
-        destHeight = maxSize;
-        destWidth = Math.round(destHeight / factor);
-      }
-
-      if (destWidth > srcWidth || destHeight > srcHeight || destWidth < minSize || destHeight < minSize) {
-        destWidth = srcWidth;
-        destHeight = srcHeight;
-      }
-
-      return {
-        srcLeft: srcLeft,
-        srcTop: srcTop,
-        srcWidth: srcWidth,
-        srcHeight: srcHeight,
-        destWidth: destWidth,
-        destHeight: destHeight
-      };
-    }
-  }, {
     key: "_bindImageEvents",
     value: function _bindImageEvents(resource, options) {
       var _this = this;
@@ -515,7 +534,7 @@ var FastAverageColor = /*#__PURE__*/function () {
 
         var onerror = function onerror() {
           unbindEvents();
-          reject(getError("Error loading image ".concat(resource.src, ".")));
+          reject(getError("Error loading image \"".concat(resource.src, "\".")));
         };
 
         var onabort = function onabort() {
