@@ -38,9 +38,18 @@ A simple library that calculates the average color of any images or videos in br
   + [.getColorAsync(resource, [options])](./docs/api.md#getcolorasyncresource-options)
   + [.getColorFromArray4(arr, [options])](./docs/api.md#getcolorfromarray4arr-options)
   + [.destroy()](./docs/api.md#destroy)
-- [Storing an image from a foreign origin](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image#Storing_an_image_from_a_foreign_origin)
 - [Different Builds](./dist/README.md)
 - [Development](./docs/development.md)
+
+## Unhandled Rejection (SecurityError): The operation is insecure.
+> The crossOrigin attribute allows images that are loaded from external origins to be used in canvas like the one they were being loaded from the current origin. Using images without CORS approval taints the canvas. Once a canvas has been tainted, you can no longer pull data back out of the canvas. By loading the canvas from cross origin domain, you are tainting the canvas.
+
+>You can prevent this by setting crossorigin="anonymous".
+
+- [Details](https://github.com/lokesh/color-thief/issues/196)
+- [Storing an image from a foreign origin](https://developer.
+mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image#Storing_an_image_from_a_foreign_origin)
+
 
 ## [More examples](https://fast-average-color.github.io/examples/background.html)
   + [Background](https://fast-average-color.github.io/examples/background.html)
