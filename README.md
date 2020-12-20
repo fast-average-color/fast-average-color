@@ -47,8 +47,7 @@ A simple library that calculates the average color of any images or videos in br
 >You can prevent this by setting crossorigin="anonymous".
 
 - [Details](https://github.com/lokesh/color-thief/issues/196)
-- [Storing an image from a foreign origin](https://developer.
-mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image#Storing_an_image_from_a_foreign_origin)
+- [Storing an image from a foreign origin](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image#Storing_an_image_from_a_foreign_origin)
 
 
 ## [More examples](https://fast-average-color.github.io/examples/background.html)
