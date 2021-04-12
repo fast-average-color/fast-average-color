@@ -1,5 +1,8 @@
 # Changelog
 
+# v6.4.0
+Accelerated the dominant method #71 @RAX7.
+
 # v6.3.0
 - Support for SVG images without width and height (only viewBox) attributes.
 - Ignored color with threshold.
