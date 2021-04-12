@@ -1,4 +1,4 @@
-/*! Fast Average Color | © 2020 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
+/*! Fast Average Color | © 2021 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
 'use strict';
 
 function _classCallCheck(instance, Constructor) {
@@ -143,6 +143,7 @@ function dominantAlgorithm(arr, len, options) {
   var divider = 24;
   var ignoredColor = options.ignoredColor;
   var step = options.step;
+  var max = [0, 0, 0, 0, 0];
 
   for (var i = 0; i < len; i += step) {
     var red = arr[i];
@@ -161,16 +162,12 @@ function dominantAlgorithm(arr, len, options) {
     } else {
       colorHash[key] = [red * alpha, green * alpha, blue * alpha, alpha, 1];
     }
+
+    if (max[4] < colorHash[key][4]) {
+      max = colorHash[key];
+    }
   }
 
-  var buffer = Object.keys(colorHash).map(function (key) {
-    return colorHash[key];
-  }).sort(function (a, b) {
-    var countA = a[4];
-    var countB = b[4];
-    return countA > countB ? -1 : countA === countB ? 0 : 1;
-  });
-  var max = buffer[0];
   var redTotal = max[0];
   var greenTotal = max[1];
   var blueTotal = max[2];
@@ -346,7 +343,7 @@ var FastAverageColor = /*#__PURE__*/function () {
 
   _createClass(FastAverageColor, [{
     key: "getColorAsync",
-
+    value:
     /**
      * Get asynchronously the average color from not loaded image.
      *
@@ -355,7 +352,7 @@ var FastAverageColor = /*#__PURE__*/function () {
      *
      * @returns {Promise<FastAverageColorOptions>}
      */
-    value: function getColorAsync(resource, options) {
+    function getColorAsync(resource, options) {
       if (!resource) {
         return Promise.reject(getError('call .getColorAsync() without resource.'));
       }
