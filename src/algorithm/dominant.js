@@ -5,7 +5,8 @@ export default function dominantAlgorithm(arr, len, options) {
     const divider = 24;
     const ignoredColor = options.ignoredColor;
     const step = options.step;
-
+    let max = [0, 0, 0, 0, 0];
+    
     for (let i = 0; i < len; i += step) {
         const red = arr[i];
         const green = arr[i + 1];
@@ -31,18 +32,11 @@ export default function dominantAlgorithm(arr, len, options) {
         } else {
             colorHash[key] = [red * alpha, green * alpha, blue * alpha, alpha, 1];
         }
+        
+        if (max[4] < colorHash[key][4]) {
+            max = colorHash[key];
+        }
     }
-
-    const buffer = Object.keys(colorHash)
-        .map(key => colorHash[key])
-        .sort((a, b) => {
-            const countA = a[4];
-            const countB = b[4];
-
-            return countA > countB ?  -1 : countA === countB ? 0 : 1;
-        });
-
-    const max = buffer[0];
 
     const redTotal = max[0];
     const greenTotal = max[1];
