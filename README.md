@@ -70,3 +70,7 @@ MIT License
 
 ## Links
 - [fast-average-color-node](https://github.com/fast-average-color/fast-average-color-node/)
+- [color-thief](https://github.com/lokesh/color-thief)
+- [node-vibrant](https://github.com/Vibrant-Colors/node-vibrant)
+- [image-palette](https://github.com/FormidableLabs/image-palette)    
+- [react-color-extractor](https://github.com/nitin42/react-color-extractor)
