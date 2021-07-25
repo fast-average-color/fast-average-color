@@ -1,5 +1,8 @@
 # Changelog
 
+# v6.4.1
+Fixes for TypeScript typings #76 @adamjosefus.
+
 # v6.4.0
 Accelerated the dominant method #71 @RAX7.
 
