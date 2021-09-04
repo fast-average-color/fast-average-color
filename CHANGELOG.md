@@ -1,5 +1,8 @@
 # Changelog
 
+# v6.4.2
+Fixes for TypeScript typings #78 @Akkuma.
+
 # v6.4.1
 Fixes for TypeScript typings #76 @adamjosefus.
 
