@@ -11,11 +11,9 @@ declare module 'fast-average-color' {
 
   export type IFastAverageIgnoredColor =
     | IFastAverageColorRgb
-    | IFastAverageColorRgb[]
     | IFastAverageColorRgba
-    | IFastAverageColorRgba[]
     | IFastAverageColorRgbaWithThreshold
-    | IFastAverageColorRgbaWithThreshold[]
+    | Array<IFastAverageColorRgb | IFastAverageColorRgba | IFastAverageColorRgbaWithThreshold>
 
   export type IFastAverageColorData = number[] | Uint8Array | Uint8ClampedArray
 
