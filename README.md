@@ -4,7 +4,7 @@
 [![Dependency Status](https://img.shields.io/david/fast-average-color/fast-average-color.svg)](https://david-dm.org/fast-average-color/fast-average-color)
 [![bundlephobia](https://badgen.net/bundlephobia/minzip/fast-average-color)](https://bundlephobia.com/result?p=fast-average-color)
 
-A simple library that calculates the average color of any images or videos in browser environment.
+A simple library that calculates average or dominant color of any images or videos in browser environment.
 <img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/fast-average-color/fast-average-color/master/img/title.png" />
 
 ## Features
