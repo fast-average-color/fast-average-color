@@ -1,5 +1,9 @@
 # Changelog
 
+# v7.0.0
+- Migration on TypeScript.
+- Removed lost dist/index.es6.js file.
+
 # v6.4.2
 Fixes for TypeScript typings #78 @Akkuma.
 

@@ -1,6 +1,7 @@
+import { FastAverageColorAlgorithmOptions, RGBAColor } from '../index';
 import { isIgnoredColor } from '../helpers/color';
 
-export default function simpleAlgorithm(arr, len, options) {
+export function simpleAlgorithm(arr: number[] | Uint8ClampedArray | Uint8Array, len: number, options: FastAverageColorAlgorithmOptions): RGBAColor {
     let redTotal = 0;
     let greenTotal = 0;
     let blueTotal = 0;

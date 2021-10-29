@@ -1,4 +1,4 @@
-import FastAverageColor from '../src';
+import FastAverageColor from '../src/index';
 
 describe('Options: algorithm', () => {
     const fac = new FastAverageColor();
@@ -61,14 +61,14 @@ describe('Options: algorithm', () => {
     });
 
     it('should return fully transparent color', () => {
-        const algorithms = ['simple', 'sqrt', 'dominant'];
+        const algorithms = ['simple', 'sqrt', 'dominant'] as const;
 
         algorithms.forEach(algorithm => {
             const color = fac.getColorFromArray4([
                 100, 100, 100, 0,
                 200, 250, 55, 0,
                 0, 0, 0, 0
-            ], {algorithm});
+            ], { algorithm });
 
             expect(color).toEqual([0, 0, 0, 0]);
         });

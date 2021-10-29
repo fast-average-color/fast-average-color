@@ -1,12 +1,13 @@
+import { FastAverageColorAlgorithmOptions, RGBAColor } from '../index';
 import { isIgnoredColor } from '../helpers/color';
 
-export default function dominantAlgorithm(arr, len, options) {
-    const colorHash = {};
+export function dominantAlgorithm(arr: number[] | Uint8ClampedArray | Uint8Array, len: number, options: FastAverageColorAlgorithmOptions): RGBAColor {
+    const colorHash: Record<string, number[]> = {};
     const divider = 24;
     const ignoredColor = options.ignoredColor;
     const step = options.step;
     let max = [0, 0, 0, 0, 0];
-    
+
     for (let i = 0; i < len; i += step) {
         const red = arr[i];
         const green = arr[i + 1];
@@ -32,7 +33,7 @@ export default function dominantAlgorithm(arr, len, options) {
         } else {
             colorHash[key] = [red * alpha, green * alpha, blue * alpha, alpha, 1];
         }
-        
+
         if (max[4] < colorHash[key][4]) {
             max = colorHash[key];
         }

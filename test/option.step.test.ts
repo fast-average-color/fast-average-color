@@ -1,4 +1,4 @@
-import FastAverageColor from '../src';
+import FastAverageColor from '../src/index';
 
 describe('Options: step', () => {
     const fac = new FastAverageColor();
