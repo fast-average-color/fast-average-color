@@ -1,31 +1,33 @@
-function toHex(num) {
+import type { FastAverageColorIgnoredColor, RGBColor, RGBAColor, RGBAColorWithThreshold } from '../index';
+
+function toHex(num: number): string {
     const str = num.toString(16);
 
     return str.length === 1 ? '0' + str : str;
 }
 
-export function arrayToHex(arr) {
+export function arrayToHex(arr: number[]): string {
     return '#' + arr.map(toHex).join('');
 }
 
-export function isDark(color) {
+export function isDark(color: number[]): boolean {
     // http://www.w3.org/TR/AERT#color-contrast
     const result = (color[0] * 299 + color[1] * 587 + color[2] * 114) / 1000;
 
     return result < 128;
 }
 
-export function prepareIgnoredColor(color) {
-    if (!color) { return color; }
+export function prepareIgnoredColor(color?: FastAverageColorIgnoredColor): Array<RGBColor | RGBAColor | RGBAColorWithThreshold> {
+    if (!color) { return []; }
 
-    if (Array.isArray(color)) {
-        return typeof color[0] === 'number' ? [color.slice()] : color;
-    }
-
-    return [color];
+    return isRGBArray(color) ? color : [color];
 }
 
-export function isIgnoredColor(data, index, ignoredColor) {
+function isRGBArray(value: RGBColor | RGBAColor | RGBAColorWithThreshold | Array<RGBColor | RGBAColor | RGBAColorWithThreshold>): value is Array<RGBColor | RGBAColor | RGBAColorWithThreshold> {
+    return Array.isArray(value[0]);
+}
+
+export function isIgnoredColor(data: number[] | Uint8ClampedArray | Uint8Array, index: number, ignoredColor: Array<RGBColor | RGBAColor | RGBAColorWithThreshold>) {
     for (let i = 0; i < ignoredColor.length; i++) {
         if (isIgnoredColorAsNumbers(data, index, ignoredColor[i])) {
             return true;
@@ -35,7 +37,7 @@ export function isIgnoredColor(data, index, ignoredColor) {
     return false;
 }
 
-function isIgnoredColorAsNumbers(data, index, ignoredColor) {
+function isIgnoredColorAsNumbers(data: number[] | Uint8ClampedArray | Uint8Array, index: number, ignoredColor: RGBColor | RGBAColor | RGBAColorWithThreshold) {
     switch (ignoredColor.length) {
         case 3:
             // [red, green, blue]
@@ -63,7 +65,7 @@ function isIgnoredColorAsNumbers(data, index, ignoredColor) {
     }
 }
 
-function isIgnoredRGBColor(data, index, ignoredColor) {
+function isIgnoredRGBColor(data: number[] | Uint8ClampedArray | Uint8Array, index: number, ignoredColor: RGBColor) {
     // Ignore if the pixel are transparent.
     if (data[index + 3] !== 255) {
         return true;
@@ -79,7 +81,7 @@ function isIgnoredRGBColor(data, index, ignoredColor) {
     return false;
 }
 
-function isIgnoredRGBAColor(data, index, ignoredColor) {
+function isIgnoredRGBAColor(data: number[] | Uint8ClampedArray | Uint8Array, index: number, ignoredColor: RGBAColor) {
     if (data[index + 3] && ignoredColor[3]) {
         return data[index] === ignoredColor[0] &&
             data[index + 1] === ignoredColor[1] &&
@@ -91,12 +93,12 @@ function isIgnoredRGBAColor(data, index, ignoredColor) {
     return data[index + 3] === ignoredColor[3];
 }
 
-function inRange(colorComponent, ignoredColorComponent, value) {
+function inRange(colorComponent: number, ignoredColorComponent: number, value: number): boolean {
     return colorComponent >= (ignoredColorComponent - value) &&
         colorComponent <= (ignoredColorComponent + value);
 }
 
-function isIgnoredRGBAColorWithThreshold(data, index, ignoredColor) {
+function isIgnoredRGBAColorWithThreshold(data: number[] | Uint8ClampedArray | Uint8Array, index: number, ignoredColor: RGBAColorWithThreshold) {
     const redIgnored = ignoredColor[0];
     const greenIgnored = ignoredColor[1];
     const blueIgnored = ignoredColor[2];

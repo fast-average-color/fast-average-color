@@ -1,13 +1,14 @@
+import type { FastAverageColorOptions } from '../index';
 import { getOption } from './option';
 
 const MIN_SIZE = 10;
 const MAX_SIZE = 100;
 
-export function isSvg(filename) {
+export function isSvg(filename: string): boolean {
     return filename.search(/\.svg(\?|$)/i) !== -1;
 }
 
-export function getOriginalSize(resource) {
+export function getOriginalSize(resource: HTMLCanvasElement | HTMLImageElement | HTMLVideoElement) {
     if (resource instanceof HTMLImageElement) {
         let width = resource.naturalWidth;
         let height = resource.naturalHeight;
@@ -36,7 +37,11 @@ export function getOriginalSize(resource) {
     };
 }
 
-export function prepareSizeAndPosition(originalSize, options) {
+export function getSrc(resource: HTMLCanvasElement | HTMLImageElement | HTMLVideoElement) {
+    return resource instanceof HTMLCanvasElement ? 'canvas' : resource.src;
+}
+
+export function prepareSizeAndPosition(originalSize: { width: number; height: number; }, options: FastAverageColorOptions) {
     const srcLeft = getOption(options, 'left', 0);
     const srcTop = getOption(options, 'top', 0);
     const srcWidth = getOption(options, 'width', originalSize.width);

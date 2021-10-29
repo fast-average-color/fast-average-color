@@ -1,4 +1,4 @@
-import FastAverageColor from '../src';
+import FastAverageColor, { RGBAColor } from '../src/index';
 
 describe('Public API', () => {
     const defaultColor = [0, 0, 0, 0];
@@ -14,7 +14,7 @@ describe('Public API', () => {
 
     describe('getColorAsync()', () => {
         it('if resource is null return error', () => {
-            return fac.getColorAsync(null).then(() => {}).catch((e) => {
+            return fac.getColorAsync(null).then(() => { /** */ }).catch((e) => {
                 expect(e).toEqual(Error('FastAverageColor: call .getColorAsync() without resource.'));
             });
         });
@@ -28,7 +28,7 @@ describe('Public API', () => {
         });
 
         it('if incorrect params should return my default color', () => {
-            const myDefaultColor = [255, 0, 255, 255];
+            const myDefaultColor: RGBAColor = [255, 0, 255, 255];
             const color = fac.getColorFromArray4([0], {
                 defaultColor: myDefaultColor
             });

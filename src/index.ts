@@ -1,22 +1,58 @@
-import dominantAlgorithm from './algorithm/dominant';
-import simpleAlgorithm from './algorithm/simple';
-import sqrtAlgorithm from './algorithm/sqrt';
+import { dominantAlgorithm } from './algorithm/dominant';
+import { simpleAlgorithm } from './algorithm/simple';
+import { sqrtAlgorithm } from './algorithm/sqrt';
 
 import { arrayToHex, isDark, prepareIgnoredColor } from './helpers/color';
 import { getDefaultColor } from './helpers/option';
-import { prepareSizeAndPosition, makeCanvas, getOriginalSize } from './helpers/dom';
+import { prepareSizeAndPosition, makeCanvas, getOriginalSize, getSrc } from './helpers/dom';
 import { outputError, getError } from './helpers/error';
 
+export type RGBColor = [number, number, number];
+export type RGBAColor = [number, number, number, number];
+export type RGBAColorWithThreshold = [number, number, number, number, number];
+
+export type FastAverageColorIgnoredColor = RGBColor | RGBAColor | RGBAColorWithThreshold | Array<RGBColor | RGBAColor | RGBAColorWithThreshold>;
+
+export interface FastAverageColorOptions {
+    defaultColor?: RGBAColor;
+    ignoredColor?: FastAverageColorIgnoredColor;
+    mode?: 'precision' | 'speed';
+    algorithm?: 'simple' | 'sqrt' | 'dominant';
+    step?: number;
+    left?: number;
+    top?: number;
+    width?: number;
+    height?: number;
+    silent?: boolean;
+}
+
+export interface FastAverageColorAlgorithmOptions {
+    defaultColor: RGBAColor;
+    ignoredColor: Array<RGBColor | RGBAColor | RGBAColorWithThreshold>;
+    step: number;
+}
+
+type FastAverageColorResource = string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null;
+
+export interface FastAverageColorResult {
+    rgb: string;
+    rgba: string;
+    hex: string;
+    hexa: string;
+    value: RGBAColor;
+    isDark: boolean;
+    isLight: boolean;
+    error?: Error;
+}
+
 export default class FastAverageColor {
+    canvas: HTMLCanvasElement | OffscreenCanvas | null = null;
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null = null;
+
     /**
      * Get asynchronously the average color from not loaded image.
-     *
-     * @param {string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
-     * @param {FastAverageColorOptions} [options]
-     *
-     * @returns {Promise<FastAverageColorOptions>}
      */
-    getColorAsync(resource, options) {
+    public getColorAsync(resource: FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult> {
         if (!resource) {
             return Promise.reject(getError('call .getColorAsync() without resource.'));
         }
@@ -26,9 +62,9 @@ export default class FastAverageColor {
             img.crossOrigin = '';
             img.src = resource;
 
-            return this._bindImageEvents(img, options);
+            return this.bindImageEvents(img, options);
         } else if (resource instanceof Image && !resource.complete) {
-            return this._bindImageEvents(resource, options);
+            return this.bindImageEvents(resource, options);
         } else {
             const result = this.getColor(resource, options);
 
@@ -38,19 +74,14 @@ export default class FastAverageColor {
 
     /**
      * Get the average color from images, videos and canvas.
-     *
-     * @param {HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null} resource
-     * @param {FastAverageColorOptions} [options]
-     *
-     * @returns {FastAverageColorResult}
      */
-    getColor(resource, options) {
+    public getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: FastAverageColorOptions): FastAverageColorResult {
         options = options || {};
 
         const defaultColor = getDefaultColor(options);
 
         if (!resource) {
-            outputError(options, 'call .getColor(null) without resource.');
+            outputError('call .getColor(null) without resource.', options.silent);
 
             return this.prepareResult(defaultColor);
         }
@@ -59,30 +90,33 @@ export default class FastAverageColor {
         const size = prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-            outputError(options, `incorrect sizes for resource "${resource.src}".`);
+            outputError(`incorrect sizes for resource "${getSrc(resource)}".`, options.silent);
 
             return this.prepareResult(defaultColor);
         }
 
-        if (!this._ctx) {
-            this._canvas = makeCanvas();
-            this._ctx = this._canvas.getContext && this._canvas.getContext('2d');
+        if (!this.canvas) {
+            this.canvas = makeCanvas();
+        }
 
-            if (!this._ctx) {
-                outputError(options, 'Canvas Context 2D is not supported in this browser.');
+        if (!this.ctx) {
+            this.ctx = this.canvas.getContext && this.canvas.getContext('2d');
+
+            if (!this.ctx) {
+                outputError('Canvas Context 2D is not supported in this browser.', options.silent);
 
                 return this.prepareResult(defaultColor);
             }
         }
 
-        this._canvas.width = size.destWidth;
-        this._canvas.height = size.destHeight;
+        this.canvas.width = size.destWidth;
+        this.canvas.height = size.destHeight;
 
         let value = defaultColor;
 
         try {
-            this._ctx.clearRect(0, 0, size.destWidth, size.destHeight);
-            this._ctx.drawImage(
+            this.ctx.clearRect(0, 0, size.destWidth, size.destHeight);
+            this.ctx.drawImage(
                 resource,
                 size.srcLeft, size.srcTop,
                 size.srcWidth, size.srcHeight,
@@ -90,10 +124,10 @@ export default class FastAverageColor {
                 size.destWidth, size.destHeight
             );
 
-            const bitmapData = this._ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
+            const bitmapData = this.ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
             value = this.getColorFromArray4(bitmapData, options);
         } catch (e) {
-            outputError(options, `security error (CORS) for resource ${resource.src}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, e);
+            outputError(`security error (CORS) for resource ${getSrc(resource)}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, options.silent, e);
         }
 
         return this.prepareResult(value);
@@ -101,17 +135,8 @@ export default class FastAverageColor {
 
     /**
      * Get the average color from a array when 1 pixel is 4 bytes.
-     *
-     * @param {number[]|Uint8Array|Uint8ClampedArray} arr
-     * @param {Object} [options]
-     * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
-     * @param {number[]}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
-     * @param {number[]}  [options.ignoredColor] [red, green, blue, alpha]
-     * @param {number} [options.step=1]
-     *
-     * @returns {number[]} [red (0-255), green (0-255), blue (0-255), alpha (0-255)]
      */
-    getColorFromArray4(arr, options) {
+    public getColorFromArray4(arr: number[]|Uint8Array|Uint8ClampedArray, options?: FastAverageColorOptions): RGBAColor {
         options = options || {};
 
         const bytesPerPixel = 4;
@@ -150,18 +175,14 @@ export default class FastAverageColor {
 
     /**
      * Get color data from value ([r, g, b, a]).
-     *
-     * @param {number[]} value
-     *
-     * @returns {FastAverageColorResult}
      */
-    prepareResult(value) {
+    public prepareResult(value: number[]): FastAverageColorResult {
         const rgb = value.slice(0, 3);
-        const rgba = [].concat(rgb, value[3] / 255);
+        const rgba = [value[0], value[1], value[2], value[3] / 255];
         const isDarkColor = isDark(value);
 
         return {
-            value,
+            value: [value[0], value[1], value[2], value[3]],
             rgb: 'rgb(' + rgb.join(',') + ')',
             rgba: 'rgba(' + rgba.join(',') + ')',
             hex: arrayToHex(rgb),
@@ -174,12 +195,12 @@ export default class FastAverageColor {
     /**
      * Destroy the instance.
      */
-    destroy() {
-        delete this._canvas;
-        delete this._ctx;
+    public destroy() {
+        this.canvas = null;
+        this.ctx = null;
     }
 
-    _bindImageEvents(resource, options) {
+    private bindImageEvents(resource: HTMLImageElement, options?: FastAverageColorOptions): Promise<FastAverageColorResult> {
         return new Promise((resolve, reject) => {
             const onload = () => {
                 unbindEvents();
@@ -217,31 +238,3 @@ export default class FastAverageColor {
         });
     }
 }
-
-/**
- * @typeof {Object} FastAverageColorOptions
- *
- * @param {number[]}  [options.defaultColor=[0, 0, 0, 0]] [red, green, blue, alpha]
- * @param {number[]}  [options.ignoredColor] [red, green, blue, alpha]
- * @param {string} [options.mode="speed"] "precision" or "speed"
- * @param {string} [options.algorithm="sqrt"] "simple", "sqrt" or "dominant"
- * @param {number} [options.step=1]
- * @param {number} [options.left=0]
- * @param {number} [options.top=0]
- * @param {number} [options.width=width of resource]
- * @param {number} [options.height=height of resource]
- * @param {boolean} [options.silent] Disable error output via console.error
- */
-
-/**
- * @typedef {Object} FastAverageColorResult
- *
- * @property {string} rgba
- * @property {string} rgb
- * @property {string} hex
- * @property {string} hexa
- * @property {number[]} value
- * @property {boolean} isDark
- * @property {boolean} isLight
- * @property {Error?} error
- */
