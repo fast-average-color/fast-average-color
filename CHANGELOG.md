@@ -1,7 +1,11 @@
 # Changelog
 
+# v7.0.1
+Fixes for typings.
+
 # v7.0.0
 - Migration on TypeScript.
+- Dropped I-prefix from typings (IFastAverageColorResult → FastAverageColorResult).
 - Removed lost dist/index.es6.js file.
 
 # v6.4.2

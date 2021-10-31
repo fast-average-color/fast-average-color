@@ -1,7 +1,7 @@
 {
   "name": "fast-average-color",
   "description": "A simple library that calculates the average color of images, videos and canvas in browser environment.",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
@@ -35,17 +35,16 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/jest": "^27.0.2",
-    "@types/offscreencanvas": "^2019.6.4",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "del-cli": "^4.0.1",
     "eslint": "^8.1.0",
-    "husky": "^7.0.1",
-    "jest": "^27.1.0",
+    "husky": "^7.0.4",
+    "jest": "^27.3.1",
     "rollup": "^2.58.3",
+    "terser": "^5.9.0",
     "ts-jest": "^27.0.7",
-    "typescript": "^4.4.2",
-    "terser": "^5.9.0"
+    "typescript": "^4.4.4"
   },
   "husky": {
     "hooks": {
@@ -61,5 +60,8 @@
     "test": "npm run eslint && npm run unit-test",
     "eslint": "eslint .",
     "unit-test": "jest ."
+  },
+  "dependencies": {
+    "@types/offscreencanvas": "^2019.6.4"
   }
 }

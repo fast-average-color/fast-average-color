@@ -1,7 +1,7 @@
 import { FastAverageColorOptions } from '../index';
-import type { RGBAColor } from '../index';
+import type { FastAverageColorRgba } from '../index';
 
-export function getDefaultColor(options: FastAverageColorOptions): RGBAColor {
+export function getDefaultColor(options: FastAverageColorOptions): FastAverageColorRgba {
     return getOption(options, 'defaultColor', [0, 0, 0, 0]);
 }
 

@@ -1,7 +1,7 @@
-import { FastAverageColorAlgorithmOptions, RGBAColor } from '../index';
+import { FastAverageColorAlgorithmOptions, FastAverageColorRgba } from '../index';
 import { isIgnoredColor } from '../helpers/color';
 
-export function dominantAlgorithm(arr: number[] | Uint8ClampedArray | Uint8Array, len: number, options: FastAverageColorAlgorithmOptions): RGBAColor {
+export function dominantAlgorithm(arr: number[] | Uint8ClampedArray | Uint8Array, len: number, options: FastAverageColorAlgorithmOptions): FastAverageColorRgba {
     const colorHash: Record<string, number[]> = {};
     const divider = 24;
     const ignoredColor = options.ignoredColor;
