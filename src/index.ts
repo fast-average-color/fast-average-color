@@ -7,14 +7,14 @@ import { getDefaultColor } from './helpers/option';
 import { prepareSizeAndPosition, makeCanvas, getOriginalSize, getSrc } from './helpers/dom';
 import { outputError, getError } from './helpers/error';
 
-export type RGBColor = [number, number, number];
-export type RGBAColor = [number, number, number, number];
-export type RGBAColorWithThreshold = [number, number, number, number, number];
+export type FastAverageColorRgb = [number, number, number];
+export type FastAverageColorRgba = [number, number, number, number];
+export type FastAverageColorRgbaWithThreshold = [number, number, number, number, number];
 
-export type FastAverageColorIgnoredColor = RGBColor | RGBAColor | RGBAColorWithThreshold | Array<RGBColor | RGBAColor | RGBAColorWithThreshold>;
+export type FastAverageColorIgnoredColor = FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold | Array<FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold>;
 
 export interface FastAverageColorOptions {
-    defaultColor?: RGBAColor;
+    defaultColor?: FastAverageColorRgba;
     ignoredColor?: FastAverageColorIgnoredColor;
     mode?: 'precision' | 'speed';
     algorithm?: 'simple' | 'sqrt' | 'dominant';
@@ -27,8 +27,8 @@ export interface FastAverageColorOptions {
 }
 
 export interface FastAverageColorAlgorithmOptions {
-    defaultColor: RGBAColor;
-    ignoredColor: Array<RGBColor | RGBAColor | RGBAColorWithThreshold>;
+    defaultColor: FastAverageColorRgba;
+    ignoredColor: Array<FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold>;
     step: number;
 }
 
@@ -39,7 +39,7 @@ export interface FastAverageColorResult {
     rgba: string;
     hex: string;
     hexa: string;
-    value: RGBAColor;
+    value: FastAverageColorRgba;
     isDark: boolean;
     isLight: boolean;
     error?: Error;
@@ -136,7 +136,7 @@ export default class FastAverageColor {
     /**
      * Get the average color from a array when 1 pixel is 4 bytes.
      */
-    public getColorFromArray4(arr: number[]|Uint8Array|Uint8ClampedArray, options?: FastAverageColorOptions): RGBAColor {
+    public getColorFromArray4(arr: number[]|Uint8Array|Uint8ClampedArray, options?: FastAverageColorOptions): FastAverageColorRgba {
         options = options || {};
 
         const bytesPerPixel = 4;

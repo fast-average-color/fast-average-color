@@ -1,4 +1,4 @@
-import FastAverageColor, { RGBAColor } from '../src/index';
+import FastAverageColor, { FastAverageColorRgba } from '../src/index';
 
 describe('Public API', () => {
     const defaultColor = [0, 0, 0, 0];
@@ -28,7 +28,7 @@ describe('Public API', () => {
         });
 
         it('if incorrect params should return my default color', () => {
-            const myDefaultColor: RGBAColor = [255, 0, 255, 255];
+            const myDefaultColor: FastAverageColorRgba = [255, 0, 255, 255];
             const color = fac.getColorFromArray4([0], {
                 defaultColor: myDefaultColor
             });
