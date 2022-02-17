@@ -14,6 +14,7 @@ export interface FastAverageColorOptions {
     width?: number;
     height?: number;
     silent?: boolean;
+    crossOrigin?: string;
 }
 export interface FastAverageColorAlgorithmOptions {
     defaultColor: FastAverageColorRgba;
