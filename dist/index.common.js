@@ -1,4 +1,4 @@
-/*! Fast Average Color | © 2021 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
+/*! Fast Average Color | © 2022 Denis Seleznev | MIT License | https://github.com/fast-average-color/fast-average-color */
 'use strict';
 
 function toHex(num) {
@@ -318,12 +318,13 @@ var FastAverageColor = /** @class */ (function () {
      * Get asynchronously the average color from not loaded image.
      */
     FastAverageColor.prototype.getColorAsync = function (resource, options) {
+        var _a;
         if (!resource) {
             return Promise.reject(getError('call .getColorAsync() without resource.'));
         }
         if (typeof resource === 'string') {
             var img = new Image();
-            img.crossOrigin = '';
+            img.crossOrigin = (_a = options === null || options === void 0 ? void 0 : options.crossOrigin) !== null && _a !== void 0 ? _a : '';
             img.src = resource;
             return this.bindImageEvents(img, options);
         }

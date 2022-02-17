@@ -24,6 +24,7 @@ export interface FastAverageColorOptions {
     width?: number;
     height?: number;
     silent?: boolean;
+    crossOrigin?: string;
 }
 
 export interface FastAverageColorAlgorithmOptions {
@@ -59,7 +60,7 @@ export default class FastAverageColor {
 
         if (typeof resource === 'string') {
             const img = new Image();
-            img.crossOrigin = '';
+            img.crossOrigin = options?.crossOrigin ?? '';
             img.src = resource;
 
             return this.bindImageEvents(img, options);
