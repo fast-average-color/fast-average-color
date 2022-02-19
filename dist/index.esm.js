@@ -347,7 +347,7 @@ var FastAverageColor = /** @class */ (function () {
         var originalSize = getOriginalSize(resource);
         var size = prepareSizeAndPosition(originalSize, options);
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-            outputError("incorrect sizes for resource \"" + getSrc(resource) + "\".", options.silent);
+            outputError("incorrect sizes for resource \"".concat(getSrc(resource), "\"."), options.silent);
             return this.prepareResult(defaultColor);
         }
         if (!this.canvas) {
@@ -370,7 +370,7 @@ var FastAverageColor = /** @class */ (function () {
             value = this.getColorFromArray4(bitmapData, options);
         }
         catch (e) {
-            outputError("security error (CORS) for resource " + getSrc(resource) + ".\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image", options.silent, e);
+            outputError("security error (CORS) for resource ".concat(getSrc(resource), ".\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image"), options.silent, e);
         }
         return this.prepareResult(value);
     };
@@ -399,7 +399,7 @@ var FastAverageColor = /** @class */ (function () {
                 algorithm = dominantAlgorithm;
                 break;
             default:
-                throw getError(options.algorithm + " is unknown algorithm.");
+                throw getError("".concat(options.algorithm, " is unknown algorithm."));
         }
         return algorithm(arr, len, {
             defaultColor: defaultColor,
@@ -446,11 +446,11 @@ var FastAverageColor = /** @class */ (function () {
             };
             var onerror = function () {
                 unbindEvents();
-                reject(getError("Error loading image \"" + resource.src + "\"."));
+                reject(getError("Error loading image \"".concat(resource.src, "\".")));
             };
             var onabort = function () {
                 unbindEvents();
-                reject(getError("Image \"" + resource.src + "\" loading aborted."));
+                reject(getError("Image \"".concat(resource.src, "\" loading aborted.")));
             };
             var unbindEvents = function () {
                 resource.removeEventListener('load', onload);
