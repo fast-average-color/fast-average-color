@@ -1,5 +1,8 @@
 # Changelog
 
+# v7.1.0
+Add crossOrigin option #86 @arnemolland.
+
 # v7.0.1
 Fixes for typings.
 
