@@ -57,6 +57,7 @@ A simple library that calculates average or dominant color of any images or vide
 
 ## [More examples](https://fast-average-color.github.io/examples/background.html)
   + [Background](https://fast-average-color.github.io/examples/background.html)
+  + [Timeline](https://fast-average-color.github.io/examples/timeline.html)
   + [Box shadow](https://fast-average-color.github.io/examples/box-shadow.html)
   + [Box shadow, 4 sides](https://fast-average-color.github.io/examples/box-shadow-4-sides.html)
   + [Border](https://fast-average-color.github.io/examples/border.html)
