@@ -10,9 +10,9 @@ A simple library that calculates average or dominant color of any images or vide
 <img width="100%" style="max-width: 640px;" src="https://raw.githubusercontent.com/fast-average-color/fast-average-color/master/img/title.png" />
 
 ## Features
-- Bet on speed
+- Bet on [speed](https://fast-average-color.github.io/examples/canvas.html)
 - Some algorithms: simple, sqrt (default) and dominant
-- Small bundle size, tree shaking
+- [Small bundle size](https://bundlephobia.com/result?p=fast-average-color), tree shaking
 - Average color can be obtained from:
   + [image](https://fast-average-color.github.io/examples/background.html)
   + string (url of image or base64)
