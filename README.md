@@ -15,7 +15,7 @@ A simple library that calculates average or dominant color of any images or vide
 - Small bundle size, tree shaking
 - Average color can be obtained from:
   + image
-  + string (url of image)
+  + string (url of image or base64)
   + video
   + canvas
   + array of numbers, `Uint8Array` or `Uint8ClampedArray`
