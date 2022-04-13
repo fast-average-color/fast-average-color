@@ -14,10 +14,10 @@ A simple library that calculates average or dominant color of any images or vide
 - Some algorithms: simple, sqrt (default) and dominant
 - Small bundle size, tree shaking
 - Average color can be obtained from:
-  + image
+  + [image](https://fast-average-color.github.io/examples/background.html)
   + string (url of image or base64)
-  + video
-  + canvas
+  + [video](https://fast-average-color.github.io/examples/timeline.html)
+  + [canvas](https://fast-average-color.github.io/examples/canvas.html)
   + array of numbers, `Uint8Array` or `Uint8ClampedArray`
 - Average color can be obtained from specific part of resource
 - Support for transparency (PNG, SVG and other formats)
