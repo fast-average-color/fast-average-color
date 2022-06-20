@@ -1,4 +1,4 @@
-import FastAverageColor from '../src/index';
+import { FastAverageColor } from '../src/index';
 
 describe('Options: algorithm', () => {
     const fac = new FastAverageColor();

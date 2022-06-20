@@ -1,4 +1,4 @@
-import FastAverageColor, { FastAverageColorRgba } from '../src/index';
+import { FastAverageColor, FastAverageColorRgba } from '../src/index';
 
 describe('Public API', () => {
     const defaultColor = [0, 0, 0, 0];

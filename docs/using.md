@@ -41,7 +41,7 @@ npm i fast-average-color
 ```js
 'use strict';
 
-const FastAverageColor = require('fast-average-color');
+const FastAverageColor = require('fast-average-color').FastAverageColor;
 const fac = new FastAverageColor();
 fac.getColorAsync(container.querySelector('img'))
     .then(color => {
@@ -57,7 +57,7 @@ fac.getColorAsync(container.querySelector('img'))
 [Details](../dist/README.md)
 
 ```js
-import FastAverageColor from 'fast-average-color';
+import { FastAverageColor } from 'fast-average-color';
 
 const fac = new FastAverageColor();
 fac.getColorAsync(container.querySelector('img'))

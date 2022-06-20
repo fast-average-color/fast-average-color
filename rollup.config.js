@@ -4,7 +4,7 @@ const plugins = [typescript({ tsconfig: './tsconfig.json' })];
 
 export default [
   {
-    input: 'src/index.ts',
+    input: 'src/umd.ts',
     output: {
       format: 'umd',
       name: 'FastAverageColor',

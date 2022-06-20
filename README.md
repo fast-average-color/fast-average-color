@@ -17,7 +17,8 @@ A simple library that calculates average or dominant color of any images or vide
   + [image](https://fast-average-color.github.io/examples/background.html)
   + string (url of image or base64)
   + [video](https://fast-average-color.github.io/examples/timeline.html)
-  + [canvas](https://fast-average-color.github.io/examples/canvas.html)
+  + [canvas](https://fast-average-color.github.io/examples/canvas.html) or `OffscreenCanvas`
+  + `ImageBitmap`
   + array of numbers, `Uint8Array` or `Uint8ClampedArray`
 - Average color can be obtained from specific part of resource
 - Support for transparency (PNG, SVG and other formats)
@@ -78,5 +79,5 @@ MIT License
 - [fast-average-color-node](https://github.com/fast-average-color/fast-average-color-node/)
 - [color-thief](https://github.com/lokesh/color-thief)
 - [node-vibrant](https://github.com/Vibrant-Colors/node-vibrant)
-- [image-palette](https://github.com/FormidableLabs/image-palette)    
+- [image-palette](https://github.com/FormidableLabs/image-palette)
 - [react-color-extractor](https://github.com/nitin42/react-color-extractor)
