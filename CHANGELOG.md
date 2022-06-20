@@ -1,5 +1,24 @@
 # Changelog
 
+# v8.0.0
+**BREAKING CHANGES:**
+Default exports are replaced with named ones.
+
+Before:
+```js
+import FastAverageColor from 'fast-average-color';
+```
+
+After:
+```js
+import { FastAverageColor } from 'fast-average-color';
+```
+
+Other changes:
+- TypeScript typings fixes for OffscreenCanvas.
+- Support for ImageBitmap.
+- Update dev deps in package.json.
+
 # v7.1.0
 Add crossOrigin option #86 @arnemolland.
 
