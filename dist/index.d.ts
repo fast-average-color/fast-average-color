@@ -21,7 +21,7 @@ export interface FastAverageColorAlgorithmOptions {
     ignoredColor: Array<FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold>;
     step: number;
 }
-declare type FastAverageColorResource = string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null;
+declare type FastAverageColorResource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null;
 export interface FastAverageColorResult {
     rgb: string;
     rgba: string;
@@ -32,17 +32,17 @@ export interface FastAverageColorResult {
     isLight: boolean;
     error?: Error;
 }
-export default class FastAverageColor {
+export declare class FastAverageColor {
     canvas: HTMLCanvasElement | OffscreenCanvas | null;
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
     /**
      * Get asynchronously the average color from not loaded image.
      */
-    getColorAsync(resource: FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult>;
+    getColorAsync(resource: string | FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult>;
     /**
      * Get the average color from images, videos and canvas.
      */
-    getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: FastAverageColorOptions): FastAverageColorResult;
+    getColor(resource: FastAverageColorResource, options?: FastAverageColorOptions): FastAverageColorResult;
     /**
      * Get the average color from a array when 1 pixel is 4 bytes.
      */

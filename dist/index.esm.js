@@ -316,13 +316,12 @@ var FastAverageColor = /** @class */ (function () {
      * Get asynchronously the average color from not loaded image.
      */
     FastAverageColor.prototype.getColorAsync = function (resource, options) {
-        var _a;
         if (!resource) {
             return Promise.reject(getError('call .getColorAsync() without resource.'));
         }
         if (typeof resource === 'string') {
             var img = new Image();
-            img.crossOrigin = (_a = options === null || options === void 0 ? void 0 : options.crossOrigin) !== null && _a !== void 0 ? _a : '';
+            img.crossOrigin = options && options.crossOrigin || '';
             img.src = resource;
             return this.bindImageEvents(img, options);
         }
@@ -465,4 +464,4 @@ var FastAverageColor = /** @class */ (function () {
     return FastAverageColor;
 }());
 
-export { FastAverageColor as default };
+export { FastAverageColor };
