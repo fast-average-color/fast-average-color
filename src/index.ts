@@ -33,7 +33,7 @@ export interface FastAverageColorAlgorithmOptions {
     step: number;
 }
 
-type FastAverageColorResource = string | HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null;
+type FastAverageColorResource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap | null;
 
 export interface FastAverageColorResult {
     rgb: string;
@@ -46,21 +46,26 @@ export interface FastAverageColorResult {
     error?: Error;
 }
 
-export default class FastAverageColor {
+export class FastAverageColor {
     canvas: HTMLCanvasElement | OffscreenCanvas | null = null;
     ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null = null;
 
     /**
      * Get asynchronously the average color from not loaded image.
      */
-    public getColorAsync(resource: FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult> {
+    public getColorAsync(resource: string | FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult> {
         if (!resource) {
             return Promise.reject(getError('call .getColorAsync() without resource.'));
         }
 
         if (typeof resource === 'string') {
+            // Web workers
+            if (typeof Image === 'undefined') {
+                return Promise.reject(getError('resource as string is not supported in this environment'));
+            }
+
             const img = new Image();
-            img.crossOrigin = options?.crossOrigin ?? '';
+            img.crossOrigin = options && options.crossOrigin || '';
             img.src = resource;
 
             return this.bindImageEvents(img, options);
@@ -76,13 +81,13 @@ export default class FastAverageColor {
     /**
      * Get the average color from images, videos and canvas.
      */
-    public getColor(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | null, options?: FastAverageColorOptions): FastAverageColorResult {
+    public getColor(resource: FastAverageColorResource, options?: FastAverageColorOptions): FastAverageColorResult {
         options = options || {};
 
         const defaultColor = getDefaultColor(options);
 
         if (!resource) {
-            outputError('call .getColor(null) without resource.', options.silent);
+            outputError('call .getColor(null) without resource', options.silent);
 
             return this.prepareResult(defaultColor);
         }
@@ -91,7 +96,7 @@ export default class FastAverageColor {
         const size = prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-            outputError(`incorrect sizes for resource "${getSrc(resource)}".`, options.silent);
+            outputError(`incorrect sizes for resource "${getSrc(resource)}"`, options.silent);
 
             return this.prepareResult(defaultColor);
         }
@@ -104,7 +109,7 @@ export default class FastAverageColor {
             this.ctx = this.canvas.getContext && this.canvas.getContext('2d');
 
             if (!this.ctx) {
-                outputError('Canvas Context 2D is not supported in this browser.', options.silent);
+                outputError('Canvas Context 2D is not supported in this browser', options.silent);
 
                 return this.prepareResult(defaultColor);
             }
@@ -164,7 +169,7 @@ export default class FastAverageColor {
                 algorithm = dominantAlgorithm;
                 break;
             default:
-                throw getError(`${options.algorithm} is unknown algorithm.`);
+                throw getError(`${options.algorithm} is unknown algorithm`);
         }
 
         return algorithm(arr, len, {
@@ -224,7 +229,7 @@ export default class FastAverageColor {
             const onabort = () => {
                 unbindEvents();
 
-                reject(getError(`Image "${resource.src}" loading aborted.`));
+                reject(getError(`Image "${resource.src}" loading aborted`));
             };
 
             const unbindEvents = () => {

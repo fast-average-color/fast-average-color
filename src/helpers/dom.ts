@@ -8,12 +8,12 @@ export function isSvg(filename: string): boolean {
     return filename.search(/\.svg(\?|$)/i) !== -1;
 }
 
-export function getOriginalSize(resource: HTMLCanvasElement | HTMLImageElement | HTMLVideoElement) {
+export function getOriginalSize(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap) {
     if (resource instanceof HTMLImageElement) {
         let width = resource.naturalWidth;
         let height = resource.naturalHeight;
 
-        // For SVG images with only viewBox attr.
+        // For SVG images with only viewBox attribute
         if (!resource.naturalWidth && isSvg(resource.src)) {
             width = height = MAX_SIZE;
         }
@@ -37,8 +37,20 @@ export function getOriginalSize(resource: HTMLCanvasElement | HTMLImageElement |
     };
 }
 
-export function getSrc(resource: HTMLCanvasElement | HTMLImageElement | HTMLVideoElement) {
-    return resource instanceof HTMLCanvasElement ? 'canvas' : resource.src;
+export function getSrc(resource: HTMLCanvasElement | OffscreenCanvas | HTMLImageElement | HTMLVideoElement | ImageBitmap) {
+    if (resource instanceof HTMLCanvasElement) {
+        return 'canvas';
+    }
+
+    if (resource instanceof OffscreenCanvas) {
+        return 'offscreencanvas';
+    }
+
+    if (resource instanceof ImageBitmap) {
+        return 'imagebitmap';
+    }
+
+    return resource.src;
 }
 
 export function prepareSizeAndPosition(originalSize: { width: number; height: number; }, options: FastAverageColorOptions) {
@@ -91,8 +103,10 @@ export function prepareSizeAndPosition(originalSize: { width: number; height: nu
     };
 }
 
+const isWebWorkers = typeof window === 'undefined';
+
 export function makeCanvas() {
-    return typeof window === 'undefined' ?
+    return isWebWorkers ?
         new OffscreenCanvas(1, 1) :
         document.createElement('canvas');
 }
