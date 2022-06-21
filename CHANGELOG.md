@@ -1,5 +1,10 @@
 # Changelog
 
+# v9.0.0
+- Commonjs by default, removed UMD.
+- Separate build for unpkg - `dist/index.js` → `dist/index.browser.js` and `dist/index.min.js` → `dist/index.browser.min.js`.
+- Add typings for all builds.
+
 # v8.0.0
 **BREAKING CHANGES:**
 Default exports are replaced with named ones.
