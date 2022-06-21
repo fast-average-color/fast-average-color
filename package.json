@@ -1,7 +1,7 @@
 {
   "name": "fast-average-color",
   "description": "A simple library that calculates the average color of images, videos and canvas in browser environment.",
-  "version": "8.0.0",
+  "version": "9.0.0",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
@@ -9,8 +9,8 @@
   },
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "unpkg": "dist/index.js",
-  "jsdelivr": "dist/index.js",
+  "unpkg": "dist/index.browser.js",
+  "jsdelivr": "dist/index.browser.js",
   "homepage": "https://github.com/fast-average-color/fast-average-color",
   "license": "MIT",
   "repository": {
@@ -32,11 +32,14 @@
     "README.md",
     "LICENSE"
   ],
+  "dependencies": {
+    "@types/offscreencanvas": "^2019.7.0"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.3",
     "@types/jest": "^28.1.2",
-    "@typescript-eslint/eslint-plugin": "^5.28.0",
-    "@typescript-eslint/parser": "^5.28.0",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
     "del-cli": "^4.0.1",
     "eslint": "^8.18.0",
     "husky": "^8.0.1",
@@ -54,14 +57,11 @@
   "scripts": {
     "build": "npm run clean && npm run rollup && npm run minify && npm run copyright",
     "clean": "del dist/*",
-    "minify": "terser ./dist/index.js -o ./dist/index.min.js -c -m",
+    "minify": "terser ./dist/index.browser.js -o ./dist/index.browser.min.js -c -m",
     "copyright": "node tools/copyright.mjs dist/index.*js",
     "rollup": "rollup --config rollup.config.js",
     "test": "npm run eslint && npm run unit-test",
     "eslint": "eslint .",
     "unit-test": "jest ."
-  },
-  "dependencies": {
-    "@types/offscreencanvas": "^2019.7.0"
   }
 }

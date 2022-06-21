@@ -12,7 +12,7 @@
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
     </div>
-    <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+    <script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
     <script>
         window.addEventListener('load', function() {
             const fac = new FastAverageColor();
@@ -51,7 +51,7 @@
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
     </div>
-    <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+    <script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
     <script>
         const fac = new FastAverageColor();
         const container = document.querySelector('.image-container');
@@ -72,7 +72,7 @@
 ## Get average color from image url
 ```html
 ...
-<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
 <script>
     const fac = new FastAverageColor();
 
@@ -95,7 +95,7 @@ For example, to ignore white background in logos.
 
 ```html
 ...
-<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
 <script>
     const fac = new FastAverageColor();
 
@@ -117,7 +117,7 @@ For example, to ignore white and black background in logos.
 
 ```html
 ...
-<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
 <script>
     const fac = new FastAverageColor();
 
@@ -139,7 +139,7 @@ For example, to ignore white and black background in logos.
 ## Get average color with ignored color and threshold
 ```html
 ...
-<script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+<script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
 <script>
     const fac = new FastAverageColor();
 

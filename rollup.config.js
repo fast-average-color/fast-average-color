@@ -4,16 +4,15 @@ const plugins = [typescript({ tsconfig: './tsconfig.json' })];
 
 export default [
   {
-    input: 'src/umd.ts',
+    input: 'src/index.browser.ts',
     output: {
-      format: 'umd',
-      name: 'FastAverageColor',
-      file: './dist/index.js'
+      format: 'iife',
+      file: './dist/index.browser.js'
     },
     plugins,
   },
   {
-    input: 'src/index.ts',
+    input: 'src/index.esm.ts',
     output: {
       format: 'es',
       file: './dist/index.esm.js'
@@ -24,7 +23,7 @@ export default [
     input: 'src/index.ts',
     output: {
       format: 'commonjs',
-      file: './dist/index.common.js'
+      file: './dist/index.js'
     },
     plugins,
   }

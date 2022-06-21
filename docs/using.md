@@ -17,7 +17,7 @@ npm i fast-average-color
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </div>
     </div>
-    <script src="https://unpkg.com/fast-average-color/dist/index.min.js"></script>
+    <script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
     <script>
         const fac = new FastAverageColor();
         const container = document.querySelector('.image-container');
