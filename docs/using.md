@@ -36,8 +36,6 @@ npm i fast-average-color
 ```
 
 ## CommonJS
-[Details](../dist/README.md)
-
 ```js
 'use strict';
 
@@ -54,8 +52,6 @@ fac.getColorAsync(container.querySelector('img'))
 ```
 
 ## ES Modules or TypeScript
-[Details](../dist/README.md)
-
 ```js
 import { FastAverageColor } from 'fast-average-color';
 
