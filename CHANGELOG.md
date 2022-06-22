@@ -1,5 +1,8 @@
 # Changelog
 
+# v9.1.0
+Added checking of global objects for web workers: `HTMLCanvasElement`, `HTMLImageElement`, `HTMLVideoElement`, `ImageBitmap` and `OffscreenCanvas`.  
+
 # v9.0.0
 - Commonjs by default, removed UMD.
 - Separate build for unpkg - `dist/index.js` → `dist/index.browser.js` and `dist/index.min.js` → `dist/index.browser.min.js`.
