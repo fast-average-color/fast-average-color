@@ -1,7 +1,7 @@
-import { isDark } from '../src/helpers/color';
+import { arrayToHex, isDark } from '../src/helpers/color';
 
 describe('Helpers: color', () => {
-    describe('isDark', () => {
+    describe('#isDark', () => {
         it('should return dark color', () => {
             [
                 {color: [0, 0, 0], expected: true},
@@ -14,6 +14,16 @@ describe('Helpers: color', () => {
             ].forEach(item => {
                 expect(isDark(item.color)).toEqual(item.expected);
             });
+        });
+    });
+
+    describe('#arrayToHex', () => {
+        it('should return hex rgb color', () => {
+            expect(arrayToHex([10, 20, 30])).toEqual('#0a141e');
+        });
+
+        it('should return hex rgba color', () => {
+            expect(arrayToHex([10, 20, 30, 40])).toEqual('#0a141e28');
         });
     });
 });
