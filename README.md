@@ -3,6 +3,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/fast-average-color.svg?style=flat)](https://www.npmjs.org/package/fast-average-color)
 [![bundlephobia](https://badgen.net/bundlephobia/minzip/fast-average-color)](https://bundlephobia.com/result?p=fast-average-color)
 [![install size](https://packagephobia.com/badge?p=fast-average-color)](https://packagephobia.com/result?p=fast-average-color)
+![Coveralls](https://img.shields.io/coveralls/github/hcodes/fast-average-color)
 
 [Demo](https://fast-average-color.github.io/examples/background.html)
 
