@@ -1,7 +1,7 @@
 {
   "name": "fast-average-color",
   "description": "A simple library that calculates the average color of images, videos and canvas in browser environment.",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
@@ -62,8 +62,10 @@
     "minify": "terser ./dist/index.browser.js -o ./dist/index.browser.min.js -c -m",
     "copyright": "node tools/copyright.mjs dist/index.*js",
     "rollup": "rollup --config rollup.config.js",
-    "test": "npm run eslint && npm run unit-test",
+    "test": "npm run typecheck && npm run eslint && npm run unit-test",
     "eslint": "eslint .",
-    "unit-test": "jest ."
+    "unit-test": "jest .",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit"
   }
 }
