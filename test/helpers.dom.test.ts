@@ -1,7 +1,8 @@
-import { isSvg, prepareSizeAndPosition } from '../src/helpers/dom';
+import 'jest-canvas-mock';
+import { isInstanceOfHTMLCanvasElement, isInstanceOfHTMLImageElement, isInstanceOfHTMLVideoElement, isInstanceOfImageBitmap, isInstanceOfOffscreenCanvas, isSvg, prepareSizeAndPosition } from '../src/helpers/dom';
 
 describe('Helpers: dom', () => {
-    it('isSvg', () => {
+    it('#isSvg', () => {
         expect(isSvg('https://my-site.com/path/my.svg')).toBeTruthy();
         expect(isSvg('/path/my.png')).toBeFalsy();
         expect(isSvg('/path/svg')).toBeFalsy();
@@ -10,8 +11,7 @@ describe('Helpers: dom', () => {
         expect(isSvg('/path/my.SVG?param1=1&param2=2')).toBeTruthy();
     });
 
-    describe('prepareSizeAndPosition()', () => {
-
+    describe('#prepareSizeAndPosition()', () => {
         it('should return values', () => {
             expect(prepareSizeAndPosition({width: 1000, height: 500}, {left: 10, top: 20, width: 300, height: 200}))
                 .toEqual({srcLeft: 10, srcTop: 20, srcWidth: 300, srcHeight: 200, destWidth: 100, destHeight: 67});
@@ -36,4 +36,29 @@ describe('Helpers: dom', () => {
         });
     });
 
+    it('#isInstanceOfHTMLImageElement', () => {
+        expect(isInstanceOfHTMLImageElement(document.createElement('img'))).toBeTruthy();
+        expect(isInstanceOfHTMLImageElement(document.createElement('canvas'))).toBeFalsy();
+    });
+
+    it('#isInstanceOfHTMLCanvasElement', () => {
+        expect(isInstanceOfHTMLCanvasElement(document.createElement('img'))).toBeFalsy();
+        expect(isInstanceOfHTMLCanvasElement(document.createElement('canvas'))).toBeTruthy();
+    });
+
+    it('#isInstanceOfHTMLVideoElement', () => {
+        expect(isInstanceOfHTMLVideoElement(document.createElement('img'))).toBeFalsy();
+        expect(isInstanceOfHTMLVideoElement(document.createElement('video'))).toBeTruthy();
+    });
+
+    it('#isInstanceOfImageBitmap', async () => {
+        expect(isInstanceOfImageBitmap(document.createElement('img'))).toBeFalsy();
+
+        const imageBitmap = await createImageBitmap(new Image(1, 1));
+        expect(isInstanceOfImageBitmap(imageBitmap)).toBeTruthy();
+    });
+
+    it('#isInstanceOfOffscreenCanvas', async () => {
+        expect(isInstanceOfOffscreenCanvas(document.createElement('img'))).toBeFalsy();
+    });
 });
