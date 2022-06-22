@@ -1,4 +1,4 @@
-import type { FastAverageColorOptions } from '../index';
+import type { FastAverageColorOptions, FastAverageColorResource } from '../index';
 import { getOption } from './option';
 
 const MIN_SIZE = 10;
@@ -9,7 +9,7 @@ export function isSvg(filename: string): boolean {
 }
 
 export function getOriginalSize(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap) {
-    if (resource instanceof HTMLImageElement) {
+    if (isInstanceOfHTMLImageElement(resource)) {
         let width = resource.naturalWidth;
         let height = resource.naturalHeight;
 
@@ -24,7 +24,7 @@ export function getOriginalSize(resource: HTMLImageElement | HTMLVideoElement | 
         };
     }
 
-    if (resource instanceof HTMLVideoElement) {
+    if (isInstanceOfHTMLVideoElement(resource)) {
         return {
             width: resource.videoWidth,
             height: resource.videoHeight
@@ -38,19 +38,39 @@ export function getOriginalSize(resource: HTMLImageElement | HTMLVideoElement | 
 }
 
 export function getSrc(resource: HTMLCanvasElement | OffscreenCanvas | HTMLImageElement | HTMLVideoElement | ImageBitmap) {
-    if (resource instanceof HTMLCanvasElement) {
+    if (isInstanceOfHTMLCanvasElement(resource)) {
         return 'canvas';
     }
 
-    if (resource instanceof OffscreenCanvas) {
+    if (isInstanceOfOffscreenCanvas(resource)) {
         return 'offscreencanvas';
     }
 
-    if (resource instanceof ImageBitmap) {
+    if (isInstanceOfImageBitmap(resource)) {
         return 'imagebitmap';
     }
 
     return resource.src;
+}
+
+export function isInstanceOfHTMLImageElement(resource: FastAverageColorResource): resource is HTMLImageElement {
+    return typeof HTMLImageElement !== 'undefined' && resource instanceof HTMLImageElement;
+}
+
+export function isInstanceOfOffscreenCanvas(resource: FastAverageColorResource): resource is OffscreenCanvas {
+    return typeof OffscreenCanvas !== 'undefined' && resource instanceof OffscreenCanvas;
+}
+
+export function isInstanceOfHTMLVideoElement(resource: FastAverageColorResource): resource is HTMLVideoElement {
+    return typeof HTMLVideoElement !== 'undefined' && resource instanceof HTMLVideoElement;
+}
+
+export function isInstanceOfHTMLCanvasElement(resource: FastAverageColorResource): resource is HTMLCanvasElement {
+    return typeof HTMLCanvasElement !== 'undefined' && resource instanceof HTMLCanvasElement;
+}
+
+export function isInstanceOfImageBitmap(resource: FastAverageColorResource): resource is ImageBitmap {
+    return typeof ImageBitmap !== 'undefined' && resource instanceof ImageBitmap;
 }
 
 export function prepareSizeAndPosition(originalSize: { width: number; height: number; }, options: FastAverageColorOptions) {

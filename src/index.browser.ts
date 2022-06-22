@@ -1,4 +1,4 @@
-import { FastAverageColor } from './main';
+import { FastAverageColor } from './index';
 
 declare global {
     interface Window {
