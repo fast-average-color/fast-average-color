@@ -87,29 +87,37 @@ export class FastAverageColor {
         const defaultColor = getDefaultColor(options);
 
         if (!resource) {
-            outputError('call .getColor(null) without resource', options.silent);
+            const error = getError('call .getColor(null) without resource');
+            outputError(error, options.silent);
 
-            return this.prepareResult(defaultColor);
+            return this.prepareResult(defaultColor, error);
         }
 
         const originalSize = getOriginalSize(resource);
         const size = prepareSizeAndPosition(originalSize, options);
 
         if (!size.srcWidth || !size.srcHeight || !size.destWidth || !size.destHeight) {
-            outputError(`incorrect sizes for resource "${getSrc(resource)}"`, options.silent);
+            const error = getError(`incorrect sizes for resource "${getSrc(resource)}"`);
+            outputError(error, options.silent);
 
-            return this.prepareResult(defaultColor);
+            return this.prepareResult(defaultColor, error);
         }
 
         if (!this.canvas) {
             this.canvas = makeCanvas();
+
+            if (!this.canvas) {
+                const error = getError('OffscreenCanvas is not supported in this browser');
+                outputError(error, options.silent);
+                return this.prepareResult(defaultColor, error);
+            }
         }
 
         if (!this.ctx) {
-            this.ctx = this.canvas.getContext && this.canvas.getContext('2d');
-
+            this.ctx = this.canvas.getContext('2d');
             if (!this.ctx) {
-                outputError('Canvas Context 2D is not supported in this browser', options.silent);
+                const error = getError('Canvas Context 2D is not supported in this browser');
+                outputError(error, options.silent);
 
                 return this.prepareResult(defaultColor);
             }
@@ -119,8 +127,6 @@ export class FastAverageColor {
 
         this.canvas.width = size.destWidth;
         this.canvas.height = size.destHeight;
-
-        let value = defaultColor;
 
         try {
             this.ctx.clearRect(0, 0, size.destWidth, size.destHeight);
@@ -133,12 +139,16 @@ export class FastAverageColor {
             );
 
             const bitmapData = this.ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
-            value = this.getColorFromArray4(bitmapData, options);
-        } catch (e) {
-            outputError(`security error (CORS) for resource ${getSrc(resource)}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`, options.silent, e);
-        }
+            
+            return this.prepareResult(this.getColorFromArray4(bitmapData, options));
+        } catch (originalError) {
+            const error = getError(`security error (CORS) for resource ${getSrc(resource)}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`);
+            outputError(error, options.silent);
 
-        return this.prepareResult(value);
+            !options.silent && console.error(originalError);
+
+            return this.prepareResult(defaultColor, error);
+        }
     }
 
     /**
@@ -184,7 +194,7 @@ export class FastAverageColor {
     /**
      * Get color data from value ([r, g, b, a]).
      */
-    public prepareResult(value: number[]): FastAverageColorResult {
+    public prepareResult(value: number[], error?: Error): FastAverageColorResult {
         const rgb = value.slice(0, 3);
         const rgba = [value[0], value[1], value[2], value[3] / 255];
         const isDarkColor = isDark(value);
@@ -196,7 +206,8 @@ export class FastAverageColor {
             hex: arrayToHex(rgb),
             hexa: arrayToHex(value),
             isDark: isDarkColor,
-            isLight: !isDarkColor
+            isLight: !isDarkColor,
+            error,
         };
     }
 

@@ -1,15 +1,11 @@
 export const ERROR_PREFIX = 'FastAverageColor: ';
 
-export function outputError(message: string, silent?: boolean, error?: unknown) {
-    if (!silent) {
-        console.error(ERROR_PREFIX + message);
-
-        if (error) {
-            console.error(error);
-        }
-    }
+export function getError(message: string): Error {
+    return Error(ERROR_PREFIX + message);
 }
 
-export function getError(text: string): Error {
-    return Error(ERROR_PREFIX + text);
+export function outputError(error: Error, silent?: boolean) {
+    if (!silent) {
+        console.error(error);
+    }
 }
