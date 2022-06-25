@@ -57,8 +57,10 @@ export function isInstanceOfHTMLImageElement(resource: FastAverageColorResource)
     return typeof HTMLImageElement !== 'undefined' && resource instanceof HTMLImageElement;
 }
 
+const hasOffscreenCanvas = typeof OffscreenCanvas !== 'undefined';
+
 export function isInstanceOfOffscreenCanvas(resource: FastAverageColorResource): resource is OffscreenCanvas {
-    return typeof OffscreenCanvas !== 'undefined' && resource instanceof OffscreenCanvas;
+    return hasOffscreenCanvas && resource instanceof OffscreenCanvas;
 }
 
 export function isInstanceOfHTMLVideoElement(resource: FastAverageColorResource): resource is HTMLVideoElement {
@@ -126,8 +128,10 @@ export function prepareSizeAndPosition(originalSize: { width: number; height: nu
 const isWebWorkers = typeof window === 'undefined';
 
 export function makeCanvas() {
-    return isWebWorkers ?
-        new OffscreenCanvas(1, 1) :
-        document.createElement('canvas');
+    if (isWebWorkers) {
+        return hasOffscreenCanvas ? new OffscreenCanvas(1, 1) : null;
+    }
+
+    return document.createElement('canvas');
 }
 
