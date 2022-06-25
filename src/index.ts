@@ -113,6 +113,8 @@ export class FastAverageColor {
 
                 return this.prepareResult(defaultColor);
             }
+
+            this.ctx.imageSmoothingEnabled = false;
         }
 
         this.canvas.width = size.destWidth;
