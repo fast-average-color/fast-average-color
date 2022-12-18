@@ -114,7 +114,7 @@ export class FastAverageColor {
         }
 
         if (!this.ctx) {
-            this.ctx = this.canvas.getContext('2d');
+            this.ctx = this.canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
             if (!this.ctx) {
                 const error = getError('Canvas Context 2D is not supported in this browser');
                 outputError(error, options.silent);
@@ -139,7 +139,7 @@ export class FastAverageColor {
             );
 
             const bitmapData = this.ctx.getImageData(0, 0, size.destWidth, size.destHeight).data;
-            
+
             return this.prepareResult(this.getColorFromArray4(bitmapData, options));
         } catch (originalError) {
             const error = getError(`security error (CORS) for resource ${getSrc(resource)}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`);
