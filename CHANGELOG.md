@@ -1,10 +1,13 @@
 # Changelog
 
+# v9.2.0
+Support for willReadFrequently canvas option.
+
 # v9.1.1
 Fix for npm publish script.
 
 # v9.1.0
-Added checking of global objects for web workers: `HTMLCanvasElement`, `HTMLImageElement`, `HTMLVideoElement`, `ImageBitmap` and `OffscreenCanvas`.  
+Added checking of global objects for web workers: `HTMLCanvasElement`, `HTMLImageElement`, `HTMLVideoElement`, `ImageBitmap` and `OffscreenCanvas`.
 
 # v9.0.0
 - Commonjs by default, removed UMD.
