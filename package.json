@@ -32,21 +32,18 @@
     "README.md",
     "LICENSE"
   ],
-  "dependencies": {
-    "@types/offscreencanvas": "^2019.7.0"
-  },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.5.0",
-    "@types/jest": "^29.2.4",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
-    "del-cli": "^4.0.1",
-    "eslint": "^8.30.0",
+    "@rollup/plugin-typescript": "^10.0.1",
+    "@types/jest": "^29.2.5",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "del-cli": "^5.0.0",
+    "eslint": "^8.31.0",
     "husky": "^8.0.2",
     "jest": "^29.3.1",
     "jest-canvas-mock": "^2.4.0",
     "jest-environment-jsdom": "^29.3.1",
-    "rollup": "^2.79.1",
+    "rollup": "^3.9.0",
     "terser": "^5.16.1",
     "ts-jest": "^29.0.3",
     "typescript": "^4.9.4"
@@ -61,7 +58,7 @@
     "clean": "del dist/*",
     "minify": "terser ./dist/index.browser.js -o ./dist/index.browser.min.js -c -m",
     "copyright": "node tools/copyright.mjs dist/index.*js",
-    "rollup": "rollup --config rollup.config.js",
+    "rollup": "rollup --config rollup.config.mjs",
     "test": "npm run typecheck && npm run eslint && npm run unit-test",
     "eslint": "eslint .",
     "unit-test": "jest .",
