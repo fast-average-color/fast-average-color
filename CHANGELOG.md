@@ -1,5 +1,8 @@
 # Changelog
 
+# v9.3.0
+Update deps in package.json.
+
 # v9.2.0
 Support for willReadFrequently canvas option.
 
