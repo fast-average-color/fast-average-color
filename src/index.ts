@@ -53,6 +53,11 @@ export class FastAverageColor {
     /**
      * Get asynchronously the average color from not loaded image.
      */
+    public getColorAsync(resource: FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult>;
+    /**
+     * Get average color from image url
+     */
+    public getColorAsync(imageUrl: string, options?: FastAverageColorOptions): Promise<FastAverageColorResult>;
     public getColorAsync(resource: string | FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult> {
         if (!resource) {
             return Promise.reject(getError('call .getColorAsync() without resource.'));
