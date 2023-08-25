@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-© 2022 Denis Seleznev, <hcodes@yandex.ru>
+© 2023 Denis Seleznev, <hcodes@yandex.ru>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the “Software”), to deal
