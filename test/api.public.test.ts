@@ -5,18 +5,16 @@ describe('Public API', () => {
     const fac = new FastAverageColor();
 
     describe('getColor()', () => {
-        it('if resource is null return default color', () => {
+        it('if resource is null return error', () => {
             const result = fac.getColor(null);
-
+            expect(result.error).toEqual(Error('FastAverageColor: call .getColor() without resource'));
             expect(result.value).toEqual(defaultColor);
         });
     });
 
     describe('getColorAsync()', () => {
-        it('if resource is null return error', () => {
-            return fac.getColorAsync(null).then(() => { /** */ }).catch((e) => {
-                expect(e).toEqual(Error('FastAverageColor: call .getColorAsync() without resource.'));
-            });
+        it('if resource is null return error', async() => {
+            await expect(fac.getColorAsync(null)).rejects.toThrow(Error('FastAverageColor: call .getColorAsync() without resource'));
         });
     });
 

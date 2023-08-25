@@ -62,7 +62,7 @@ export class FastAverageColor {
     public getColorAsync(imageUrl: string, options?: FastAverageColorOptions): Promise<FastAverageColorResult>;
     public getColorAsync(resource: string | FastAverageColorResource, options?: FastAverageColorOptions): Promise<FastAverageColorResult> {
         if (!resource) {
-            return Promise.reject(getError('call .getColorAsync() without resource.'));
+            return Promise.reject(getError('call .getColorAsync() without resource'));
         }
 
         if (typeof resource === 'string') {
@@ -94,7 +94,7 @@ export class FastAverageColor {
         const defaultColor = getDefaultColor(options);
 
         if (!resource) {
-            const error = getError('call .getColor(null) without resource');
+            const error = getError('call .getColor() without resource');
             outputError(error, options.silent);
 
             return this.prepareResult(defaultColor, error);
@@ -249,7 +249,7 @@ export class FastAverageColor {
             const onerror = () => {
                 unbindEvents();
 
-                reject(getError(`Error loading image "${resource.src}".`));
+                reject(getError(`Error loading image "${resource.src}"`));
             };
 
             const onabort = () => {
