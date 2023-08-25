@@ -1,9 +1,11 @@
 import { FastAverageColorAlgorithmOptions, FastAverageColorRgba } from '../index';
 import { isIgnoredColor } from '../helpers/color';
 
+const DEFAULT_DOMINANT_DIVIDER = 24;
+
 export function dominantAlgorithm(arr: number[] | Uint8ClampedArray | Uint8Array, len: number, options: FastAverageColorAlgorithmOptions): FastAverageColorRgba {
     const colorHash: Record<string, number[]> = {};
-    const divider = 24;
+    const divider = options.dominantDivider || DEFAULT_DOMINANT_DIVIDER;
     const ignoredColor = options.ignoredColor;
     const step = options.step;
     let max = [0, 0, 0, 0, 0];

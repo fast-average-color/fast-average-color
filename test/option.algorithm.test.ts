@@ -60,6 +60,21 @@ describe('Options: algorithm', () => {
         expect(color).toEqual([197, 197, 197, 200]);
     });
 
+    it('should return average color using dominant algorithm with dominantDivider', () => {
+        const color = fac.getColorFromArray4([
+            100, 100, 100, 100,
+            190, 190, 190, 200,
+            200, 200, 200, 200,
+            200, 200, 200, 200,
+            50, 150, 0, 200
+        ], {
+            algorithm: 'dominant',
+            dominantDivider: 128,
+        });
+
+        expect(color).toEqual([160, 160, 160, 150]);
+    });
+
     it('should return fully transparent color', () => {
         const algorithms = ['simple', 'sqrt', 'dominant'] as const;
 
