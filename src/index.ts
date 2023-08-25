@@ -25,12 +25,14 @@ export interface FastAverageColorOptions {
     height?: number;
     silent?: boolean;
     crossOrigin?: string;
+    dominantDivider?: number;
 }
 
 export interface FastAverageColorAlgorithmOptions {
     defaultColor: FastAverageColorRgba;
     ignoredColor: Array<FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold>;
     step: number;
+    dominantDivider?: number;
 }
 
 export type FastAverageColorResource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap | null;
@@ -192,7 +194,8 @@ export class FastAverageColor {
         return algorithm(arr, len, {
             defaultColor,
             ignoredColor: prepareIgnoredColor(options.ignoredColor),
-            step
+            step,
+            dominantDivider: options.dominantDivider,
         });
     }
 
