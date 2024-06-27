@@ -26,6 +26,7 @@ export interface FastAverageColorOptions {
     silent?: boolean;
     crossOrigin?: string;
     dominantDivider?: number;
+    alpha?: number;
 }
 
 export interface FastAverageColorAlgorithmOptions {
@@ -191,12 +192,18 @@ export class FastAverageColor {
                 throw getError(`${options.algorithm} is unknown algorithm`);
         }
 
-        return algorithm(arr, len, {
+        const result = algorithm(arr, len, {
             defaultColor,
             ignoredColor: prepareIgnoredColor(options.ignoredColor),
             step,
             dominantDivider: options.dominantDivider,
         });
+        
+        if (options.alpha) {
+            result[3] = options.alpha;
+        }
+
+        return result
     }
 
     /**
