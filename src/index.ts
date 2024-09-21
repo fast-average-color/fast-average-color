@@ -152,7 +152,9 @@ export class FastAverageColor {
             const error = getError(`security error (CORS) for resource ${getSrc(resource)}.\nDetails: https://developer.mozilla.org/en/docs/Web/HTML/CORS_enabled_image`);
             outputError(error, options.silent);
 
-            !options.silent && console.error(originalError);
+            if (!options.silent) {
+                console.error(originalError);
+            }
 
             return this.prepareResult(defaultColor, error);
         }
