@@ -8,7 +8,7 @@ export function isSvg(filename: string): boolean {
     return filename.search(/\.svg(\?|$)/i) !== -1;
 }
 
-export function getOriginalSize(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap) {
+export function getOriginalSize(resource: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap | VideoFrame) {
     if (isInstanceOfHTMLImageElement(resource)) {
         let width = resource.naturalWidth;
         let height = resource.naturalHeight;
@@ -31,19 +31,30 @@ export function getOriginalSize(resource: HTMLImageElement | HTMLVideoElement | 
         };
     }
 
+    if (isInstanceOfVideoFrame(resource)) {
+        return {
+            width: resource.codedWidth,
+            height: resource.codedHeight,
+        };
+    }
+
     return {
         width: resource.width,
         height: resource.height
     };
 }
 
-export function getSrc(resource: HTMLCanvasElement | OffscreenCanvas | HTMLImageElement | HTMLVideoElement | ImageBitmap) {
+export function getSrc(resource: HTMLCanvasElement | OffscreenCanvas | HTMLImageElement | HTMLVideoElement | ImageBitmap | VideoFrame) {
     if (isInstanceOfHTMLCanvasElement(resource)) {
         return 'canvas';
     }
 
     if (isInstanceOfOffscreenCanvas(resource)) {
         return 'offscreencanvas';
+    }
+
+    if (isInstanceOfVideoFrame(resource)) {
+        return 'videoframe';
     }
 
     if (isInstanceOfImageBitmap(resource)) {
@@ -65,6 +76,10 @@ export function isInstanceOfOffscreenCanvas(resource: FastAverageColorResource):
 
 export function isInstanceOfHTMLVideoElement(resource: FastAverageColorResource): resource is HTMLVideoElement {
     return typeof HTMLVideoElement !== 'undefined' && resource instanceof HTMLVideoElement;
+}
+
+export function isInstanceOfVideoFrame(resource: FastAverageColorResource): resource is VideoFrame {
+    return typeof VideoFrame !== 'undefined' && resource instanceof VideoFrame;
 }
 
 export function isInstanceOfHTMLCanvasElement(resource: FastAverageColorResource): resource is HTMLCanvasElement {

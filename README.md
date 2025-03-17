@@ -20,6 +20,7 @@ A simple library that calculates average or dominant color of any images or vide
   + [video](https://fast-average-color.github.io/examples/timeline.html)
   + [canvas](https://fast-average-color.github.io/examples/canvas.html) or `OffscreenCanvas`
   + `ImageBitmap`
+  + `VideoFrame`
   + array of numbers, `Uint8Array` or `Uint8ClampedArray`
 - Average color can be obtained from specific part of resource
 - Support for transparency (PNG, SVG and other formats)

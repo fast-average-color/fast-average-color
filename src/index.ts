@@ -35,7 +35,7 @@ export interface FastAverageColorAlgorithmOptions {
     dominantDivider?: number;
 }
 
-export type FastAverageColorResource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap | null;
+export type FastAverageColorResource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap | VideoFrame | null;
 
 export interface FastAverageColorResult {
     rgb: string;
