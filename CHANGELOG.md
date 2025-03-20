@@ -1,5 +1,8 @@
 # Changelog
 
+# v9.5.0
+- Add support for VideoFrame.
+
 # v9.4.0
 - Add `dominantDivider` option.
 - Update dev deps in package.json.
