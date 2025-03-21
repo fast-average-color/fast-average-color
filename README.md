@@ -71,6 +71,7 @@ A simple library that calculates average or dominant color of any images or vide
   + [Text photo](https://fast-average-color.github.io/examples/text-photo.html)
   + [Ambilight](https://fast-average-color.github.io/examples/ambilight.html)
   + [Define the average color for your images](https://fast-average-color.github.io/examples/define.html)
+  + [WebGL](https://fast-average-color.github.io/examples/webgl.html)
 
 [See code](https://github.com/fast-average-color/examples)
 
