@@ -1,4 +1,9 @@
-import type { FastAverageColorIgnoredColor, FastAverageColorRgb, FastAverageColorRgba, FastAverageColorRgbaWithThreshold } from '../index';
+import type {
+    FastAverageColorIgnoredColor,
+    FastAverageColorRgb,
+    FastAverageColorRgba,
+    FastAverageColorRgbaWithThreshold,
+} from '../types';
 
 function toHex(num: number): string {
     const str = num.toString(16);

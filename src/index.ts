@@ -6,47 +6,9 @@ import { arrayToHex, isDark, prepareIgnoredColor } from './helpers/color';
 import { getDefaultColor } from './helpers/option';
 import { prepareSizeAndPosition, makeCanvas, getOriginalSize, getSrc, isInstanceOfHTMLImageElement } from './helpers/dom';
 import { outputError, getError } from './helpers/error';
+import type { FastAverageColorOptions, FastAverageColorResource, FastAverageColorResult, FastAverageColorRgba } from './types';
 
-export type FastAverageColorRgb = [number, number, number];
-export type FastAverageColorRgba = [number, number, number, number];
-export type FastAverageColorRgbaWithThreshold = [number, number, number, number, number];
-
-export type FastAverageColorIgnoredColor = FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold | Array<FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold>;
-
-export interface FastAverageColorOptions {
-    defaultColor?: FastAverageColorRgba;
-    ignoredColor?: FastAverageColorIgnoredColor;
-    mode?: 'precision' | 'speed';
-    algorithm?: 'simple' | 'sqrt' | 'dominant';
-    step?: number;
-    left?: number;
-    top?: number;
-    width?: number;
-    height?: number;
-    silent?: boolean;
-    crossOrigin?: string;
-    dominantDivider?: number;
-}
-
-export interface FastAverageColorAlgorithmOptions {
-    defaultColor: FastAverageColorRgba;
-    ignoredColor: Array<FastAverageColorRgb | FastAverageColorRgba | FastAverageColorRgbaWithThreshold>;
-    step: number;
-    dominantDivider?: number;
-}
-
-export type FastAverageColorResource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | OffscreenCanvas | ImageBitmap | VideoFrame | null;
-
-export interface FastAverageColorResult {
-    rgb: string;
-    rgba: string;
-    hex: string;
-    hexa: string;
-    value: FastAverageColorRgba;
-    isDark: boolean;
-    isLight: boolean;
-    error?: Error;
-}
+export * from './types';
 
 export class FastAverageColor {
     canvas: HTMLCanvasElement | OffscreenCanvas | null = null;
@@ -73,9 +35,10 @@ export class FastAverageColor {
 
             const img = new Image();
             img.crossOrigin = options && options.crossOrigin || '';
+            const promise = this.bindImageEvents(img, options)
             img.src = resource;
 
-            return this.bindImageEvents(img, options);
+            return promise;
         } else if (isInstanceOfHTMLImageElement(resource) && !resource.complete) {
             return this.bindImageEvents(resource, options);
         } else {
@@ -126,7 +89,7 @@ export class FastAverageColor {
                 const error = getError('Canvas Context 2D is not supported in this browser');
                 outputError(error, options.silent);
 
-                return this.prepareResult(defaultColor);
+                return this.prepareResult(defaultColor, error);
             }
 
             this.ctx.imageSmoothingEnabled = false;
@@ -236,6 +199,12 @@ export class FastAverageColor {
 
     private bindImageEvents(resource: HTMLImageElement, options?: FastAverageColorOptions): Promise<FastAverageColorResult> {
         return new Promise((resolve, reject) => {
+            const unbindEvents = () => {
+                resource.removeEventListener('load', onload);
+                resource.removeEventListener('error', onerror);
+                resource.removeEventListener('abort', onabort);
+            };
+
             const onload = () => {
                 unbindEvents();
 
@@ -260,15 +229,13 @@ export class FastAverageColor {
                 reject(getError(`Image "${resource.src}" loading aborted`));
             };
 
-            const unbindEvents = () => {
-                resource.removeEventListener('load', onload);
-                resource.removeEventListener('error', onerror);
-                resource.removeEventListener('abort', onabort);
-            };
-
             resource.addEventListener('load', onload);
             resource.addEventListener('error', onerror);
             resource.addEventListener('abort', onabort);
+
+            if (resource.complete) {
+                onload();
+            }
         });
     }
 }

@@ -1,4 +1,7 @@
-import type { FastAverageColorOptions, FastAverageColorResource } from '../index';
+import type {
+    FastAverageColorOptions,
+    FastAverageColorResource,
+} from '../types';
 import { getOption } from './option';
 
 const MIN_SIZE = 10;
