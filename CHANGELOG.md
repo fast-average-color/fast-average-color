@@ -1,5 +1,8 @@
 # Changelog
 
+# v9.5.1
+- Fixed binding of event handler for image.
+
 # v9.5.0
 - Add support for VideoFrame.
 
