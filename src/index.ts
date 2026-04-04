@@ -35,8 +35,8 @@ export class FastAverageColor {
 
             const img = new Image();
             img.crossOrigin = options && options.crossOrigin || '';
-            const promise = this.bindImageEvents(img, options)
             img.src = resource;
+            const promise = this.bindImageEvents(img, options)
 
             return promise;
         } else if (isInstanceOfHTMLImageElement(resource) && !resource.complete) {
