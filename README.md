@@ -1,7 +1,6 @@
 # 🍏🍊🍅 Fast Average Color
 [![NPM version](https://img.shields.io/npm/v/fast-average-color.svg)](https://www.npmjs.com/package/fast-average-color)
 [![NPM Downloads](https://img.shields.io/npm/dm/fast-average-color.svg?style=flat)](https://www.npmjs.org/package/fast-average-color)
-[![bundlephobia](https://badgen.net/bundlephobia/minzip/fast-average-color)](https://bundlephobia.com/result?p=fast-average-color)
 [![install size](https://packagephobia.com/badge?p=fast-average-color)](https://packagephobia.com/result?p=fast-average-color)
 ![Coveralls](https://img.shields.io/coveralls/github/hcodes/fast-average-color)
 
