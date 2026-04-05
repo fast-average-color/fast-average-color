@@ -1,5 +1,8 @@
 # Changelog
 
+# v9.5.2
+- Fixed image loading completion check.
+
 # v9.5.1
 - Fixed binding of event handler for image.
 

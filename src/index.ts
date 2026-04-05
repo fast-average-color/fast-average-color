@@ -233,7 +233,7 @@ export class FastAverageColor {
             resource.addEventListener('error', onerror);
             resource.addEventListener('abort', onabort);
 
-            if (resource.complete) {
+            if (resource.src && resource.complete) {
                 onload();
             }
         });
