@@ -72,7 +72,7 @@ A simple library that calculates average or dominant color of any images or vide
   + [Ambilight](https://fast-average-color.github.io/examples/ambilight.html)
   + [Define the average color for your images](https://fast-average-color.github.io/examples/define.html)
   + [WebGL](https://fast-average-color.github.io/examples/webgl.html)
-  + [Colors of movies](https://film-color.github.io/film-color/)
+  + [Colors of movies](https://film-color.github.io/film-color/) 🎬 average color for frames
 
 [See code](https://github.com/fast-average-color/examples)
 
